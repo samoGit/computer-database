@@ -1,0 +1,5 @@
+com.excilys.cdb.mapper
+com.excilys.cdb.model
+com.excilys.cdb.persistence
+com.excilys.cdb.service
+com.excilys.cdb.ui
