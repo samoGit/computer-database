@@ -9,8 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.excilys.cdb.mapper.ComputerMapper;
 import com.excilys.cdb.model.Company;
@@ -27,7 +27,7 @@ public enum ComputerDao {
 	 */
 	INSTANCE;
 
-//	private final Logger logger = LoggerFactory.getLogger("ComputerDao");
+	private final Logger logger = LoggerFactory.getLogger("ComputerDao");
 
 	private final static String SQL_SELECT_ALL_COMPUTERS = "SELECT "
 			+ "computer.id, computer.name, computer.introduced, computer.discontinued, company.id, company.name "
@@ -38,7 +38,7 @@ public enum ComputerDao {
 			+ "computer.id, computer.name, computer.introduced, computer.discontinued, company.id, company.name "
 			+ "FROM computer LEFT JOIN company ON computer.company_id = company.id "
 			+ "WHERE computer.name = ?; ";
-	
+
 	final static String SQL_SELECT_NB_COMPUTERS = "SELECT count(id) as nbComputers FROM computer;";
 	
 	private final static String SQL_INSERT_COMPUTER = "INSERT INTO computer ";
@@ -59,14 +59,14 @@ public enum ComputerDao {
 			PreparedStatement stmt = connection.prepareStatement(SQL_SELECT_ALL_COMPUTERS);
 			stmt.setLong(1, offset);
 			stmt.setLong(2, nbComputersByPage);
-//			logger.info(stmt.toString());			
+			logger.info(stmt.toString());			
 			ResultSet resultSet = stmt.executeQuery();
 			while (resultSet.next()) {
 				listComputers.add(ComputerMapper.getComputer(resultSet));
 			}
 		} catch (SQLException e) {
-//			logger.error(e.getMessage());
-//			logger.error(e.getStackTrace().toString());
+			logger.error(e.getMessage());
+			logger.error(e.getStackTrace().toString());
 		}
 		return listComputers;
 	}
@@ -82,14 +82,14 @@ public enum ComputerDao {
 		try (Connection connection = connectionManager.getConnection()) {
 			PreparedStatement stmt = connection.prepareStatement(SQL_SELECT_COMPUTERS_FROM_NAME);
 			stmt.setString(1, name);
-//			logger.info(stmt.toString());			
+			logger.info(stmt.toString());			
 			ResultSet resultSet = stmt.executeQuery();
 			while (resultSet.next()) {
 				listComputersFound.add(ComputerMapper.getComputer(resultSet));
 			}
 		} catch (SQLException e) {
-//			logger.error(e.getMessage());
-//			logger.error(e.getStackTrace().toString());
+			logger.error(e.getMessage());
+			logger.error(e.getStackTrace().toString());
 		}
 		return listComputersFound;
 	}
@@ -133,11 +133,11 @@ public enum ComputerDao {
 				stmt.setString(num++, discontinued.get().toString());
 			if (company.isPresent())
 				stmt.setLong(num++, company.get().getId());
-//			logger.info(stmt.toString());
+			logger.info(stmt.toString());
 			stmt.executeUpdate();
 		} catch (SQLException e) {
-//			logger.error(e.getMessage());
-//			logger.error(e.getStackTrace().toString());
+			logger.error(e.getMessage());
+			logger.error(e.getStackTrace().toString());
 		}
 	}
 
@@ -151,11 +151,11 @@ public enum ComputerDao {
 		try (Connection connection = connectionManager.getConnection()) {
 			PreparedStatement stmt = connection.prepareStatement(SQL_DELETE_COMPUTER);
 			stmt.setLong(1, computer.getId());
-//			logger.info(stmt.toString());
+			logger.info(stmt.toString());
 			stmt.executeUpdate();
 		} catch (SQLException e) {
-//			logger.error(e.getMessage());
-//			logger.error(e.getStackTrace().toString());
+			logger.error(e.getMessage());
+			logger.error(e.getStackTrace().toString());
 		}
 	}
 
@@ -196,12 +196,12 @@ public enum ComputerDao {
 			String query = String.format(SQL_UPDATE_COMPUTER, field, valueWithQuoteIfNeeded, computer.getId());
 			PreparedStatement stmt;
 			stmt = connection.prepareStatement(query);
-//			logger.info(stmt.toString());
-//			logger.info(stmt.toString());
+			logger.info(stmt.toString());
+			logger.info(stmt.toString());
 			stmt.executeUpdate();
 		} catch (SQLException e) {
-//			logger.error(e.getMessage());
-//			logger.error(e.getStackTrace().toString());
+			logger.error(e.getMessage());
+			logger.error(e.getStackTrace().toString());
 		}
 	}
 	
@@ -220,8 +220,8 @@ public enum ComputerDao {
 				resultSet.next();
 			nbComputer = resultSet.getLong("nbComputers");
 		} catch (SQLException e) {
-//			logger.error(e.getMessage());
-//			logger.error(e.getStackTrace().toString());
+			logger.error(e.getMessage());
+			logger.error(e.getStackTrace().toString());
 		}
 		return nbComputer;
 	}

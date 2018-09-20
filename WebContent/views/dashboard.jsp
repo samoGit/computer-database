@@ -1,3 +1,5 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -19,7 +21,10 @@
     <section id="main">
         <div class="container">
             <h1 id="homeTitle">
-                121 Computers found
+                <%@
+					impor
+					new java.util.Date()
+				%>121 Computers found
             </h1>
             <div id="actions" class="form-horizontal">
                 <div class="pull-left">
@@ -57,7 +62,7 @@
                             </span>
                         </th>
                         <th>
-                            Computer name
+                            Computer nameZZsri8
                         </th>
                         <th>
                             Introduced date
