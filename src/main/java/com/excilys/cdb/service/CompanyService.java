@@ -10,13 +10,13 @@ import com.excilys.cdb.persistence.CompanyDao;
  * 
  * @author samy
  */
-public class CompanyService {
+public enum CompanyService {
+	/**
+	 * Instance of {@link CompanyService} (for Singleton pattern).
+	 */
+	INSTANCE;
 
-	private CompanyDao companyDao;
-
-	public CompanyService() {
-		companyDao = CompanyDao.INSTANCE;
-	}
+	private CompanyDao companyDao = CompanyDao.INSTANCE;
 
 	/**
 	 * Return the list of companies present in the BDD

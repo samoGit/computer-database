@@ -13,13 +13,13 @@ import com.excilys.cdb.persistence.ComputerDao;
  * 
  * @author samy
  */
-public class ComputerService {
-		
-	private ComputerDao computerDao;
-	
-	public ComputerService() {
-		computerDao = ComputerDao.INSTANCE;
-	}
+public enum ComputerService {
+	/**
+	 * Instance of {@link ComputerService} (for Singleton pattern).
+	 */
+	INSTANCE;
+
+	private ComputerDao computerDao = ComputerDao.INSTANCE;
 
 	/**
 	 * Return the list of computer present in the BDD.
@@ -48,8 +48,8 @@ public class ComputerService {
 	 * @param discontinued LocalDate
 	 * @param company {@link Company}
 	 */
-	public void CreateNewComputer(String name, Optional<LocalDate> introduced, Optional<LocalDate> discontinued, Optional<Company> company) {
-		computerDao.CreateNewComputer(name, introduced, discontinued, company);
+	public void CreateNewComputer(Computer computer) {
+		computerDao.CreateNewComputer(computer);
 	}
 
 	/**

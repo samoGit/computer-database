@@ -16,7 +16,7 @@ public class CompanyServiceTst {
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		companyService = new CompanyService();
+		companyService = CompanyService.INSTANCE;
 	}
 
 	@Test

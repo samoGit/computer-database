@@ -3,7 +3,6 @@ package com.excilys.cdb.persistence;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -26,10 +25,13 @@ public enum ConnectionManager {
 		logger = LoggerFactory.getLogger("ConnectionManager");
 
 		Properties properties = new Properties();
-		try (InputStream input = new FileInputStream("config.properties")){
+		
+		ClassLoader classLoader = getClass().getClassLoader();		
+		try (FileInputStream input = new FileInputStream(classLoader.getResource("config.properties").getFile());){
 			logger.info("Load config.properties file.");
 			properties.load(input);
 		} catch (FileNotFoundException e) {
+			e.printStackTrace();
 			logger.error(e.getMessage());
 			logger.error(e.getStackTrace().toString());
 		}

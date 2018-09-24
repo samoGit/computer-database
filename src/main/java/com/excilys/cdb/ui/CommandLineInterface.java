@@ -33,8 +33,8 @@ public class CommandLineInterface {
      * Constructor, init services.
      */
 	public CommandLineInterface() {
-		companyService = new CompanyService();
-		computerService = new ComputerService();
+		companyService = CompanyService.INSTANCE;
+		computerService = ComputerService.INSTANCE;
     	scanner = new Scanner(System.in);
 	}
 
@@ -219,10 +219,7 @@ public class CommandLineInterface {
 	 	Optional<LocalDate> dateIntroduced = this.getDateFromUser("\n(Expected format = 'DD/MM/YYYY'    or    '?' if unknown)\nDate when introduced : ");
 	 	Optional<LocalDate> dateDiscontinued = this.getDateFromUser("\n(Expected format = 'DD/MM/YYYY'    or    '?' if unknown)\nDate when discontinued : ");
 	 	Optional<Company> companyNewComputer = this.getCompanyFromUser();
-		computerService.CreateNewComputer(	newComputerName, 
-											dateIntroduced, 
-											dateDiscontinued, 
-											companyNewComputer);		
+		computerService.CreateNewComputer(new Computer(Long.valueOf(-1), newComputerName, dateIntroduced, dateDiscontinued, companyNewComputer));		
 	}
 	
 	/**

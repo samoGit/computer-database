@@ -102,21 +102,20 @@ public enum ComputerDao {
 	 * @param discontinued LocalDate
 	 * @param idCompany    Long
 	 */
-	public void CreateNewComputer(String name, Optional<LocalDate> introduced, Optional<LocalDate> discontinued,
-			Optional<Company> company) {
+	public void CreateNewComputer(Computer computer) {
 		String query = SQL_INSERT_COMPUTER; // (?) VALUES (?);
 
 		String indices = "name";
 		String values = "?";
-		if (introduced.isPresent()) {
+		if (computer.getDateIntroduced().isPresent()) {
 			indices += ", introduced";
 			values += ", ?";
 		}
-		if (discontinued.isPresent()) {
+		if (computer.getDateDiscontinued().isPresent()) {
 			indices += ", discontinued";
 			values += ", ?";
 		}
-		if (company.isPresent()) {
+		if (computer.getCompany().isPresent()) {
 			indices += ", company_id";
 			values += ", ?";
 		}
@@ -126,13 +125,13 @@ public enum ComputerDao {
 			PreparedStatement stmt = connection.prepareStatement(query);
 
 			int num = 1;
-			stmt.setString(num++, name);
-			if (introduced.isPresent())
-				stmt.setString(num++, introduced.get().toString());
-			if (discontinued.isPresent())
-				stmt.setString(num++, discontinued.get().toString());
-			if (company.isPresent())
-				stmt.setLong(num++, company.get().getId());
+			stmt.setString(num++, computer.getName());
+			if (computer.getDateIntroduced().isPresent())
+				stmt.setString(num++, computer.getDateIntroduced().get().toString());
+			if (computer.getDateDiscontinued().isPresent())
+				stmt.setString(num++, computer.getDateDiscontinued().get().toString());
+			if (computer.getCompany().isPresent())
+				stmt.setLong(num++, computer.getCompany().get().getId());
 			logger.info(stmt.toString());
 			stmt.executeUpdate();
 		} catch (SQLException e) {

@@ -29,7 +29,7 @@ public class ComputerServiceTst {
 	 */
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		computerService = new ComputerService();
+		computerService = ComputerService.INSTANCE;
 	}
 
 	/**
@@ -96,17 +96,17 @@ public class ComputerServiceTst {
 		assertTrue(computerListShouldBeEmpty.isEmpty());
 
 		String nameNewPC = "testCreateNewComputer";
-		LocalDate dateIntoducedNewPC = LocalDate.parse("01/02/2003", DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-		LocalDate dateDiscontinuedNewPC = LocalDate.parse("04/05/2006", DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-		computerService.CreateNewComputer(nameNewPC, Optional.ofNullable(dateIntoducedNewPC), Optional.ofNullable(dateDiscontinuedNewPC),  Optional.empty());
+		Optional<LocalDate> dateIntoducedNewPC = Optional.ofNullable(LocalDate.parse("01/02/2003", DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+		Optional<LocalDate> dateDiscontinuedNewPC = Optional.ofNullable(LocalDate.parse("04/05/2006", DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+		computerService.CreateNewComputer(new Computer(Long.valueOf(-1), nameNewPC, dateIntoducedNewPC, dateDiscontinuedNewPC, Optional.empty()));
 
 		List<Computer> computerListFound = computerService.getListComputersByName("testCreateNewComputer");
 		assertFalse(computerListFound.isEmpty());
 
 		Computer computerFound = computerListFound.get(0);
 		assertEquals(computerFound.getName(), nameNewPC);
-		assertEquals(computerFound.getDateIntroduced().get(), dateIntoducedNewPC);
-		assertEquals(computerFound.getDateDiscontinued().get(), dateDiscontinuedNewPC);
+		assertEquals(computerFound.getDateIntroduced(), dateIntoducedNewPC);
+		assertEquals(computerFound.getDateDiscontinued(), dateDiscontinuedNewPC);
 
 		computerService.DeleteComputer(computerFound);
 	}
@@ -117,9 +117,9 @@ public class ComputerServiceTst {
 	@Test
 	public void testDeleteComputer() {
 		String nameNewPC = "testCreateNewComputer";
-		LocalDate dateIntoducedNewPC = LocalDate.parse("01/02/2003", DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-		LocalDate dateDiscontinuedNewPC = LocalDate.parse("04/05/2006", DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-		computerService.CreateNewComputer(nameNewPC, Optional.ofNullable(dateIntoducedNewPC), Optional.ofNullable(dateDiscontinuedNewPC),  Optional.empty());		
+		Optional<LocalDate> dateIntoducedNewPC = Optional.ofNullable(LocalDate.parse("01/02/2003", DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+		Optional<LocalDate> dateDiscontinuedNewPC = Optional.ofNullable(LocalDate.parse("04/05/2006", DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+		computerService.CreateNewComputer(new Computer(Long.valueOf(-1), nameNewPC, dateIntoducedNewPC, dateDiscontinuedNewPC, Optional.empty()));
 
 		List<Computer> computerListShouldNotBeEmpty = computerService.getListComputersByName("testCreateNewComputer");
 		assertFalse(computerListShouldNotBeEmpty.isEmpty());
@@ -136,9 +136,9 @@ public class ComputerServiceTst {
 	@Test
 	public void testUpdateComputer() {
 		String nameNewPC = "testCreateNewComputer";
-		LocalDate dateIntoducedNewPC = LocalDate.parse("01/02/2003", DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-		LocalDate dateDiscontinuedNewPC = LocalDate.parse("04/05/2006", DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-		computerService.CreateNewComputer(nameNewPC, Optional.ofNullable(dateIntoducedNewPC), Optional.ofNullable(dateDiscontinuedNewPC),  Optional.empty());
+		Optional<LocalDate> dateIntoducedNewPC = Optional.ofNullable(LocalDate.parse("01/02/2003", DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+		Optional<LocalDate> dateDiscontinuedNewPC = Optional.ofNullable(LocalDate.parse("04/05/2006", DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+		computerService.CreateNewComputer(new Computer(Long.valueOf(-1), nameNewPC, dateIntoducedNewPC, dateDiscontinuedNewPC, Optional.empty()));
 
 		List<Computer> computerListShouldNotBeEmpty = computerService.getListComputersByName("testCreateNewComputer");
 		assertFalse(computerListShouldNotBeEmpty.isEmpty());
