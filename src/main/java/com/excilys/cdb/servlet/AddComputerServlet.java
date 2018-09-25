@@ -91,12 +91,12 @@ public class AddComputerServlet extends HttpServlet {
         if (dateIsOk) {
 	        String companyId = request.getParameter("companyId");
 	        Optional<Company> company = companyService.getCompanyFromId(Long.valueOf(companyId));
-	
+
 	        Computer newComputer = new Computer(Long.valueOf(-1), computerName, dateIntroduced, dateDiscontinued, company); 
 	        logger.info("Create the following computer : " + newComputer);
 	        computerService.CreateNewComputer(newComputer);
-	
-	        this.getServletContext().getRequestDispatcher("/Dashboard").forward( request, response );
+
+	        response.sendRedirect("Dashboard");
         }
         else {
     		List<Company> listCompanies = companyService.getListCompanies();

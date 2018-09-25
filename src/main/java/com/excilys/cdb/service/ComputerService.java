@@ -1,8 +1,6 @@
 package com.excilys.cdb.service;
 
-import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
@@ -55,10 +53,10 @@ public enum ComputerService {
 	/**
 	 * Delete the given computer from the BDD
 	 * 
-	 * @param c {@link Computer}
+	 * @param computerId
 	 */	
-	public void DeleteComputer(Computer c) {
-		computerDao.DeleteComputer(c);
+	public void DeleteComputer(Long computerId) {
+		computerDao.DeleteComputer(computerId);
 	}
 
 	/**

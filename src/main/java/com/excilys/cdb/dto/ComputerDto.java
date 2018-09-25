@@ -1,5 +1,7 @@
 package com.excilys.cdb.dto;
 
+import java.time.format.DateTimeFormatter;
+
 import com.excilys.cdb.model.Computer;
 
 public class ComputerDto {
@@ -16,10 +18,10 @@ public class ComputerDto {
 		this.name = computer.getName();
 		this.dateIntroduced = "";
 		if (computer.getDateIntroduced().isPresent())
-			this.dateIntroduced = computer.getDateIntroduced().get().toString();
+			this.dateIntroduced = computer.getDateIntroduced().get().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 		this.dateDiscontinued = "";
 		if (computer.getDateDiscontinued().isPresent())
-			this.dateDiscontinued = computer.getDateDiscontinued().get().toString();
+			this.dateDiscontinued = computer.getDateDiscontinued().get().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 		this.companyName = "";
 		if (computer.getCompany().isPresent())
 			this.companyName = computer.getCompany().get().getName();

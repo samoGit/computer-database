@@ -65,6 +65,8 @@ public class DashboardServlet extends HttpServlet {
         listComputers.forEach( (c) -> {
         	listComputerDtos.add(new ComputerDto(c));
         });
+        System.out.println("listComputers = ");
+        System.out.println(listComputerDtos);
         request.setAttribute("listComputerDtos", listComputerDtos);
 
         this.getServletContext().getRequestDispatcher("/WEB-INF/views/dashboard.jsp").forward(request, response);

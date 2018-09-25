@@ -140,13 +140,13 @@ public enum ComputerDao {
 	/**
 	 * Delete the given computer from the BDD
 	 * 
-	 * @param computer {@link Computer}
+	 * @param computerId
 	 * @throws SQLException .
 	 */
-	public void DeleteComputer(Computer computer) {
+	public void DeleteComputer(Long computerId) {
 		try (Connection connection = connectionManager.getConnection()) {
 			PreparedStatement stmt = connection.prepareStatement(SQL_DELETE_COMPUTER);
-			stmt.setLong(1, computer.getId());
+			stmt.setLong(1, computerId);
 			logger.info(stmt.toString());
 			stmt.executeUpdate();
 		} catch (SQLException e) {

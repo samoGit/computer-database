@@ -260,7 +260,7 @@ public class CommandLineInterface {
 	protected void launchMenuDeleteComputer() {
 		Optional<Computer> computerToBeDeleted = this.launchMenuChooseComputer();
 		if (computerToBeDeleted.isPresent())
-			computerService.DeleteComputer(computerToBeDeleted.get());
+			computerService.DeleteComputer(computerToBeDeleted.get().getId());
 	}
 	
 	/**
