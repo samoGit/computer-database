@@ -40,33 +40,34 @@ public class DashboardServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         logger.info("doGet");
 
+        String strNbComputersByPage = request.getParameter("nbComputersByPage");
+		Long nbComputersByPage = (strNbComputersByPage == null || strNbComputersByPage.equals("")) ? 10 : Long.valueOf(strNbComputersByPage);
+        request.setAttribute("nbComputersByPage", nbComputersByPage);
+        
+        Long nbComputers = computerService.getNbComputers();
+        request.setAttribute("nbComputers", nbComputers);
 
-        Long offset = 1L;
-        String pageNumber = request.getParameter("pageNumber");
-        if (pageNumber == null || pageNumber.equals("")) {
-        	pageNumber = "1";
+        Long nbPage = nbComputers % nbComputersByPage == 0 ? nbComputers/nbComputersByPage : nbComputers/nbComputersByPage+1;
+        request.setAttribute("nbPage", nbPage);
+
+        String strPageNumber = request.getParameter("pageNumber");
+        if (strPageNumber == null || strPageNumber.equals("")) {
+        	strPageNumber = "1";
         }
-		offset = (Long.valueOf(pageNumber)-1)*10;
+        else if (strPageNumber.equals("lastPage")) {
+        	strPageNumber = String.valueOf(nbPage);
+        }
+        Long pageNumber = Long.valueOf(strPageNumber);
+        request.setAttribute("pageNumber", pageNumber);
 
-		Long nbComputersByPage = Long.valueOf(10);
-        List<Computer> listComputers = computerService.getListComputers(offset, nbComputersByPage);
+        List<Computer> listComputers = computerService.getListComputers((pageNumber-1)*nbComputersByPage, nbComputersByPage);
         List<ComputerDto> listComputerDtos = new ArrayList<>();
         listComputers.forEach( (c) -> {
         	listComputerDtos.add(new ComputerDto(c));
         });
-        
         request.setAttribute("listComputerDtos", listComputerDtos);
-        Long nbComputers = computerService.getNbComputers();
-        request.setAttribute("nbComputers", nbComputers);
-        request.setAttribute("pageNumber", pageNumber);
-        
-        Long nbPage = nbComputers/10;
-        if (10*nbPage < nbComputers) {
-        	nbPage++;
-        }
-        request.setAttribute("nbPage", nbPage);
 
-        this.getServletContext().getRequestDispatcher( "/WEB-INF/views/dashboard.jsp" ).forward( request, response );
+        this.getServletContext().getRequestDispatcher("/WEB-INF/views/dashboard.jsp").forward(request, response);
 	}
 
 	/**
