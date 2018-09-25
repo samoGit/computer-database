@@ -38,26 +38,26 @@ public class ComputerServiceTst {
 	@Test
 	public void testGetListComputers() {
 		List<Computer> expectedComputerList = new ArrayList<Computer>();
-		expectedComputerList.add(new Computer(Long.valueOf(10),
+		expectedComputerList.add(new Computer(10L,
 				"Apple IIc Plus", 
 				Optional.empty(), 
-				Optional.empty(), 
-				Optional.empty()
+				Optional.empty(),
+				Optional.empty() 
 			));
-		expectedComputerList.add(new Computer(Long.valueOf(11), 
+		expectedComputerList.add(new Computer(11L, 
 				"Apple II Plus", 
 				Optional.empty(), 
 				Optional.empty(), 
 				Optional.empty()
 			));
-		expectedComputerList.add(new Computer(Long.valueOf(12), 
+		expectedComputerList.add(new Computer(12L, 
 				"Apple III", 
 				Optional.ofNullable(LocalDate.parse("01/05/1980", DateTimeFormatter.ofPattern("dd/MM/yyyy"))), 
 				Optional.ofNullable(LocalDate.parse("01/04/1984", DateTimeFormatter.ofPattern("dd/MM/yyyy"))), 
 				Optional.ofNullable(new Company(Long.valueOf(1), "Apple Inc."))
 			));
 
-		List<Computer> actualComputerList = computerService.getListComputers(Long.valueOf(9), Long.valueOf(3));
+		List<Computer> actualComputerList = computerService.getListComputers(9L, 3L);
 		
 
 		for (int i=0; i<3; i++) {
@@ -76,14 +76,14 @@ public class ComputerServiceTst {
 	@Test
 	public void testGetListComputersByName() {
 		List<Computer> expectedComputerList = new ArrayList<Computer>();
-		Computer expectedComputer = new Computer(	Long.valueOf(319), 
+		Computer expectedComputer = new Computer(	319L, 
 													"HP Mini 1000", 
 													Optional.ofNullable(LocalDate.parse("29/10/2008", DateTimeFormatter.ofPattern("dd/MM/yyyy"))), 
 													Optional.empty(), 
-													Optional.ofNullable(new Company(Long.valueOf(27), "Hewlett-Packard")));
+													Optional.ofNullable(new Company(27L, "Hewlett-Packard")));
 		expectedComputerList.add(expectedComputer);
 		List<Computer> actualComputerList = computerService.getListComputersByName("HP Mini 1000");
-		
+
 		assertEquals(expectedComputerList, actualComputerList);
 	}
 

@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +28,7 @@ public enum CompanyDao {
 	private final Logger logger = LoggerFactory.getLogger("CompanyDao");
 
 	private final static String SQL_SELECT_ALL_COMPANY = "SELECT id, name FROM company;";
+	private final static String SQL_SELECT_COMPANY_FROM_ID = "SELECT id, name FROM company WHERE ID = ?;";
 
 	private final ConnectionManager connectionManager = ConnectionManager.INSTANCE;
 
@@ -51,4 +53,25 @@ public enum CompanyDao {
 		return listCompanies;
 	}
 
+	/**
+	 * Return the company corresponding to the given id
+	 * 
+	 * @param id Long
+	 * @return a {@link Company}
+	 */
+	public Optional<Company> getCompanyFromId(Long id) {
+		Optional<Company> company = Optional.empty();
+		try (Connection connection = connectionManager.getConnection()) {
+			PreparedStatement stmt = connection.prepareStatement(SQL_SELECT_COMPANY_FROM_ID);
+			stmt.setLong(1, id);
+			logger.info(stmt.toString());
+			ResultSet resultSet = stmt.executeQuery();
+			resultSet.next();
+			company = Optional.ofNullable(CompanyMapper.getCompany(resultSet));
+		} catch (SQLException e) {
+			logger.error(e.getMessage());
+			logger.error(e.getStackTrace().toString());
+		}
+		return company;
+	}
 }

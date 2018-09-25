@@ -208,8 +208,7 @@ public enum ComputerDao {
 	 * Return the number of computer present in the BDD
 	 * 
 	 * @return Long
-	 */// 	final static String SQL_SELECT_NB_COMPUTERS = "SELECT count(id) as nbComputers FROM computer;";
-
+	 */
 	public Long getNbComputers() {
 		Long nbComputer = null;
 		try (Connection connection = connectionManager.getConnection()) {

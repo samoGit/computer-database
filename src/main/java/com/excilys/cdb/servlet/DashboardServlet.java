@@ -40,7 +40,14 @@ public class DashboardServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         logger.info("doGet");
 
-		Long offset = Long.valueOf(0);
+
+        Long offset = 1L;
+        String pageNumber = request.getParameter("pageNumber");
+        if (pageNumber == null || pageNumber.equals("")) {
+        	pageNumber = "1";
+        }
+		offset = (Long.valueOf(pageNumber)-1)*10;
+
 		Long nbComputersByPage = Long.valueOf(10);
         List<Computer> listComputers = computerService.getListComputers(offset, nbComputersByPage);
         List<ComputerDto> listComputerDtos = new ArrayList<>();
@@ -49,8 +56,15 @@ public class DashboardServlet extends HttpServlet {
         });
         
         request.setAttribute("listComputerDtos", listComputerDtos);
-
-        request.setAttribute("nbComputers", computerService.getNbComputers());
+        Long nbComputers = computerService.getNbComputers();
+        request.setAttribute("nbComputers", nbComputers);
+        request.setAttribute("pageNumber", pageNumber);
+        
+        Long nbPage = nbComputers/10;
+        if (10*nbPage < nbComputers) {
+        	nbPage++;
+        }
+        request.setAttribute("nbPage", nbPage);
 
         this.getServletContext().getRequestDispatcher( "/WEB-INF/views/dashboard.jsp" ).forward( request, response );
 	}

@@ -63,12 +63,16 @@ public class AddComputerServlet extends HttpServlet {
 
         String strIntroduced = request.getParameter("introduced");
         Optional<LocalDate> dateIntroduced = Optional.empty();
+        
+        Boolean dateIsOk = true;
+        
         try {
         	dateIntroduced = Optional.ofNullable(LocalDate.parse(strIntroduced, DateTimeFormatter.ofPattern("dd/MM/yyyy")));
         }
         catch (DateTimeException e) {
         	if (!strIntroduced.equals("")) {
         		logger.warn("Incorect date format unter in date introduced");
+        		dateIsOk = false;
         	}
 		}
 
@@ -80,17 +84,25 @@ public class AddComputerServlet extends HttpServlet {
         catch (DateTimeException e) {
         	if (!strDiscontinued.equals("")) {
         		logger.warn("Incorect date format unter in date discontinued");
+        		dateIsOk = false;
         	}
 		}
 
-        String companyId = request.getParameter("companyId");
-        Optional<Company> company = Optional.empty();
-        
-        Computer newComputer = new Computer(Long.valueOf(-1), computerName, dateIntroduced, dateDiscontinued, company); 
-        logger.info("Create the following computer : " + newComputer);
-        computerService.CreateNewComputer(newComputer);
+        if (dateIsOk) {
+	        String companyId = request.getParameter("companyId");
+	        Optional<Company> company = companyService.getCompanyFromId(Long.valueOf(companyId));
+	
+	        Computer newComputer = new Computer(Long.valueOf(-1), computerName, dateIntroduced, dateDiscontinued, company); 
+	        logger.info("Create the following computer : " + newComputer);
+	        computerService.CreateNewComputer(newComputer);
+	
+	        this.getServletContext().getRequestDispatcher("/Dashboard").forward( request, response );
+        }
+        else {
+    		List<Company> listCompanies = companyService.getListCompanies();
+            request.setAttribute("listCompanies", listCompanies);
+            this.getServletContext().getRequestDispatcher( "/WEB-INF/views/addComputer.jsp" ).forward( request, response );
+        }
 
-        this.getServletContext().getRequestDispatcher( "/WEB-INF/views/dashboard.jsp" ).forward( request, response );
 	}
-
 }
