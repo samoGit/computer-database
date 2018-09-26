@@ -32,35 +32,33 @@ public class ComputerServiceTst {
 		computerService = ComputerService.INSTANCE;
 	}
 
-	/**
+	/**java.lang.AssertionError: expected:	<Computer [id=23, name=Macintosh Plus, dateIntroduced=Optional[1986-05-16], dateDiscontinued=Optional[1990-10-15], company=Optional[Company [id=1, name=Apple Inc.]]]> but was:
+	 * 										<Computer [id=23, name=Macintosh Plus, dateIntroduced=Optional[1986-01-16], dateDiscontinued=Optional[1990-10-15], company=Optional[Company [id=1, name=Apple Inc.]]]>
+
+
+
 	 * Test method for {@link com.excilys.cdb.service.ComputerService#getListComputers(java.lang.Long)}.
 	 */
 	@Test
 	public void testGetListComputers() {
 		List<Computer> expectedComputerList = new ArrayList<Computer>();
-		expectedComputerList.add(new Computer(10L,
-				"Apple IIc Plus", 
+		expectedComputerList.add(new Computer(22L,
+				"Macintosh II", 
 				Optional.empty(), 
 				Optional.empty(),
 				Optional.empty() 
 			));
-		expectedComputerList.add(new Computer(11L, 
-				"Apple II Plus", 
-				Optional.empty(), 
-				Optional.empty(), 
-				Optional.empty()
-			));
-		expectedComputerList.add(new Computer(12L, 
-				"Apple III", 
-				Optional.ofNullable(LocalDate.parse("01/05/1980", DateTimeFormatter.ofPattern("dd/MM/yyyy"))), 
-				Optional.ofNullable(LocalDate.parse("01/04/1984", DateTimeFormatter.ofPattern("dd/MM/yyyy"))), 
+		expectedComputerList.add(new Computer(23L, 
+				"Macintosh Plus", 
+				Optional.ofNullable(LocalDate.parse("16/01/1986", DateTimeFormatter.ofPattern("dd/MM/yyyy"))), 
+				Optional.ofNullable(LocalDate.parse("15/10/1990", DateTimeFormatter.ofPattern("dd/MM/yyyy"))), 
 				Optional.ofNullable(new Company(Long.valueOf(1), "Apple Inc."))
 			));
 
-		List<Computer> actualComputerList = computerService.getListComputers(9L, 3L);
+		List<Computer> actualComputerList = computerService.getListComputers(10L, 2L);
 		
 
-		for (int i=0; i<3; i++) {
+		for (int i=0; i<expectedComputerList.size(); i++) {
 			System.out.println("\nexpectedComputerList.get(" + i + ") = ");
 			System.out.println(expectedComputerList.get(i));
 			System.out.println("actualComputerList.get(" + i + ")");
@@ -70,7 +68,9 @@ public class ComputerServiceTst {
 		}
 	}
 
-	/**
+	/**[id=21, name=Macintosh II, dateIntroduced=Optional.empty, dateDiscontinued=Optional.empty, company=Optional.empty]> but was:<Computer 
+	 * [id=21, name=Macintosh, dateIntroduced=Optional[1984-01-24], dateDiscontinued=Optional.empty, company=Optional[Company [id=1, name=Apple Inc.]]]>
+
 	 * Test method for {@link com.excilys.cdb.service.ComputerService#getListComputersByName(java.lang.String)}.
 	 */
 	@Test
@@ -98,7 +98,7 @@ public class ComputerServiceTst {
 		String nameNewPC = "testCreateNewComputer";
 		Optional<LocalDate> dateIntoducedNewPC = Optional.ofNullable(LocalDate.parse("01/02/2003", DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 		Optional<LocalDate> dateDiscontinuedNewPC = Optional.ofNullable(LocalDate.parse("04/05/2006", DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-		computerService.CreateNewComputer(new Computer(Long.valueOf(-1), nameNewPC, dateIntoducedNewPC, dateDiscontinuedNewPC, Optional.empty()));
+		computerService.createNewComputer(new Computer(Long.valueOf(-1), nameNewPC, dateIntoducedNewPC, dateDiscontinuedNewPC, Optional.empty()));
 
 		List<Computer> computerListFound = computerService.getListComputersByName("testCreateNewComputer");
 		assertFalse(computerListFound.isEmpty());
@@ -108,44 +108,44 @@ public class ComputerServiceTst {
 		assertEquals(computerFound.getDateIntroduced(), dateIntoducedNewPC);
 		assertEquals(computerFound.getDateDiscontinued(), dateDiscontinuedNewPC);
 
-		computerService.DeleteComputer(computerFound.getId());
+		computerService.deleteComputer(computerFound.getId());
 	}
 
 	/**
-	 * Test method for {@link com.excilys.cdb.service.ComputerService#DeleteComputer(com.excilys.cdb.model.Computer)}.
+	 * Test method for {@link com.excilys.cdb.service.ComputerService#deleteComputer(com.excilys.cdb.model.Computer)}.
 	 */
 	@Test
 	public void testDeleteComputer() {
 		String nameNewPC = "testCreateNewComputer";
 		Optional<LocalDate> dateIntoducedNewPC = Optional.ofNullable(LocalDate.parse("01/02/2003", DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 		Optional<LocalDate> dateDiscontinuedNewPC = Optional.ofNullable(LocalDate.parse("04/05/2006", DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-		computerService.CreateNewComputer(new Computer(Long.valueOf(-1), nameNewPC, dateIntoducedNewPC, dateDiscontinuedNewPC, Optional.empty()));
+		computerService.createNewComputer(new Computer(Long.valueOf(-1), nameNewPC, dateIntoducedNewPC, dateDiscontinuedNewPC, Optional.empty()));
 
 		List<Computer> computerListShouldNotBeEmpty = computerService.getListComputersByName("testCreateNewComputer");
 		assertFalse(computerListShouldNotBeEmpty.isEmpty());
 		
-		computerService.DeleteComputer(computerListShouldNotBeEmpty.get(0).getId());
+		computerService.deleteComputer(computerListShouldNotBeEmpty.get(0).getId());
 
 		List<Computer> computerListShouldBeEmpty = computerService.getListComputersByName("testCreateNewComputer");
 		assertTrue(computerListShouldBeEmpty.isEmpty());
 	}
 
 	/**
-	 * Test method for {@link com.excilys.cdb.service.ComputerService#UpdateComputer(com.excilys.cdb.model.Computer, java.lang.String)}.
+	 * Test method for {@link com.excilys.cdb.service.ComputerService#updateComputer(com.excilys.cdb.model.Computer, java.lang.String)}.
 	 */
 	@Test
 	public void testUpdateComputer() {
 		String nameNewPC = "testCreateNewComputer";
 		Optional<LocalDate> dateIntoducedNewPC = Optional.ofNullable(LocalDate.parse("01/02/2003", DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 		Optional<LocalDate> dateDiscontinuedNewPC = Optional.ofNullable(LocalDate.parse("04/05/2006", DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-		computerService.CreateNewComputer(new Computer(Long.valueOf(-1), nameNewPC, dateIntoducedNewPC, dateDiscontinuedNewPC, Optional.empty()));
+		computerService.createNewComputer(new Computer(Long.valueOf(-1), nameNewPC, dateIntoducedNewPC, dateDiscontinuedNewPC, Optional.empty()));
 
 		List<Computer> computerListShouldNotBeEmpty = computerService.getListComputersByName("testCreateNewComputer");
 		assertFalse(computerListShouldNotBeEmpty.isEmpty());
 
 		Computer computerToBeUpdate = computerListShouldNotBeEmpty.get(0);
 		computerToBeUpdate.setName("testCreateNewComputer_RENAMED");
-		computerService.UpdateComputer(computerToBeUpdate, "name");
+		computerService.updateComputer(computerToBeUpdate, "name");
 		
 		List<Computer> computerListAfterRename = computerService.getListComputersByName("testCreateNewComputer_RENAMED");
 		assertFalse(computerListAfterRename.isEmpty());
@@ -153,6 +153,6 @@ public class ComputerServiceTst {
 		Computer computerAfterRename = computerListAfterRename.get(0);
 		assertEquals(computerToBeUpdate, computerAfterRename);
 
-		computerService.DeleteComputer(computerAfterRename.getId());
+		computerService.deleteComputer(computerAfterRename.getId());
 	}
 }

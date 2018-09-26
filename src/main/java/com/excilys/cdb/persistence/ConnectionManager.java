@@ -55,7 +55,7 @@ public enum ConnectionManager {
 	}
 
 	public Connection getConnection() throws SQLException {
-		logger.info("Open connection to : {}", BDD_URL);
+		logger.trace("Open connection to : {}", BDD_URL);
 		return DriverManager.getConnection(BDD_URL, BDD_USER, BDD_PASSWORD);
 	}
 }

@@ -41,7 +41,7 @@
 			</div>
 		</div>
 
-		<form id="deleteForm" action="DeleteComputerServelet" method="POST">
+		<form id="deleteForm" action="DeleteComputerServelet?pageNumber=${pageNumber}" method="POST">
 			<input type="hidden" name="selection" value="">
 		</form>
 
@@ -94,7 +94,7 @@
 	<footer class="navbar-fixed-bottom">
 		<div class="container text-center">
 			<ul class="pagination">
-				<li><a href="#" aria-label="Previous"> <span
+				<li><a href="Dashboard?pageNumber=${pageNumber-1}&nbComputersByPage=${nbComputersByPage}" aria-label="Previous"> <span
 						aria-hidden="true">&laquo;</span>
 				</a></li>
 
@@ -122,7 +122,7 @@
 					<li><a href="Dashboard?pageNumber=${nbPage}&nbComputersByPage=${nbComputersByPage}">${nbPage}</a></li>
 				</c:if>
 
-				<li><a href="#" aria-label="Next"> <span aria-hidden="true">&raquo;</span>
+				<li><a href="Dashboard?pageNumber=${pageNumber+1}&nbComputersByPage=${nbComputersByPage}" aria-label="Next"> <span aria-hidden="true">&raquo;</span>
 				</a></li>
 			</ul>
 
@@ -137,6 +137,7 @@
 						onclick="location.href='Dashboard?pageNumber=1&nbComputersByPage=100'">100
 				</button>
 			</div>
+		</div>
 	</footer>
 	<script src="js/jquery.min.js"></script>
 	<script src="js/bootstrap.min.js"></script>

@@ -14,7 +14,6 @@ import org.slf4j.LoggerFactory;
 
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.service.CompanyService;
-import com.excilys.cdb.service.ComputerService;
 
 /**
  * Servlet implementation class EditComputerServlet
@@ -23,15 +22,7 @@ import com.excilys.cdb.service.ComputerService;
 public class EditComputerServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private static CompanyService companyService = CompanyService.INSTANCE;
-	private final Logger logger;
-
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public EditComputerServlet() {
-        super();
-        logger = LoggerFactory.getLogger("EditComputerServlet");
-    }
+	private final Logger logger = LoggerFactory.getLogger("EditComputerServlet");
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
@@ -62,7 +53,6 @@ public class EditComputerServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         logger.info("doGet");
-
 		doGet(request, response);
 	}
 }

@@ -219,7 +219,7 @@ public class CommandLineInterface {
 	 	Optional<LocalDate> dateIntroduced = this.getDateFromUser("\n(Expected format = 'DD/MM/YYYY'    or    '?' if unknown)\nDate when introduced : ");
 	 	Optional<LocalDate> dateDiscontinued = this.getDateFromUser("\n(Expected format = 'DD/MM/YYYY'    or    '?' if unknown)\nDate when discontinued : ");
 	 	Optional<Company> companyNewComputer = this.getCompanyFromUser();
-		computerService.CreateNewComputer(new Computer(Long.valueOf(-1), newComputerName, dateIntroduced, dateDiscontinued, companyNewComputer));		
+		computerService.createNewComputer(new Computer(Long.valueOf(-1), newComputerName, dateIntroduced, dateDiscontinued, companyNewComputer));		
 	}
 	
 	/**
@@ -260,7 +260,7 @@ public class CommandLineInterface {
 	protected void launchMenuDeleteComputer() {
 		Optional<Computer> computerToBeDeleted = this.launchMenuChooseComputer();
 		if (computerToBeDeleted.isPresent())
-			computerService.DeleteComputer(computerToBeDeleted.get().getId());
+			computerService.deleteComputer(computerToBeDeleted.get().getId());
 	}
 	
 	/**
@@ -304,7 +304,7 @@ public class CommandLineInterface {
 			computerToBeUpdate.get().setCompany(company);
 		}
 
-		computerService.UpdateComputer(computerToBeUpdate.get(), field);
+		computerService.updateComputer(computerToBeUpdate.get(), field);
 	}
 
 	/**

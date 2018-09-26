@@ -1,6 +1,8 @@
 package com.excilys.cdb.servlet;
 
 import java.io.IOException;
+import java.util.Optional;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -20,15 +22,7 @@ public class DeleteComputerServelet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
 	private static ComputerService computerService = ComputerService.INSTANCE;
-	private final Logger logger;
-
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public DeleteComputerServelet() {
-        super();
-        logger = LoggerFactory.getLogger("DashboardServlet");
-    }
+	private final Logger logger = LoggerFactory.getLogger("DashboardServlet");
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
@@ -50,11 +44,14 @@ public class DeleteComputerServelet extends HttpServlet {
         {
         	String[] strComputerId = strSelection.split(",");
         	for (String s : strComputerId) {
-               	computerService.DeleteComputer(Long.valueOf(s));
+               	computerService.deleteComputer(Long.valueOf(s));
         	}
         }
 
-        response.sendRedirect("Dashboard");
+		Optional<String> pageNumber = Optional.ofNullable(request.getParameter("pageNumber"));
+		if (!pageNumber.isPresent() || "".equals(pageNumber.get()))
+			pageNumber = Optional.of("1");
+        response.sendRedirect("Dashboard?pageNumber=" + pageNumber.get());
 	}
 
 }

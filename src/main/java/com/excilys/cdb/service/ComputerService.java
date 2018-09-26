@@ -1,6 +1,13 @@
 package com.excilys.cdb.service;
 
+import java.time.DateTimeException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
@@ -18,6 +25,8 @@ public enum ComputerService {
 	INSTANCE;
 
 	private ComputerDao computerDao = ComputerDao.INSTANCE;
+	private CompanyService companyService = CompanyService.INSTANCE;
+	private final Logger logger = LoggerFactory.getLogger("ComputerService");
 
 	/**
 	 * Return the list of computer present in the BDD.
@@ -46,8 +55,44 @@ public enum ComputerService {
 	 * @param discontinued LocalDate
 	 * @param company {@link Company}
 	 */
-	public void CreateNewComputer(Computer computer) {
-		computerDao.CreateNewComputer(computer);
+	public void createNewComputer(String computerName, String strIntroduced, String strDiscontinued, String companyId) {
+        Optional<LocalDate> dateIntroduced = Optional.empty();
+        try {
+        	if (!strIntroduced.equals("")) {
+        		dateIntroduced = Optional.ofNullable(LocalDate.parse(strIntroduced, DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        	}
+        }
+        catch (DateTimeException e) {
+    		throw new DateTimeException("Incorect date format unter in date introduced");
+		}
+
+        Optional<LocalDate> dateDiscontinued = Optional.empty();
+        try {
+        	if (!strDiscontinued.equals("")) {
+        		dateDiscontinued = Optional.ofNullable(LocalDate.parse(strDiscontinued, DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        	}
+        }
+        catch (DateTimeException e) {
+    		throw new DateTimeException("Incorect date format unter in date discontinued");
+		}
+
+        Optional<Company> company = companyService.getCompanyFromId(Long.valueOf(companyId));
+        Computer newComputer = new Computer(Long.valueOf(-1), computerName, dateIntroduced, dateDiscontinued, company); 
+
+        logger.info("Create the following computer : " + newComputer);
+		computerDao.createNewComputer(newComputer);
+	}
+	
+	/**
+	 * Create a new computer in the BDD
+	 * 
+	 * @param name String
+	 * @param introduced LocalDate
+	 * @param discontinued LocalDate
+	 * @param company {@link Company}
+	 */
+	public void createNewComputer(Computer computer) {
+		computerDao.createNewComputer(computer);
 	}
 
 	/**
@@ -55,8 +100,8 @@ public enum ComputerService {
 	 * 
 	 * @param computerId
 	 */	
-	public void DeleteComputer(Long computerId) {
-		computerDao.DeleteComputer(computerId);
+	public void deleteComputer(Long computerId) {
+		computerDao.deleteComputer(computerId);
 	}
 
 	/**
@@ -65,8 +110,8 @@ public enum ComputerService {
 	 * @param field String field of the Table to be updated
 	 * @param c {@link Computer}
 	 */	
-	public void UpdateComputer(Computer c, String field) {
-		computerDao.UpdateComputer(c, field);
+	public void updateComputer(Computer c, String field) {
+		computerDao.updateComputer(c, field);
 	}
 	
 	/**

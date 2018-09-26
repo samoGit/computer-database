@@ -1,5 +1,6 @@
 /home/excilys/eclipse-workspace/cdb/src/main/java/com/excilys/cdb/mapper/CompanyMapper.java
 /home/excilys/eclipse-workspace/cdb/src/main/java/com/excilys/cdb/servlet/AddComputerServlet.java
+/home/excilys/eclipse-workspace/cdb/src/main/java/com/excilys/cdb/service/ComputerPageService.java
 /home/excilys/eclipse-workspace/cdb/src/main/java/com/excilys/cdb/persistence/CompanyDao.java
 /home/excilys/eclipse-workspace/cdb/src/main/java/com/excilys/cdb/model/Company.java
 /home/excilys/eclipse-workspace/cdb/src/main/java/com/excilys/cdb/service/ComputerService.java

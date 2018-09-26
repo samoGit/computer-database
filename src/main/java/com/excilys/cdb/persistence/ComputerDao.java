@@ -99,7 +99,7 @@ public enum ComputerDao {
 	 * @param discontinued LocalDate
 	 * @param idCompany    Long
 	 */
-	public void CreateNewComputer(Computer computer) {
+	public void createNewComputer(Computer computer) {
 		String query = SQL_INSERT_COMPUTER; // (?) VALUES (?);
 
 		String indices = "name";
@@ -143,7 +143,7 @@ public enum ComputerDao {
 	 * @param computerId
 	 * @throws SQLException .
 	 */
-	public void DeleteComputer(Long computerId) {
+	public void deleteComputer(Long computerId) {
 		try (Connection connection = connectionManager.getConnection()) {
 			PreparedStatement stmt = connection.prepareStatement(SQL_DELETE_COMPUTER);
 			stmt.setLong(1, computerId);
@@ -161,7 +161,7 @@ public enum ComputerDao {
 	 * @param computer {@link Computer}
 	 * @param field    String field of the Table to be updated
 	 */
-	public void UpdateComputer(Computer computer, String field) {
+	public void updateComputer(Computer computer, String field) {
 		String valueWithQuoteIfNeeded = "null";
 		switch (field) {
 		case "id":

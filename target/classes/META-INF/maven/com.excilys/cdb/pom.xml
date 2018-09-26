@@ -14,6 +14,13 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
+    
+	<junit.version>4.12</junit.version>
+	<mysql.version>5.1.6</mysql.version>
+	<ch.qos.logback.version>1.0.13</ch.qos.logback.version>
+	<org.slf4j.version>1.8.0-beta2</org.slf4j.version>
+	<javax.servlet.version>3.0.1</javax.servlet.version>
+	<jstl.version>1.2</jstl.version>
   </properties>
         
   <dependencies>
@@ -21,7 +28,7 @@
 	<dependency>
 	    <groupId>junit</groupId>
 	    <artifactId>junit</artifactId>
-	    <version>4.12</version>
+	    <version>${junit.version}</version>
 	    <scope>test</scope>
 	</dependency>
 
@@ -29,25 +36,25 @@
 	<dependency>
 	    <groupId>mysql</groupId>
 	    <artifactId>mysql-connector-java</artifactId>
-	    <version>5.1.6</version>
+	    <version>${mysql.version}</version>
 	</dependency> 
 
 	<dependency> 
 	  <groupId>ch.qos.logback</groupId>
 	  <artifactId>logback-classic</artifactId>
-	  <version>1.0.13</version>
+	  <version>${ch.qos.logback.version}</version>
 	</dependency>
 
 	<dependency> 
 	  <groupId>org.slf4j</groupId>
 	  <artifactId>slf4j-jdk14</artifactId>
-	  <version>1.8.0-beta2</version>
+	  <version>${org.slf4j.version}</version>
 	</dependency>
 
 	<dependency>
 	    <groupId>javax.servlet</groupId>
 	    <artifactId>javax.servlet-api</artifactId>
-	    <version>3.0.1</version>
+	    <version>${javax.servlet.version}</version>
 	    <scope>provided</scope>
 	</dependency>
 
@@ -55,7 +62,7 @@
 	<dependency>
 	    <groupId>jstl</groupId>
 	    <artifactId>jstl</artifactId>
-	    <version>1.2</version>
+	    <version>${jstl.version}</version>
 	</dependency>
 
 
