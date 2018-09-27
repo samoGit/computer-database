@@ -1,11 +1,10 @@
 package com.excilys.cdb.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import com.excilys.cdb.dto.ComputerDto;
-import com.excilys.cdb.model.Computer;
 
 public class ComputerPageService {
 
@@ -39,22 +38,24 @@ public class ComputerPageService {
         }
         else {
         	pageNumber = Long.valueOf(strPageNumber.get());        	
-        }
-        
-        if (pageNumber < 1L) {
-        	pageNumber = 1L;
-        }
-        else if (pageNumber > nbPageTotal) {
-        	pageNumber = nbPageTotal;
+            if (pageNumber < 1L) {
+            	pageNumber = 1L;
+            }
+            else if (pageNumber > nbPageTotal) {
+            	pageNumber = nbPageTotal;
+            }
         }
 
-        List<Computer> listComputers = computerService.getListComputers((pageNumber-1)*nbComputersByPage, nbComputersByPage);
-        listComputerDtos = new ArrayList<>();
-        listComputers.forEach( (c) -> {
-        	listComputerDtos.add(new ComputerDto(c));
-        });
+        listComputerDtos = computerService.getListComputers((pageNumber-1)*nbComputersByPage, nbComputersByPage)
+        								  .stream()
+        								  .map(c -> new ComputerDto(c))
+        								  .collect(Collectors.toList());
+          // Better than this ?
+//        listComputerDtos = new ArrayList<>();
+//        computerService.getListComputers((pageNumber-1)*nbComputersByPage, nbComputersByPage).forEach( (c) -> {
+//            listComputerDtos.add(new ComputerDto(c));
+//        });
 	}
-
 	public Long getNbComputersByPage() {
 		return nbComputersByPage;
 	}
