@@ -5,6 +5,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
@@ -162,17 +163,17 @@ public class CommandLineInterface {
      * @param message String The text to be display until the user enter a date with the expected format (or "?")
      * @return A LocalDate object or Optional.empty() if the user enter "?"
      */ 
-	private Optional<LocalDate> getDateFromUser(String message) {		
-		Optional<LocalDate> date = Optional.empty();
+	private Optional<String> getDateFromUser(String message) {		
+		Optional<String> date = Optional.empty();
 
 		boolean dateFormatIsOk = false;
 		while (!dateFormatIsOk) {
 			System.out.println(message);
 			String strDate = scanner.nextLine();
 			try {
-				LocalDate localDate = LocalDate.parse(strDate, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+				LocalDate.parse(strDate, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
 				dateFormatIsOk = true;
-				date = Optional.ofNullable(localDate);
+				date = Optional.ofNullable(strDate);
 			}
 			catch (Exception e) {
 				if (!strDate.equals("?")) {
@@ -192,8 +193,9 @@ public class CommandLineInterface {
      * @param message String The text to be display until the user enter a CompnayId (or "?")
      * @return {@link Company} 
      */ 
-	private Optional<Company> getCompanyFromUser() {		
+	private Optional<String> getCompanyIdFromUser() {		
 		boolean companyUnknown = false;
+		List<String> listCompanyId = companyService.getListCompanies().stream().map(c -> c.getId().toString()).collect(Collectors.toList());
 		while (!companyUnknown) {
 			this.displayAllCompanies();
 			System.out.println("Please enter a company id (or '?') : ");
@@ -201,10 +203,8 @@ public class CommandLineInterface {
 			if (strCompanyId.equals("?"))
 				companyUnknown = true;
 
-			for (Company c : companyService.getListCompanies()) {
-				if (c.getId().toString().equals(strCompanyId))
-					return Optional.ofNullable(c);					
-			}
+			if (listCompanyId.contains(strCompanyId))
+				return Optional.of(strCompanyId);
 		}
 		
 		return Optional.empty();
@@ -215,11 +215,11 @@ public class CommandLineInterface {
      */ 
 	protected void launchMenuCreateComputer() {
 		System.out.println("\nName : ");
-		String newComputerName = scanner.nextLine();
-	 	Optional<LocalDate> dateIntroduced = this.getDateFromUser("\n(Expected format = 'DD/MM/YYYY'    or    '?' if unknown)\nDate when introduced : ");
-	 	Optional<LocalDate> dateDiscontinued = this.getDateFromUser("\n(Expected format = 'DD/MM/YYYY'    or    '?' if unknown)\nDate when discontinued : ");
-	 	Optional<Company> companyNewComputer = this.getCompanyFromUser();
-		computerService.createNewComputer(new Computer(Long.valueOf(-1), newComputerName, dateIntroduced, dateDiscontinued, companyNewComputer));		
+		Optional<String> newComputerName = Optional.ofNullable(scanner.nextLine());
+	 	Optional<String> dateIntroduced = this.getDateFromUser("\n(Expected format = 'DD/MM/YYYY'    or    '?' if unknown)\nDate when introduced : ");
+	 	Optional<String> dateDiscontinued = this.getDateFromUser("\n(Expected format = 'DD/MM/YYYY'    or    '?' if unknown)\nDate when discontinued : ");
+	 	Optional<String> companyId = this.getCompanyIdFromUser();
+		computerService.createNewComputer(newComputerName, dateIntroduced, dateDiscontinued, companyId);
 	}
 	
 	/**
@@ -291,16 +291,20 @@ public class CommandLineInterface {
 			computerToBeUpdate.get().setName(newName);
 		}
 		else if (field.equals("introduced")){
-			Optional<LocalDate> dateIntroduced = this.getDateFromUser("Enter the new date : ");
-			computerToBeUpdate.get().setDateIntroduced(dateIntroduced);
+			Optional<String> dateIntroduced = this.getDateFromUser("Enter the new date : ");
+			computerToBeUpdate.get().setDateIntroducedFromString(dateIntroduced);
 		}
 		else if (field.equals("discontinued")){
-			Optional<LocalDate> dateDiscontinued = this.getDateFromUser("Enter the new date : ");
-			computerToBeUpdate.get().setDateDiscontinued(dateDiscontinued);
+			Optional<String> dateDiscontinued = this.getDateFromUser("Enter the new date : ");
+			computerToBeUpdate.get().setDateDiscontinuedFromString(dateDiscontinued);
 		}
 		else if (field.equals("company")) {
 			field = "company_id";
-		 	Optional<Company> company = this.getCompanyFromUser();
+		 	Optional<String> companyId = this.getCompanyIdFromUser();
+		 	Optional<Company> company = Optional.empty();
+		 	if (companyId.isPresent()) {
+		 		company = companyService.getCompanyFromId(Long.valueOf(companyId.get()));
+		 	}
 			computerToBeUpdate.get().setCompany(company);
 		}
 

@@ -49,9 +49,9 @@ public class DeleteComputerServelet extends HttpServlet {
         }
 
 		Optional<String> pageNumber = Optional.ofNullable(request.getParameter("pageNumber"));
-		if (!pageNumber.isPresent() || "".equals(pageNumber.get()))
-			pageNumber = Optional.of("1");
-        response.sendRedirect("Dashboard?pageNumber=" + pageNumber.get());
+        Optional<String> nbComputersByPage = Optional.ofNullable(request.getParameter("nbComputersByPage"));
+        response.sendRedirect("Dashboard?pageNumber=" + (pageNumber.isPresent() ? pageNumber.get() : "1")
+        		 + "&nbComputersByPage=" + (nbComputersByPage.isPresent() ? nbComputersByPage.get() : "10"));
 	}
 
 }

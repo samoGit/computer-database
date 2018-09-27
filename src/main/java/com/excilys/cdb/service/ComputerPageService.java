@@ -16,15 +16,15 @@ public class ComputerPageService {
 	private Long nbPageTotal;
 	private Long pageNumber;
 	private List<ComputerDto> listComputerDtos;
-	
+
 	public ComputerPageService(Optional<String> strNbComputersByPage, Optional<String> strPageNumber) {
 		nbComputersByPage = NbComputersByPageDefaultValue;
 		if (strNbComputersByPage.isPresent() && !"".equals(strNbComputersByPage.get())) {
 			nbComputersByPage = Long.valueOf(strNbComputersByPage.get());
 		}
-		
+
 		nbComputers = computerService.getNbComputers();
-		
+
         nbPageTotal = nbComputers/nbComputersByPage;
         if (nbComputers % nbComputersByPage != 0) {
         	nbPageTotal++;

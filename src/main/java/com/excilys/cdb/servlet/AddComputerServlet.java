@@ -2,6 +2,7 @@ package com.excilys.cdb.servlet;
 
 import java.io.IOException;
 import java.time.DateTimeException;
+import java.util.Optional;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -32,7 +33,13 @@ public class AddComputerServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         logger.info("doGet");
 
+        Optional<String> pageNumber = Optional.ofNullable(request.getParameter("pageNumber"));
+        Optional<String> nbComputersByPage = Optional.ofNullable(request.getParameter("nbComputersByPage"));
+
+        request.setAttribute("pageNumber", (pageNumber.isPresent() ? pageNumber.get() : "1"));
+        request.setAttribute("nbComputersByPage", (nbComputersByPage.isPresent() ? nbComputersByPage.get() : "1"));
         request.setAttribute("listCompanies", companyService.getListCompanies());
+
         this.getServletContext().getRequestDispatcher( "/WEB-INF/views/addComputer.jsp" ).forward( request, response );
 	}
 
@@ -42,15 +49,17 @@ public class AddComputerServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         logger.info("doPost");
 
-        String computerName = request.getParameter("computerName");
-        String strIntroduced = request.getParameter("introduced");
-        String strDiscontinued = request.getParameter("discontinued");
-        String companyId = request.getParameter("companyId");
-        String pageNumber = request.getParameter("pageNumber");
+        Optional<String> computerName = Optional.ofNullable(request.getParameter("computerName"));
+        Optional<String> strIntroduced = Optional.ofNullable(request.getParameter("introduced"));
+        Optional<String> strDiscontinued = Optional.ofNullable(request.getParameter("discontinued"));
+        Optional<String> companyId = Optional.ofNullable(request.getParameter("companyId"));
+        Optional<String> pageNumber = Optional.ofNullable(request.getParameter("pageNumber"));
+        Optional<String> nbComputersByPage = Optional.ofNullable(request.getParameter("nbComputersByPage"));
 
         try {
         	computerService.createNewComputer(computerName, strIntroduced, strDiscontinued, companyId);
-        	response.sendRedirect("Dashboard?pageNumber=" + pageNumber);
+        	response.sendRedirect("Dashboard?pageNumber=" + (pageNumber.isPresent() ? pageNumber.get() : "1")
+        			 + "&nbComputersByPage=" + (nbComputersByPage.isPresent() ? nbComputersByPage.get() : "10"));
         }
         catch (DateTimeException e) {
         	logger.warn(e.getMessage());

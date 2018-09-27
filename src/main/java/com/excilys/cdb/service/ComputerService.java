@@ -55,11 +55,15 @@ public enum ComputerService {
 	 * @param discontinued LocalDate
 	 * @param company {@link Company}
 	 */
-	public void createNewComputer(String computerName, String strIntroduced, String strDiscontinued, String companyId) {
+	public void createNewComputer(Optional<String> computerName, Optional<String> strIntroduced, Optional<String> strDiscontinued, Optional<String> companyId) {
+		if (!computerName.isPresent() || "".equals(computerName.get())) {
+			computerName = Optional.of("NO_NAME");// TODO throw an Exception
+		}
+		
         Optional<LocalDate> dateIntroduced = Optional.empty();
         try {
-        	if (!strIntroduced.equals("")) {
-        		dateIntroduced = Optional.ofNullable(LocalDate.parse(strIntroduced, DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        	if (strIntroduced.isPresent() && !"".equals(strIntroduced.get())) {
+        		dateIntroduced = Optional.ofNullable(LocalDate.parse(strIntroduced.get(), DateTimeFormatter.ofPattern("dd/MM/yyyy")));
         	}
         }
         catch (DateTimeException e) {
@@ -68,31 +72,22 @@ public enum ComputerService {
 
         Optional<LocalDate> dateDiscontinued = Optional.empty();
         try {
-        	if (!strDiscontinued.equals("")) {
-        		dateDiscontinued = Optional.ofNullable(LocalDate.parse(strDiscontinued, DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        	if (strDiscontinued.isPresent() && !"".equals(strDiscontinued.get())) {
+        		dateDiscontinued = Optional.ofNullable(LocalDate.parse(strDiscontinued.get(), DateTimeFormatter.ofPattern("dd/MM/yyyy")));
         	}
         }
         catch (DateTimeException e) {
     		throw new DateTimeException("Incorect date format unter in date discontinued");
 		}
 
-        Optional<Company> company = companyService.getCompanyFromId(Long.valueOf(companyId));
-        Computer newComputer = new Computer(Long.valueOf(-1), computerName, dateIntroduced, dateDiscontinued, company); 
-
+        Optional<Company> company = Optional.empty();
+        if (companyId.isPresent()) {
+        	company = companyService.getCompanyFromId(Long.valueOf(companyId.get()));
+        }
+        
+        Computer newComputer = new Computer(Long.valueOf(-1), computerName.get(), dateIntroduced, dateDiscontinued, company); 
         logger.info("Create the following computer : " + newComputer);
 		computerDao.createNewComputer(newComputer);
-	}
-	
-	/**
-	 * Create a new computer in the BDD
-	 * 
-	 * @param name String
-	 * @param introduced LocalDate
-	 * @param discontinued LocalDate
-	 * @param company {@link Company}
-	 */
-	public void createNewComputer(Computer computer) {
-		computerDao.createNewComputer(computer);
 	}
 
 	/**

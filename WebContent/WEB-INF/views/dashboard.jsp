@@ -34,7 +34,7 @@
 					</form>
 				</div>
 				<div class="pull-right">
-					<a class="btn btn-success" id="addComputer" href="AddComputer">Add
+					<a class="btn btn-success" id="addComputer" href="AddComputer?pageNumber=${pageNumber}&nbComputersByPage=${nbComputersByPage}">Add
 						Computer</a> <a class="btn btn-default" id="editComputer" href="#"
 						onclick="$.fn.toggleEditMode();">Edit</a>
 				</div>
@@ -77,7 +77,9 @@
 							<td><a href="EditComputer?computerName=${computer.name}
 									&dateDiscontinued=${computer.dateIntroduced}
 									&dateIntroduced=${computer.dateDiscontinued}
-									&companyName=${computer.companyName}" 
+									&companyName=${computer.companyName}
+									&pageNumber=${pageNumber}
+									&nbComputersByPage=${nbComputersByPage}" 
 								onclick=""> <c:out
 								value="${computer.name}" />
 							</a></td>

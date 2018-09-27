@@ -14,7 +14,7 @@
 <body>
     <header class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
-            <a class="navbar-brand" href="dashboard.html"> Application - Computer Database </a>
+            <a class="navbar-brand" href="Dashboard?pageNumber=1&nbComputersByPage=${nbComputersByPage}"> Application - Computer Database </a>
         </div>
     </header>
     <section id="main">
@@ -26,7 +26,7 @@
                     </div>
                     <h1>Edit Computer</h1>
 
-                    <form action="editComputer" method="POST">
+                    <form action="EditComputer?pageNumber=${pageNumber}&nbComputersByPage=${nbComputersByPage}" method="POST">
                         <input type="hidden" value="0" id="id"/> <!-- TODO: Change this value with the computer id -->
                         <fieldset>
                             <div class="form-group">
@@ -55,7 +55,7 @@
                         <div class="actions pull-right">
                             <input type="submit" value="Edit" class="btn btn-primary">
                             or
-                            <a href="Dashboard" class="btn btn-default">Cancel</a>
+                            <a href="Dashboard?pageNumber=${pageNumber}&nbComputersByPage=${nbComputersByPage}" class="btn btn-default">Cancel</a>
                         </div>
                     </form>
                 </div>

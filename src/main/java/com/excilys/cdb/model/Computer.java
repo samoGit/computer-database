@@ -1,6 +1,7 @@
 package com.excilys.cdb.model;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 /**
@@ -48,12 +49,28 @@ public class Computer {
 	public void setDateIntroduced(Optional<LocalDate> dateIntroduced) {
 		this.dateIntroduced = dateIntroduced;
 	}
+	public void setDateIntroducedFromString(Optional<String> dateIntroduced) {
+		if (dateIntroduced.isPresent()) {
+			this.dateIntroduced = Optional.ofNullable(LocalDate.parse(dateIntroduced.get(), DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+		}
+		else {
+			this.dateIntroduced = Optional.empty();
+		}
+	}
 	public Optional<LocalDate> getDateDiscontinued() {
 		return dateDiscontinued;
 	}
 	public void setDateDiscontinued(Optional<LocalDate> dateDiscontinued) {
 		this.dateDiscontinued = dateDiscontinued;
 	}
+	public void setDateDiscontinuedFromString(Optional<String> dateDiscontinued) {
+		if (dateDiscontinued.isPresent()) {
+			this.dateDiscontinued = Optional.ofNullable(LocalDate.parse(dateDiscontinued.get(), DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+		}
+		else {
+			this.dateDiscontinued = Optional.empty();
+		}
+	}	
 	public Optional<Company> getCompany() {
 		return company;
 	}
