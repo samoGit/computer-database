@@ -30,19 +30,21 @@ public class EditComputerServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         logger.info("doGet");
 
+        String pageNumber = request.getParameter("pageNumber");
+        String nbComputersByPage = request.getParameter("nbComputersByPage");
         String computerName = request.getParameter("computerName");
-        request.setAttribute("computerName", computerName);
-        
         String dateDiscontinued = request.getParameter("dateDiscontinued");
-        request.setAttribute("dateDiscontinued", dateDiscontinued);
-        
         String dateIntroduced = request.getParameter("dateIntroduced");
-        request.setAttribute("dateIntroduced", dateIntroduced);
-        
-        String companyName = request.getParameter("companyName");
-        request.setAttribute("companyName", companyName);
-        
+        String companyName = request.getParameter("companyName");        
+
         List<Company> listCompanies = companyService.getListCompanies();
+
+        request.setAttribute("pageNumber", pageNumber);
+        request.setAttribute("nbComputersByPage", nbComputersByPage);
+        request.setAttribute("computerName", computerName);
+        request.setAttribute("dateDiscontinued", dateDiscontinued);
+        request.setAttribute("dateIntroduced", dateIntroduced);
+        request.setAttribute("companyName", companyName);
         request.setAttribute("listCompanies", listCompanies);
 
         this.getServletContext().getRequestDispatcher("/WEB-INF/views/editComputer.jsp").forward(request, response);
