@@ -23,30 +23,34 @@ public class DashboardServlet extends HttpServlet {
 	private final Logger logger = LoggerFactory.getLogger("DashboardServlet");
 
 	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+	 *      response)
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        logger.info("doGet");
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		logger.info("doGet");
 
-        Optional<String> strNbComputersByPage = Optional.ofNullable(request.getParameter("nbComputersByPage"));
-        Optional<String> strPageNumber = Optional.ofNullable(request.getParameter("pageNumber"));
+		Optional<String> strNbComputersByPage = Optional.ofNullable(request.getParameter("nbComputersByPage"));
+		Optional<String> strPageNumber = Optional.ofNullable(request.getParameter("pageNumber"));
 
-        ComputerPageService computerPageService = new ComputerPageService(strNbComputersByPage, strPageNumber);
+		ComputerPageService computerPageService = new ComputerPageService(strNbComputersByPage, strPageNumber);
 
-        request.setAttribute("nbComputersByPage", computerPageService.getNbComputersByPage());        
-        request.setAttribute("nbComputers", computerPageService.getNbComputers());
-        request.setAttribute("nbPage", computerPageService.getNbPageTotal());
-        request.setAttribute("pageNumber", computerPageService.getPageNumber());
-        request.setAttribute("listComputerDtos", computerPageService.getListComputerDtos());
+		request.setAttribute("nbComputersByPage", computerPageService.getNbComputersByPage());
+		request.setAttribute("nbComputers", computerPageService.getNbComputers());
+		request.setAttribute("nbPage", computerPageService.getNbPageTotal());
+		request.setAttribute("pageNumber", computerPageService.getPageNumber());
+		request.setAttribute("listComputerDtos", computerPageService.getListComputerDtos());
 
-        this.getServletContext().getRequestDispatcher("/WEB-INF/views/dashboard.jsp").forward(request, response);
+		this.getServletContext().getRequestDispatcher("/WEB-INF/views/dashboard.jsp").forward(request, response);
 	}
 
 	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+	 *      response)
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        logger.info("doPost");
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		logger.info("doPost");
 		doGet(request, response);
 	}
 }

@@ -15,14 +15,15 @@
 <body>
 	<header class="navbar navbar-inverse navbar-fixed-top">
 		<div class="container">
-			<a class="navbar-brand" href="Dashboard?pageNumber=1&nbComputersByPage=${nbComputersByPage}"> Application -
-				Computer Database </a>
+			<a class="navbar-brand"
+				href="Dashboard?pageNumber=1&nbComputersByPage=${nbComputersByPage}">
+				Application - Computer Database </a>
 		</div>
 	</header>
 
 	<section id="main">
 		<div class="container">
-			<h1 id="homeTitle">${nbComputers} Computers found</h1>
+			<h1 id="homeTitle">${nbComputers}Computers found</h1>
 			<div id="actions" class="form-horizontal">
 				<div class="pull-left">
 					<form id="searchForm" action="#" method="GET" class="form-inline">
@@ -34,14 +35,17 @@
 					</form>
 				</div>
 				<div class="pull-right">
-					<a class="btn btn-success" id="addComputer" href="AddComputer?pageNumber=${pageNumber}&nbComputersByPage=${nbComputersByPage}">Add
+					<a class="btn btn-success" id="addComputer"
+						href="AddComputer?pageNumber=${pageNumber}&nbComputersByPage=${nbComputersByPage}">Add
 						Computer</a> <a class="btn btn-default" id="editComputer" href="#"
 						onclick="$.fn.toggleEditMode();">Edit</a>
 				</div>
 			</div>
 		</div>
 
-		<form id="deleteForm" action="DeleteComputerServelet?pageNumber=${pageNumber}&nbComputersByPage=${nbComputersByPage" method="POST">
+		<form id="deleteForm"
+			action="DeleteComputerServelet?pageNumber=${pageNumber}&nbComputersByPage=${nbComputersByPage}"
+			method="POST">
 			<input type="hidden" name="selection" value="">
 		</form>
 
@@ -74,14 +78,15 @@
 						<tr>
 							<td class="editMode"><input type="checkbox" name="cb"
 								class="cb" value="${computer.id}"></td>
-							<td><a href="EditComputer?computerName=${computer.name}
+							<td><a
+								href="EditComputer?computerId=${computer.id}
+									&computerName=${computer.name}
 									&dateDiscontinued=${computer.dateIntroduced}
 									&dateIntroduced=${computer.dateDiscontinued}
 									&companyName=${computer.companyName}
 									&pageNumber=${pageNumber}
-									&nbComputersByPage=${nbComputersByPage}" 
-								onclick=""> <c:out
-								value="${computer.name}" />
+									&nbComputersByPage=${nbComputersByPage}"
+								onclick=""> <c:out value="${computer.name}" />
 							</a></td>
 							<td><c:out value="${computer.dateIntroduced}" /></td>
 							<td><c:out value="${computer.dateDiscontinued}" /></td>
@@ -96,47 +101,60 @@
 	<footer class="navbar-fixed-bottom">
 		<div class="container text-center">
 			<ul class="pagination">
-				<li><a href="Dashboard?pageNumber=${pageNumber-1}&nbComputersByPage=${nbComputersByPage}" aria-label="Previous"> <span
-						aria-hidden="true">&laquo;</span>
+				<li><a
+					href="Dashboard?pageNumber=${pageNumber-1}&nbComputersByPage=${nbComputersByPage}"
+					aria-label="Previous"> <span aria-hidden="true">&laquo;</span>
 				</a></li>
 
 				<c:if test="${pageNumber>3}">
-					<li><a href="Dashboard?pageNumber=1&nbComputersByPage=${nbComputersByPage}">1</a></li>
+					<li><a
+						href="Dashboard?pageNumber=1&nbComputersByPage=${nbComputersByPage}">1</a></li>
 					<li><a href="#">...</a></li>
 				</c:if>
 
 				<c:if test="${pageNumber>2}">
-					<li><a href="Dashboard?pageNumber=${pageNumber-2}&nbComputersByPage=${nbComputersByPage}">${pageNumber-2}</a></li>
+					<li><a
+						href="Dashboard?pageNumber=${pageNumber-2}&nbComputersByPage=${nbComputersByPage}">${pageNumber-2}</a></li>
 				</c:if>
 				<c:if test="${pageNumber>1}">
-					<li><a href="Dashboard?pageNumber=${pageNumber-1}&nbComputersByPage=${nbComputersByPage}">${pageNumber-1}</a></li>
+					<li><a
+						href="Dashboard?pageNumber=${pageNumber-1}&nbComputersByPage=${nbComputersByPage}">${pageNumber-1}</a></li>
 				</c:if>
-				<li><a href="Dashboard?pageNumber=${pageNumber}&nbComputersByPage=${nbComputersByPage}"><b>${pageNumber}</b></a></li>
+				<li><a
+					href="Dashboard?pageNumber=${pageNumber}&nbComputersByPage=${nbComputersByPage}"><b>${pageNumber}</b></a></li>
 				<c:if test="${pageNumber<=nbPage-1}">
-					<li><a href="Dashboard?pageNumber=${pageNumber+1}&nbComputersByPage=${nbComputersByPage}">${pageNumber+1}</a></li>
+					<li><a
+						href="Dashboard?pageNumber=${pageNumber+1}&nbComputersByPage=${nbComputersByPage}">${pageNumber+1}</a></li>
 				</c:if>
 				<c:if test="${pageNumber<=nbPage-2}">
-					<li><a href="Dashboard?pageNumber=${pageNumber+2}&nbComputersByPage=${nbComputersByPage}">${pageNumber+2}</a></li>
-				</c:if>
-				
-				<c:if test="${pageNumber<nbPage-2}">
-					<li><a href="#">...</a></li>
-					<li><a href="Dashboard?pageNumber=${nbPage}&nbComputersByPage=${nbComputersByPage}">${nbPage}</a></li>
+					<li><a
+						href="Dashboard?pageNumber=${pageNumber+2}&nbComputersByPage=${nbComputersByPage}">${pageNumber+2}</a></li>
 				</c:if>
 
-				<li><a href="Dashboard?pageNumber=${pageNumber+1}&nbComputersByPage=${nbComputersByPage}" aria-label="Next"> <span aria-hidden="true">&raquo;</span>
+				<c:if test="${pageNumber<nbPage-2}">
+					<li><a href="#">...</a></li>
+					<li><a
+						href="Dashboard?pageNumber=${nbPage}&nbComputersByPage=${nbComputersByPage}">${nbPage}</a></li>
+				</c:if>
+
+				<li><a
+					href="Dashboard?pageNumber=${pageNumber+1}&nbComputersByPage=${nbComputersByPage}"
+					aria-label="Next"> <span aria-hidden="true">&raquo;</span>
 				</a></li>
 			</ul>
 
 			<div class="btn-group btn-group-sm pull-right" role="group">
-				<button type="button" class="btn btn-default <c:if test="${nbComputersByPage == 10}">btn-primary</c:if>" 
-						onclick="location.href='Dashboard?pageNumber=1&nbComputersByPage=10'">10
+				<button type="button"
+					class="btn btn-default <c:if test="${nbComputersByPage == 10}">btn-primary</c:if>"
+					onclick="location.href='Dashboard?pageNumber=1&nbComputersByPage=10'">10
 				</button>
-				<button type="button" class="btn btn-default <c:if test="${nbComputersByPage == 50}">btn-primary</c:if>" 
-						onclick="location.href='Dashboard?pageNumber=1&nbComputersByPage=50'">50
+				<button type="button"
+					class="btn btn-default <c:if test="${nbComputersByPage == 50}">btn-primary</c:if>"
+					onclick="location.href='Dashboard?pageNumber=1&nbComputersByPage=50'">50
 				</button>
-				<button type="button" class="btn btn-default <c:if test="${nbComputersByPage == 100}">btn-primary</c:if>" 
-						onclick="location.href='Dashboard?pageNumber=1&nbComputersByPage=100'">100
+				<button type="button"
+					class="btn btn-default <c:if test="${nbComputersByPage == 100}">btn-primary</c:if>"
+					onclick="location.href='Dashboard?pageNumber=1&nbComputersByPage=100'">100
 				</button>
 			</div>
 		</div>

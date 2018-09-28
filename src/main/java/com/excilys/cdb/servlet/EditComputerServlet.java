@@ -25,36 +25,42 @@ public class EditComputerServlet extends HttpServlet {
 	private final Logger logger = LoggerFactory.getLogger("EditComputerServlet");
 
 	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+	 *      response)
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        logger.info("doGet");
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		logger.info("doGet");
 
-        String pageNumber = request.getParameter("pageNumber");
-        String nbComputersByPage = request.getParameter("nbComputersByPage");
-        String computerName = request.getParameter("computerName");
-        String dateDiscontinued = request.getParameter("dateDiscontinued");
-        String dateIntroduced = request.getParameter("dateIntroduced");
-        String companyName = request.getParameter("companyName");        
+		String pageNumber = request.getParameter("pageNumber");
+		String nbComputersByPage = request.getParameter("nbComputersByPage");
+		String computerId = request.getParameter("computerId");
+		String computerName = request.getParameter("computerName");
+		String dateDiscontinued = request.getParameter("dateDiscontinued");
+		String dateIntroduced = request.getParameter("dateIntroduced");
+		String companyName = request.getParameter("companyName");
 
-        List<Company> listCompanies = companyService.getListCompanies();
+		List<Company> listCompanies = companyService.getListCompanies();
 
-        request.setAttribute("pageNumber", pageNumber);
-        request.setAttribute("nbComputersByPage", nbComputersByPage);
-        request.setAttribute("computerName", computerName);
-        request.setAttribute("dateDiscontinued", dateDiscontinued);
-        request.setAttribute("dateIntroduced", dateIntroduced);
-        request.setAttribute("companyName", companyName);
-        request.setAttribute("listCompanies", listCompanies);
+		request.setAttribute("pageNumber", pageNumber);
+		request.setAttribute("nbComputersByPage", nbComputersByPage);
+		request.setAttribute("computerId", computerId);
+		request.setAttribute("computerName", computerName);
+		request.setAttribute("dateDiscontinued", dateDiscontinued);
+		request.setAttribute("dateIntroduced", dateIntroduced);
+		request.setAttribute("companyName", companyName);
+		request.setAttribute("listCompanies", listCompanies);
 
-        this.getServletContext().getRequestDispatcher("/WEB-INF/views/editComputer.jsp").forward(request, response);
+		this.getServletContext().getRequestDispatcher("/WEB-INF/views/editComputer.jsp").forward(request, response);
 	}
 
 	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+	 *      response)
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        logger.info("doGet");
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		logger.info("doGet");
 		doGet(request, response);
 	}
 }

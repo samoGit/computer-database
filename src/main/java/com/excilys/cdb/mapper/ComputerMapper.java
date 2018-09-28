@@ -49,7 +49,8 @@ public class ComputerMapper {
 		if (companyId != null && companyName != null)
 			company = Optional.of(new Company(companyId, companyName));
 
-		return new Computer(id, name, Optional.ofNullable(localDateintroduced), Optional.ofNullable(localDateDiscontinued), company);
+		return new Computer(id, name, Optional.ofNullable(localDateintroduced),
+				Optional.ofNullable(localDateDiscontinued), company);
 	}
 
 }

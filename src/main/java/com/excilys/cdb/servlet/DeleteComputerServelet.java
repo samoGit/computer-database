@@ -20,37 +20,39 @@ import com.excilys.cdb.service.ComputerService;
 @WebServlet("/DeleteComputerServelet")
 public class DeleteComputerServelet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-       
+
 	private static ComputerService computerService = ComputerService.INSTANCE;
 	private final Logger logger = LoggerFactory.getLogger("DashboardServlet");
 
 	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+	 *      response)
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        logger.info("doGet");
-
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		logger.info("doGet");
 		response.getWriter().append("Served at: ").append(request.getContextPath());
 	}
 
 	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+	 *      response)
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        logger.info("doPost");
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		logger.info("doPost");
 
-        Optional<String> selection = Optional.ofNullable(request.getParameter("selection"));
-        if (selection.isPresent())
-        {
-        	String[] computersId = selection.get().split(",");
-        	for (String id : computersId) {
-               	computerService.deleteComputer(Long.valueOf(id));
-        	}
-        }
+		Optional<String> selection = Optional.ofNullable(request.getParameter("selection"));
+		if (selection.isPresent()) {
+			String[] computersId = selection.get().split(",");
+			for (String id : computersId) {
+				computerService.deleteComputer(Long.valueOf(id));
+			}
+		}
 
 		Optional<String> pageNumber = Optional.ofNullable(request.getParameter("pageNumber"));
-        Optional<String> nbComputersByPage = Optional.ofNullable(request.getParameter("nbComputersByPage"));
-        response.sendRedirect("Dashboard?pageNumber=" + (pageNumber.isPresent() ? pageNumber.get() : "1")
-        		 + "&nbComputersByPage=" + (nbComputersByPage.isPresent() ? nbComputersByPage.get() : "10"));
+		Optional<String> nbComputersByPage = Optional.ofNullable(request.getParameter("nbComputersByPage"));
+		response.sendRedirect("Dashboard?pageNumber=" + (pageNumber.isPresent() ? pageNumber.get() : "1")
+				+ "&nbComputersByPage=" + (nbComputersByPage.isPresent() ? nbComputersByPage.get() : "10"));
 	}
 }

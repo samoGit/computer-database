@@ -21,13 +21,13 @@ public class CompanyServiceTst {
 
 	@Test
 	public void testGetListCompanies() {
-		List<String> expectedName5firstCompany = new ArrayList<>();		
+		List<String> expectedName5firstCompany = new ArrayList<>();
 		expectedName5firstCompany.add("Apple Inc.");
 		expectedName5firstCompany.add("Thinking Machines");
 		expectedName5firstCompany.add("RCA");
 
 		List<Company> actualListCompany = companyService.getListCompanies();
-		for (int i=0; i<3; i++) {
+		for (int i = 0; i < 3; i++) {
 			assertEquals(expectedName5firstCompany.get(i), actualListCompany.get(i).getName());
 		}
 	}

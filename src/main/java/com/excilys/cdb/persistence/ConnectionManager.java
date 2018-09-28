@@ -25,17 +25,16 @@ public enum ConnectionManager {
 		logger = LoggerFactory.getLogger("ConnectionManager");
 
 		Properties properties = new Properties();
-		
-		ClassLoader classLoader = getClass().getClassLoader();		
-		try (FileInputStream input = new FileInputStream(classLoader.getResource("config.properties").getFile());){
+
+		ClassLoader classLoader = getClass().getClassLoader();
+		try (FileInputStream input = new FileInputStream(classLoader.getResource("config.properties").getFile());) {
 			logger.info("Load config.properties file.");
 			properties.load(input);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 			logger.error(e.getMessage());
 			logger.error(e.getStackTrace().toString());
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			logger.error(e.getMessage());
 			logger.error(e.getStackTrace().toString());
 		}

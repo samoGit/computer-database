@@ -33,11 +33,10 @@ public enum ComputerDao {
 
 	final static String SQL_SELECT_COMPUTERS_FROM_NAME = "SELECT "
 			+ "computer.id, computer.name, computer.introduced, computer.discontinued, company.id, company.name "
-			+ "FROM computer LEFT JOIN company ON computer.company_id = company.id "
-			+ "WHERE computer.name = ?; ";
+			+ "FROM computer LEFT JOIN company ON computer.company_id = company.id " + "WHERE computer.name = ?; ";
 
 	final static String SQL_SELECT_NB_COMPUTERS = "SELECT count(id) as nbComputers FROM computer;";
-	
+
 	private final static String SQL_INSERT_COMPUTER = "INSERT INTO computer ";
 	private final static String SQL_DELETE_COMPUTER = "DELETE FROM computer WHERE id=?;";
 	private final static String SQL_UPDATE_COMPUTER = "UPDATE computer SET %s = %s  WHERE id = %s;";
@@ -56,7 +55,7 @@ public enum ComputerDao {
 			PreparedStatement stmt = connection.prepareStatement(SQL_SELECT_ALL_COMPUTERS);
 			stmt.setLong(1, offset);
 			stmt.setLong(2, nbComputersByPage);
-			logger.info(stmt.toString());			
+			logger.info(stmt.toString());
 			ResultSet resultSet = stmt.executeQuery();
 			while (resultSet.next()) {
 				listComputers.add(ComputerMapper.getComputer(resultSet));
@@ -79,7 +78,7 @@ public enum ComputerDao {
 		try (Connection connection = connectionManager.getConnection()) {
 			PreparedStatement stmt = connection.prepareStatement(SQL_SELECT_COMPUTERS_FROM_NAME);
 			stmt.setString(1, name);
-			logger.info(stmt.toString());			
+			logger.info(stmt.toString());
 			ResultSet resultSet = stmt.executeQuery();
 			while (resultSet.next()) {
 				listComputersFound.add(ComputerMapper.getComputer(resultSet));
@@ -200,7 +199,7 @@ public enum ComputerDao {
 			logger.error(e.getStackTrace().toString());
 		}
 	}
-	
+
 	/**
 	 * Return the number of computer present in the BDD
 	 * 
