@@ -26,7 +26,7 @@
 				<div class="col-xs-8 col-xs-offset-2 box">
 					<h1>Add Computer</h1>
 					<form
-						action="AddComputer?pageNumber=lastPage&nbComputersByPage=${nbComputersByPage}"
+						action="AddComputer?pageNumber=${pageNumber}&nbComputersByPage=${nbComputersByPage}"
 						method="POST">
 						<fieldset>
 							<div class="form-group">

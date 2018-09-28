@@ -59,18 +59,20 @@ public class AddComputerServlet extends HttpServlet {
 		Optional<String> companyId = Optional.ofNullable(request.getParameter("companyId"));
 
 		Optional<String> pageNumber = Optional.ofNullable(request.getParameter("pageNumber"));
+		String pageNumberNeverEmpty = pageNumber.isPresent() ? pageNumber.get() : "1";
 		Optional<String> nbComputersByPage = Optional.ofNullable(request.getParameter("nbComputersByPage"));
+		String nbComputersByPageNeverEmpty = nbComputersByPage.isPresent() ? nbComputersByPage.get() : "10";
 
 		try {
 			computerService.createNewComputer(computerName, strIntroduced, strDiscontinued, companyId);
-			response.sendRedirect("Dashboard?pageNumber=" + (pageNumber.isPresent() ? pageNumber.get() : "1")
-					+ "&nbComputersByPage=" + (nbComputersByPage.isPresent() ? nbComputersByPage.get() : "10"));
+			response.sendRedirect("Dashboard?pageNumber=lastPage&nbComputersByPage="
+					+ nbComputersByPageNeverEmpty);
 		} catch (DateTimeException e) {
 			logger.warn(e.getMessage());
 
 			request.setAttribute("listCompanies", companyService.getListCompanies());
-			request.setAttribute("pageNumber", pageNumber);
-			request.setAttribute("nbComputersByPage", nbComputersByPage);
+			request.setAttribute("pageNumber", pageNumberNeverEmpty);
+			request.setAttribute("nbComputersByPage", nbComputersByPageNeverEmpty);
 
 			this.getServletContext().getRequestDispatcher("/WEB-INF/views/addComputer.jsp").forward(request, response);
 		}
