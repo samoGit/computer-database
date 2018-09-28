@@ -39,12 +39,12 @@ public class DeleteComputerServelet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         logger.info("doPost");
 
-        String strSelection = request.getParameter("selection");
-        if (strSelection != null)
+        Optional<String> selection = Optional.ofNullable(request.getParameter("selection"));
+        if (selection.isPresent())
         {
-        	String[] strComputerId = strSelection.split(",");
-        	for (String s : strComputerId) {
-               	computerService.deleteComputer(Long.valueOf(s));
+        	String[] computersId = selection.get().split(",");
+        	for (String id : computersId) {
+               	computerService.deleteComputer(Long.valueOf(id));
         	}
         }
 
@@ -53,5 +53,4 @@ public class DeleteComputerServelet extends HttpServlet {
         response.sendRedirect("Dashboard?pageNumber=" + (pageNumber.isPresent() ? pageNumber.get() : "1")
         		 + "&nbComputersByPage=" + (nbComputersByPage.isPresent() ? nbComputersByPage.get() : "10"));
 	}
-
 }

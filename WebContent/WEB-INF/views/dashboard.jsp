@@ -41,7 +41,7 @@
 			</div>
 		</div>
 
-		<form id="deleteForm" action="DeleteComputerServelet?pageNumber=${pageNumber}" method="POST">
+		<form id="deleteForm" action="DeleteComputerServelet?pageNumber=${pageNumber}&nbComputersByPage=${nbComputersByPage" method="POST">
 			<input type="hidden" name="selection" value="">
 		</form>
 

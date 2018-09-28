@@ -53,6 +53,7 @@ public class AddComputerServlet extends HttpServlet {
         Optional<String> strIntroduced = Optional.ofNullable(request.getParameter("introduced"));
         Optional<String> strDiscontinued = Optional.ofNullable(request.getParameter("discontinued"));
         Optional<String> companyId = Optional.ofNullable(request.getParameter("companyId"));
+
         Optional<String> pageNumber = Optional.ofNullable(request.getParameter("pageNumber"));
         Optional<String> nbComputersByPage = Optional.ofNullable(request.getParameter("nbComputersByPage"));
 
