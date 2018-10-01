@@ -19,7 +19,8 @@ import com.excilys.cdb.service.ComputerPageService;
  */
 @WebServlet("/Dashboard")
 public class DashboardServlet extends HttpServlet {
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1182886835641082355L;
+
 	private final Logger logger = LoggerFactory.getLogger("DashboardServlet");
 
 	/**

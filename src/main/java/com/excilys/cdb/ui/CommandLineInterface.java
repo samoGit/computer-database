@@ -7,6 +7,8 @@ import java.util.Optional;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
+import com.excilys.cdb.mapper.InvalidComputerException;
+import com.excilys.cdb.mapper.InvalidDateException;
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.service.CompanyService;
@@ -225,7 +227,13 @@ public class CommandLineInterface {
 		Optional<String> dateDiscontinued = this.getDateFromUser(
 				"\n(Expected format = 'DD/MM/YYYY'    or    '?' if unknown)\nDate when discontinued : ");
 		Optional<String> companyId = this.getCompanyIdFromUser();
-		computerService.createNewComputer(newComputerName, dateIntroduced, dateDiscontinued, companyId);
+		
+		try {
+			computerService.createNewComputer(newComputerName, dateIntroduced, dateDiscontinued, companyId);
+		}
+		catch (InvalidComputerException | InvalidDateException e) {
+			System.err.println(e.getMessage());
+		}
 	}
 
 	/**

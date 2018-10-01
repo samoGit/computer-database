@@ -20,7 +20,8 @@ import com.excilys.cdb.service.CompanyService;
  */
 @WebServlet("/EditComputer")
 public class EditComputerServlet extends HttpServlet {
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 6852085386625285312L;
+
 	private static CompanyService companyService = CompanyService.INSTANCE;
 	private final Logger logger = LoggerFactory.getLogger("EditComputerServlet");
 

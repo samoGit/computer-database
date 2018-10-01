@@ -1,7 +1,6 @@
 package com.excilys.cdb.servlet;
 
 import java.io.IOException;
-import java.time.DateTimeException;
 import java.util.Optional;
 
 import javax.servlet.ServletException;
@@ -13,6 +12,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.excilys.cdb.mapper.InvalidComputerException;
+import com.excilys.cdb.mapper.InvalidDateException;
 import com.excilys.cdb.service.CompanyService;
 import com.excilys.cdb.service.ComputerService;
 
@@ -21,8 +22,8 @@ import com.excilys.cdb.service.ComputerService;
  */
 @WebServlet("/AddComputer")
 public class AddComputerServlet extends HttpServlet {
-	private static final long serialVersionUID = 1L;
-
+	private static final long serialVersionUID = 1491265413354643955L;
+	
 	private static CompanyService companyService = CompanyService.INSTANCE;
 	private static ComputerService computerService = ComputerService.INSTANCE;
 	private final Logger logger = LoggerFactory.getLogger("AddComputerServlet");
@@ -67,12 +68,27 @@ public class AddComputerServlet extends HttpServlet {
 			computerService.createNewComputer(computerName, strIntroduced, strDiscontinued, companyId);
 			response.sendRedirect("Dashboard?pageNumber=lastPage&nbComputersByPage="
 					+ nbComputersByPageNeverEmpty);
-		} catch (DateTimeException e) {
-			logger.warn(e.getMessage());
+		} catch (InvalidComputerException | InvalidDateException e) {
+			String errorMsg = e.getMessage();
+			logger.warn(errorMsg);
+
+			if (computerName.isPresent()) {
+				request.setAttribute("computerName", computerName.get());
+			}
+			if (strIntroduced.isPresent()) {
+				request.setAttribute("introduced", strIntroduced.get());
+			}
+			if (strDiscontinued.isPresent()) {
+				request.setAttribute("discontinued", strDiscontinued.get());
+			}
+			if (companyId.isPresent()) {
+				request.setAttribute("companyId", companyId.get());
+			}
 
 			request.setAttribute("listCompanies", companyService.getListCompanies());
 			request.setAttribute("pageNumber", pageNumberNeverEmpty);
 			request.setAttribute("nbComputersByPage", nbComputersByPageNeverEmpty);
+			request.setAttribute("errorMsg", errorMsg);
 
 			this.getServletContext().getRequestDispatcher("/WEB-INF/views/addComputer.jsp").forward(request, response);
 		}

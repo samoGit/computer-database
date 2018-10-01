@@ -6,12 +6,15 @@
 /home/excilys/eclipse-workspace/cdb/src/main/java/com/excilys/cdb/service/ComputerService.java
 /home/excilys/eclipse-workspace/cdb/src/main/java/com/excilys/cdb/persistence/ConnectionManager.java
 /home/excilys/eclipse-workspace/cdb/src/main/java/com/excilys/cdb/service/CompanyService.java
+/home/excilys/eclipse-workspace/cdb/src/main/java/com/excilys/cdb/mapper/InvalidDateException.java
 /home/excilys/eclipse-workspace/cdb/src/main/java/com/excilys/cdb/servlet/DeleteComputerServelet.java
 /home/excilys/eclipse-workspace/cdb/src/main/java/com/excilys/cdb/model/Computer.java
 /home/excilys/eclipse-workspace/cdb/src/main/java/com/excilys/cdb/dto/ComputerDto.java
 /home/excilys/eclipse-workspace/cdb/src/main/java/com/excilys/cdb/servlet/DashboardServlet.java
 /home/excilys/eclipse-workspace/cdb/src/main/java/com/excilys/cdb/ui/UserChoicePage.java
 /home/excilys/eclipse-workspace/cdb/src/main/java/com/excilys/cdb/ui/UserChoiceMain.java
+/home/excilys/eclipse-workspace/cdb/src/main/java/com/excilys/cdb/mapper/DateMapper.java
+/home/excilys/eclipse-workspace/cdb/src/main/java/com/excilys/cdb/mapper/InvalidComputerException.java
 /home/excilys/eclipse-workspace/cdb/src/main/java/com/excilys/cdb/servlet/EditComputerServlet.java
 /home/excilys/eclipse-workspace/cdb/src/main/java/com/excilys/cdb/persistence/ComputerDao.java
 /home/excilys/eclipse-workspace/cdb/src/main/java/com/excilys/cdb/mapper/ComputerMapper.java

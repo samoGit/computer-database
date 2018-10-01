@@ -1,14 +1,14 @@
 package com.excilys.cdb.service;
 
-import java.time.DateTimeException;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.excilys.cdb.mapper.ComputerMapper;
+import com.excilys.cdb.mapper.InvalidComputerException;
+import com.excilys.cdb.mapper.InvalidDateException;
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.persistence.ComputerDao;
@@ -25,7 +25,6 @@ public enum ComputerService {
 	INSTANCE;
 
 	private ComputerDao computerDao = ComputerDao.INSTANCE;
-	private CompanyService companyService = CompanyService.INSTANCE;
 	private final Logger logger = LoggerFactory.getLogger("ComputerService");
 
 	/**
@@ -54,40 +53,13 @@ public enum ComputerService {
 	 * @param introduced   LocalDate
 	 * @param discontinued LocalDate
 	 * @param company      {@link Company}
+	 * @throws InvalidComputerException
+	 * @throws InvalidDateException 
 	 */
-	public void createNewComputer(Optional<String> computerName, Optional<String> strIntroduced,
-			Optional<String> strDiscontinued, Optional<String> companyId) {
-		if (!computerName.isPresent() || "".equals(computerName.get())) {
-			computerName = Optional.of("NO_NAME");// TODO throw an Exception
-		}
-
-		Optional<LocalDate> dateIntroduced = Optional.empty();
-		try {
-			if (strIntroduced.isPresent() && !"".equals(strIntroduced.get())) {
-				dateIntroduced = Optional
-						.ofNullable(LocalDate.parse(strIntroduced.get(), DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-			}
-		} catch (DateTimeException e) {
-			throw new DateTimeException("Incorect date format unter in date introduced");
-		}
-
-		Optional<LocalDate> dateDiscontinued = Optional.empty();
-		try {
-			if (strDiscontinued.isPresent() && !"".equals(strDiscontinued.get())) {
-				dateDiscontinued = Optional
-						.ofNullable(LocalDate.parse(strDiscontinued.get(), DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-			}
-		} catch (DateTimeException e) {
-			throw new DateTimeException("Incorect date format unter in date discontinued");
-		}
-
-		Optional<Company> company = Optional.empty();
-		if (companyId.isPresent()) {
-			company = companyService.getCompanyFromId(Long.valueOf(companyId.get()));
-		}
-
-		Computer newComputer = new Computer(Long.valueOf(-1), computerName.get(), dateIntroduced, dateDiscontinued,
-				company);
+	public void createNewComputer(Optional<String> computerName, Optional<String> strDateIntroduced,
+			Optional<String> strDateDiscontinued, Optional<String> strCompanyId) throws InvalidComputerException, InvalidDateException {
+		
+		Computer newComputer = ComputerMapper.getComputer(computerName, strDateIntroduced, strDateDiscontinued, strCompanyId);
 		logger.info("Create the following computer : " + newComputer);
 		computerDao.createNewComputer(newComputer);
 	}

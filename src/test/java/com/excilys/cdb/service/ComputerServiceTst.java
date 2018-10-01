@@ -13,6 +13,8 @@ import java.util.Optional;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.excilys.cdb.mapper.InvalidComputerException;
+import com.excilys.cdb.mapper.InvalidDateException;
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
 
@@ -101,7 +103,13 @@ public class ComputerServiceTst {
 		Optional<String> nameNewPC = Optional.ofNullable("testCreateNewComputer");
 		Optional<String> dateIntoducedNewPC = Optional.ofNullable("01/02/2003");
 		Optional<String> dateDiscontinuedNewPC = Optional.ofNullable("04/05/2006");
-		computerService.createNewComputer(nameNewPC, dateIntoducedNewPC, dateDiscontinuedNewPC, Optional.empty());
+		
+		try {
+			computerService.createNewComputer(nameNewPC, dateIntoducedNewPC, dateDiscontinuedNewPC, Optional.empty());
+		}
+		catch (InvalidComputerException | InvalidDateException e) {
+			assertTrue(e.getMessage(), false);
+		}
 
 		List<Computer> computerListFound = computerService.getListComputersByName("testCreateNewComputer");
 		assertFalse(computerListFound.isEmpty());
@@ -125,7 +133,13 @@ public class ComputerServiceTst {
 		Optional<String> nameNewPC = Optional.of("testCreateNewComputer");
 		Optional<String> dateIntoducedNewPC = Optional.of("01/02/2003");
 		Optional<String> dateDiscontinuedNewPC = Optional.of("04/05/2006");
-		computerService.createNewComputer(nameNewPC, dateIntoducedNewPC, dateDiscontinuedNewPC, Optional.empty());
+		
+		try {
+			computerService.createNewComputer(nameNewPC, dateIntoducedNewPC, dateDiscontinuedNewPC, Optional.empty());
+		}
+		catch (InvalidComputerException | InvalidDateException e) {
+			assertTrue(e.getMessage(), false);
+		}
 
 		List<Computer> computerListShouldNotBeEmpty = computerService.getListComputersByName("testCreateNewComputer");
 		assertFalse(computerListShouldNotBeEmpty.isEmpty());
@@ -145,7 +159,13 @@ public class ComputerServiceTst {
 		Optional<String> nameNewPC = Optional.of("testCreateNewComputer");
 		Optional<String> dateIntoducedNewPC = Optional.of("01/02/2003");
 		Optional<String> dateDiscontinuedNewPC = Optional.of("04/05/2006");
-		computerService.createNewComputer(nameNewPC, dateIntoducedNewPC, dateDiscontinuedNewPC, Optional.empty());
+		
+		try {
+			computerService.createNewComputer(nameNewPC, dateIntoducedNewPC, dateDiscontinuedNewPC, Optional.empty());
+		}
+		catch (InvalidComputerException | InvalidDateException e) {
+			assertTrue(e.getMessage(), false);
+		}
 
 		List<Computer> computerListShouldNotBeEmpty = computerService.getListComputersByName("testCreateNewComputer");
 		assertFalse(computerListShouldNotBeEmpty.isEmpty());
