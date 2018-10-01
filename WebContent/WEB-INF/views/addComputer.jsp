@@ -58,14 +58,14 @@
 									name="computerName" placeholder="Computer name" value="${computerName}">
 							</div>
 							<div class="form-group">
-								<label for="introduced">Introduced date</label> <input
-									type="date" class="form-control" id="introduced"
-									name="introduced" placeholder="Introduced date" value="${introduced}">
+								<label for="dateIntroduced">Introduced date</label> <input
+									type="date" class="form-control" id="dateIntroduced"
+									name="dateIntroduced" placeholder="Introduced date" value="${introduced}">
 							</div>
 							<div class="form-group">
-								<label for="discontinued">Discontinued date</label> <input
-									type="date" class="form-control" id="discontinued"
-									name="discontinued" placeholder="Discontinued date" value="${discontinued}">
+								<label for="dateDiscontinued">Discontinued date</label> <input
+									type="date" class="form-control" id="dateDiscontinued"
+									name="dateDiscontinued" placeholder="Discontinued date" value="${discontinued}">
 							</div>
 							<div class="form-group">
 								<label for="companyId">Company</label> <select
@@ -95,7 +95,6 @@
 	</section>
 
 	<script src="js/jquery.min.js"></script>
-
 	<script>
 		$(function() {
 			$("#errorMessage").animate({
@@ -103,23 +102,6 @@
 				height: "toggle"
 			});
 		});
-
-/*		// Get the modal
-		var modal = document.getElementById('myModal');
-		modal.style.display = "block";
-
-		// When the user clicks on <span> (x), close the modal
-		var span = document.getElementsByClassName("close")[0];
-		span.onclick = function() {
-			modal.style.display = "none";
-		}
-
-		// When the user clicks anywhere outside of the modal, close it
-		window.onclick = function(event) {
-			if (event.target == modal) {
-				modal.style.display = "none";
-			}
-		}*/
 	</script>
 
 </body>

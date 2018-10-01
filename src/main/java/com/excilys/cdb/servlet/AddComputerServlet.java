@@ -55,8 +55,8 @@ public class AddComputerServlet extends HttpServlet {
 		logger.info("doPost");
 
 		Optional<String> computerName = Optional.ofNullable(request.getParameter("computerName"));
-		Optional<String> strIntroduced = Optional.ofNullable(request.getParameter("introduced"));
-		Optional<String> strDiscontinued = Optional.ofNullable(request.getParameter("discontinued"));
+		Optional<String> strIntroduced = Optional.ofNullable(request.getParameter("dateIntroduced"));
+		Optional<String> strDiscontinued = Optional.ofNullable(request.getParameter("dateDiscontinued"));
 		Optional<String> companyId = Optional.ofNullable(request.getParameter("companyId"));
 
 		Optional<String> pageNumber = Optional.ofNullable(request.getParameter("pageNumber"));
@@ -76,10 +76,10 @@ public class AddComputerServlet extends HttpServlet {
 				request.setAttribute("computerName", computerName.get());
 			}
 			if (strIntroduced.isPresent()) {
-				request.setAttribute("introduced", strIntroduced.get());
+				request.setAttribute("dateIntroduced", strIntroduced.get());
 			}
 			if (strDiscontinued.isPresent()) {
-				request.setAttribute("discontinued", strDiscontinued.get());
+				request.setAttribute("dateDiscontinued", strDiscontinued.get());
 			}
 			if (companyId.isPresent()) {
 				request.setAttribute("companyId", companyId.get());

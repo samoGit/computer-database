@@ -67,7 +67,16 @@ public class ComputerMapper {
 	 */
 	public static Computer getComputer(Optional<String> computerName, Optional<String> strDateIntroduced,
 			Optional<String> strDateDiscontinued, Optional<String> strCompanyId) throws InvalidComputerException, InvalidDateException {
-				
+		return ComputerMapper.getComputer(Optional.of("-1"), computerName, strDateIntroduced, strDateDiscontinued, strCompanyId);
+	}
+	
+	public static Computer getComputer(Optional<String> computerId, Optional<String> computerName, Optional<String> strDateIntroduced,
+			Optional<String> strDateDiscontinued, Optional<String> strCompanyId) throws InvalidComputerException, InvalidDateException {
+		Long id = -1L;
+		if (computerName.isPresent() && !"".equals(computerName.get())) {
+			id = Long.valueOf(computerId.get());
+		}
+
 		if (!computerName.isPresent() || "".equals(computerName.get())) {
 			throw new InvalidComputerException("Computer name value should not be empty.");
 		}
@@ -93,6 +102,6 @@ public class ComputerMapper {
 			}
 		}
 
-		return new Computer(-1L, computerName.get(), dateIntroduced, dateDiscontinued, company);
+		return new Computer(id, computerName.get(), dateIntroduced, dateDiscontinued, company);
 	}
 }

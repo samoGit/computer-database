@@ -82,6 +82,10 @@ public enum ComputerService {
 	public void updateComputer(Computer c, String field) {
 		computerDao.updateComputer(c, field);
 	}
+	
+	public void updateComputer(Computer computer) {
+		computerDao.updateComputer(computer);
+	}
 
 	/**
 	 * Return the number of computer present in the BDD

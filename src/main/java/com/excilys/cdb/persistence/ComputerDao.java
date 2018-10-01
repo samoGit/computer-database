@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,6 +41,8 @@ public enum ComputerDao {
 	private final static String SQL_INSERT_COMPUTER = "INSERT INTO computer ";
 	private final static String SQL_DELETE_COMPUTER = "DELETE FROM computer WHERE id=?;";
 	private final static String SQL_UPDATE_COMPUTER = "UPDATE computer SET %s = %s  WHERE id = %s;";
+	private final static String SQL_UPDATE_COMPUTER_ALLFIELDS = "UPDATE computer SET name = ?"
+			+ ", introduced = ?, discontinued = ?, company_id = ? WHERE id = ?;";
 
 	private final ConnectionManager connectionManager = ConnectionManager.INSTANCE;
 
@@ -197,6 +200,47 @@ public enum ComputerDao {
 		} catch (SQLException e) {
 			logger.error(e.getMessage());
 			logger.error(e.getStackTrace().toString());
+		}
+	}
+
+	/**
+	 * 
+	 * @param computer
+	 */
+	public void updateComputer(Computer computer) {
+		try (Connection connection = connectionManager.getConnection()) {
+			PreparedStatement stmt;
+			stmt = connection.prepareStatement(SQL_UPDATE_COMPUTER_ALLFIELDS);
+			stmt.setString(1, computer.getName());
+			
+			if (computer.getDateIntroduced().isPresent()) {
+				stmt.setString(2, computer.getDateIntroduced().get().toString());
+			}
+			else {
+				stmt.setNull(2, Types.DATE);
+			}
+			
+			if (computer.getDateDiscontinued().isPresent()) {
+				stmt.setString(3, computer.getDateDiscontinued().get().toString());
+			}
+			else {
+				stmt.setNull(3, Types.DATE);
+			}
+			
+			if (computer.getCompany().isPresent()) {
+				stmt.setLong(4, computer.getCompany().get().getId());
+			}
+			else {
+				stmt.setNull(4, Types.INTEGER);
+			}
+			
+			stmt.setLong(5, computer.getId());
+			
+			logger.info(stmt.toString());
+			stmt.executeUpdate();
+		} catch (SQLException e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
 		}
 	}
 
