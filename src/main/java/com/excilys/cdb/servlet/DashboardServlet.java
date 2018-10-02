@@ -34,6 +34,9 @@ public class DashboardServlet extends HttpServlet {
 			throws ServletException, IOException {
 		logger.info("doGet");
 
+		Optional<String> orderBy = Optional.ofNullable(request.getParameter("orderBy"));
+		request.setAttribute("orderBy", orderBy.isPresent() ? orderBy.get() : "");
+
 		Long nbComputersByPage = ComputerPageService
 				.getNbComputersByPage(Optional.ofNullable(request.getParameter("nbComputersByPage")));
 		request.setAttribute("nbComputersByPage", nbComputersByPage);
@@ -51,7 +54,7 @@ public class DashboardServlet extends HttpServlet {
 				nbComputersByPage, nbComputers, nbPageTotal);
 		request.setAttribute("pageNumber", pageNumber);
 
-		List<ComputerDto> listComputerDto = this.getListComputerDto(pageNumber, nbComputersByPage, strSearch);
+		List<ComputerDto> listComputerDto = this.getListComputerDto(pageNumber, nbComputersByPage, strSearch, orderBy);
 		request.setAttribute("listComputerDtos", listComputerDto);
 
 		this.getServletContext().getRequestDispatcher("/WEB-INF/views/dashboard.jsp").forward(request, response);
@@ -67,13 +70,13 @@ public class DashboardServlet extends HttpServlet {
 		return nbComputers;
 	}
 
-	private List<ComputerDto> getListComputerDto(Long pageNumber, Long nbComputersByPage, Optional<String> strSearch) {
+	private List<ComputerDto> getListComputerDto(Long pageNumber, Long nbComputersByPage, Optional<String> strSearch, Optional<String> orderBy) {
 		List<ComputerDto> listComputerDto;
 		if (strSearch.isPresent() && !"".equals(strSearch.get())) {
 			listComputerDto = ComputerPageService.getListComputerDtosByName(pageNumber, nbComputersByPage,
-					strSearch.get());
+					strSearch.get(), orderBy);
 		} else {
-			listComputerDto = ComputerPageService.getListComputerDtos(pageNumber, nbComputersByPage);
+			listComputerDto = ComputerPageService.getListComputerDtos(pageNumber, nbComputersByPage, orderBy);
 		}
 		return listComputerDto;
 	}

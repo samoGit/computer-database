@@ -32,8 +32,8 @@ public enum ComputerService {
 	 * 
 	 * @return List of {@link Computer}
 	 */
-	public List<Computer> getListComputers(Long offset, Long nbComputersByPage) {
-		return computerDao.getListComputers(offset, nbComputersByPage);
+	public List<Computer> getListComputers(Long offset, Long nbComputersByPage, Optional<String> orderBy) {
+		return computerDao.getListComputers(offset, nbComputersByPage, orderBy);
 	}
 	
 	/**
@@ -41,8 +41,8 @@ public enum ComputerService {
 	 * 
 	 * @return List of {@link Computer}
 	 */
-	public List<Computer> getListComputersByName(Long offset, Long nbComputersByPage, String searchedName) {
-		return computerDao.getListComputersByName(offset, nbComputersByPage, searchedName);
+	public List<Computer> getListComputersByName(Long offset, Long nbComputersByPage, String searchedName, Optional<String> orderBy) {
+		return computerDao.getListComputersByName(offset, nbComputersByPage, searchedName, orderBy);
 	}
 
 	/**

@@ -62,12 +62,22 @@
 									class="fa fa-trash-o fa-lg"></i>
 							</a>
 						</span></th>
-						<th>Computer name</th>
-						<th>Introduced date</th>
-						<!-- Table header for Discontinued Date -->
-						<th>Discontinued date</th>
-						<!-- Table header for Company -->
-						<th>Company</th>
+						<th><a href="Dashboard?pageNumber=${pageNumber-1}&nbComputersByPage=${nbComputersByPage}&search=${search}&orderBy=Name"
+								<c:if test="${orderBy eq 'Name'}"> style="text-decoration: underline"</c:if>>
+								Computer name
+						</a></th>
+						<th><a href="Dashboard?pageNumber=${pageNumber-1}&nbComputersByPage=${nbComputersByPage}&search=${search}&orderBy=Introduced"
+								<c:if test="${orderBy eq 'Introduced'}"> style="text-decoration: underline"</c:if>>
+								Introduced date
+						</a></th>
+						<th><a href="Dashboard?pageNumber=${pageNumber-1}&nbComputersByPage=${nbComputersByPage}&search=${search}&orderBy=Discontinued"
+								<c:if test="${orderBy eq 'Discontinued'}"> style="text-decoration: underline"</c:if>>
+								Discontinued date
+						</a></th>
+						<th><a href="Dashboard?pageNumber=${pageNumber-1}&nbComputersByPage=${nbComputersByPage}&search=${search}&orderBy=Company"
+								<c:if test="${orderBy eq 'Company'}">style="text-decoration: underline;"</c:if> >
+								Company
+						</a></th>
 					</tr>
 				</thead>
 
@@ -101,43 +111,43 @@
 		<div class="container text-center">
 			<ul class="pagination">
 				<li><a
-					href="Dashboard?pageNumber=${pageNumber-1}&nbComputersByPage=${nbComputersByPage}&search=${search}"
+					href="Dashboard?pageNumber=${pageNumber-1}&nbComputersByPage=${nbComputersByPage}&search=${search}&orderBy=${orderBy}"
 					aria-label="Previous"> <span aria-hidden="true">&laquo;</span>
 				</a></li>
 
 				<c:if test="${pageNumber>3}">
 					<li><a
-						href="Dashboard?pageNumber=1&nbComputersByPage=${nbComputersByPage}&search=${search}">1</a></li>
+						href="Dashboard?pageNumber=1&nbComputersByPage=${nbComputersByPage}&search=${search}&orderBy=${orderBy}">1</a></li>
 					<li><a href="#">...</a></li>
 				</c:if>
 
 				<c:if test="${pageNumber>2}">
 					<li><a
-						href="Dashboard?pageNumber=${pageNumber-2}&nbComputersByPage=${nbComputersByPage}&search=${search}">${pageNumber-2}</a></li>
+						href="Dashboard?pageNumber=${pageNumber-2}&nbComputersByPage=${nbComputersByPage}&search=${search}&orderBy=${orderBy}">${pageNumber-2}</a></li>
 				</c:if>
 				<c:if test="${pageNumber>1}">
 					<li><a
-						href="Dashboard?pageNumber=${pageNumber-1}&nbComputersByPage=${nbComputersByPage}&search=${search}">${pageNumber-1}</a></li>
+						href="Dashboard?pageNumber=${pageNumber-1}&nbComputersByPage=${nbComputersByPage}&search=${search}&orderBy=${orderBy}">${pageNumber-1}</a></li>
 				</c:if>
 				<li><a
-					href="Dashboard?pageNumber=${pageNumber}&nbComputersByPage=${nbComputersByPage}&search=${search}"><b>${pageNumber}</b></a></li>
+					href="Dashboard?pageNumber=${pageNumber}&nbComputersByPage=${nbComputersByPage}&search=${search}&orderBy=${orderBy}"><b>${pageNumber}</b></a></li>
 				<c:if test="${pageNumber<=nbPage-1}">
 					<li><a
-						href="Dashboard?pageNumber=${pageNumber+1}&nbComputersByPage=${nbComputersByPage}&search=${search}">${pageNumber+1}</a></li>
+						href="Dashboard?pageNumber=${pageNumber+1}&nbComputersByPage=${nbComputersByPage}&search=${search}&orderBy=${orderBy}">${pageNumber+1}</a></li>
 				</c:if>
 				<c:if test="${pageNumber<=nbPage-2}">
 					<li><a
-						href="Dashboard?pageNumber=${pageNumber+2}&nbComputersByPage=${nbComputersByPage}&search=${search}">${pageNumber+2}</a></li>
+						href="Dashboard?pageNumber=${pageNumber+2}&nbComputersByPage=${nbComputersByPage}&search=${search}&orderBy=${orderBy}">${pageNumber+2}</a></li>
 				</c:if>
 
 				<c:if test="${pageNumber<nbPage-2}">
 					<li><a href="#">...</a></li>
 					<li><a
-						href="Dashboard?pageNumber=${nbPage}&nbComputersByPage=${nbComputersByPage}&search=${search}">${nbPage}</a></li>
+						href="Dashboard?pageNumber=${nbPage}&nbComputersByPage=${nbComputersByPage}&search=${search}&orderBy=${orderBy}">${nbPage}</a></li>
 				</c:if>
 
 				<li><a
-					href="Dashboard?pageNumber=${pageNumber+1}&nbComputersByPage=${nbComputersByPage}&search=${search}"
+					href="Dashboard?pageNumber=${pageNumber+1}&nbComputersByPage=${nbComputersByPage}&search=${search}&orderBy=${orderBy}"
 					aria-label="Next"> <span aria-hidden="true">&raquo;</span>
 				</a></li>
 			</ul>
@@ -145,15 +155,15 @@
 			<div class="btn-group btn-group-sm pull-right" role="group">
 				<button type="button"
 					class="btn btn-default <c:if test="${nbComputersByPage == 10}">btn-primary</c:if>"
-					onclick="location.href='Dashboard?pageNumber=1&nbComputersByPage=10&search=${search}'">10
+					onclick="location.href='Dashboard?pageNumber=1&nbComputersByPage=10&search=${search}&orderBy=${orderBy}'">10
 				</button>
 				<button type="button"
 					class="btn btn-default <c:if test="${nbComputersByPage == 50}">btn-primary</c:if>"
-					onclick="location.href='Dashboard?pageNumber=1&nbComputersByPage=50&search=${search}'">50
+					onclick="location.href='Dashboard?pageNumber=1&nbComputersByPage=50&search=${search}&orderBy=${orderBy}'">50
 				</button>
 				<button type="button"
 					class="btn btn-default <c:if test="${nbComputersByPage == 100}">btn-primary</c:if>"
-					onclick="location.href='Dashboard?pageNumber=1&nbComputersByPage=100&search=${search}'">100
+					onclick="location.href='Dashboard?pageNumber=1&nbComputersByPage=100&search=${search}&orderBy=${orderBy}'">100
 				</button>
 			</div>
 		</div>

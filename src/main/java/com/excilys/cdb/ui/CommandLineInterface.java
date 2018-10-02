@@ -66,7 +66,7 @@ public class CommandLineInterface {
 		Long offset = nbComputers - NB_COMPUTERS_BY_PAGE;
 		boolean stop = false;
 		while (!stop) {
-			List<Computer> listComputers = computerService.getListComputers(offset, NB_COMPUTERS_BY_PAGE);
+			List<Computer> listComputers = computerService.getListComputers(offset, NB_COMPUTERS_BY_PAGE, Optional.empty());
 			if (listComputers.isEmpty()) {
 				System.out.println("No computers found.");
 			} else {
@@ -154,7 +154,7 @@ public class CommandLineInterface {
 	protected void launchMenuShowDetailComputer() {
 		System.out.println("\n\nPlease enter the name of a computer : ");
 		String name = scanner.nextLine();
-		List<Computer> listComputersFound = computerService.getListComputersByName(0L, 10L, name);
+		List<Computer> listComputersFound = computerService.getListComputersByName(0L, 10L, name, Optional.empty());
 		if (listComputersFound.isEmpty()) {
 			System.out.println("The computer '" + name + "' is not found.");
 		} else {
@@ -245,7 +245,7 @@ public class CommandLineInterface {
 		System.out.println("\nEnter the name of the computer : ");
 		String name = scanner.nextLine();
 
-		List<Computer> listComputersFound = computerService.getListComputersByName(0L, 10L, name);
+		List<Computer> listComputersFound = computerService.getListComputersByName(0L, 10L, name, Optional.empty());
 
 		if (listComputersFound.isEmpty()) {
 			System.out.println("No computer found with this name.");

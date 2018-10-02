@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,13 +31,13 @@ public enum ComputerDao {
 	private final static String SQL_SELECT_ALL_COMPUTERS = "SELECT "
 			+ "computer.id, computer.name, computer.introduced, computer.discontinued, company.id, company.name "
 			+ "FROM computer LEFT JOIN company ON computer.company_id = company.id "
-			+ "ORDER BY computer.id LIMIT ?,?; ";
+			+ "ORDER BY %s LIMIT ?,?; ";
 	
 	private final static String SQL_SELECT_ALL_COMPUTERS_BYNAME = "SELECT "
 			+ "computer.id, computer.name, computer.introduced, computer.discontinued, company.id, company.name "
 			+ "FROM computer LEFT JOIN company ON computer.company_id = company.id "
 			+ "WHERE computer.name LIKE ? "
-			+ "ORDER BY computer.id LIMIT ?,?; ";
+			+ "ORDER BY %s LIMIT ?,?; ";
 
 	final static String SQL_SELECT_NB_COMPUTERS = "SELECT count(id) as nbComputers FROM computer; ";
 	final static String SQL_SELECT_NB_COMPUTERS_BYNAME = "SELECT count(id) as nbComputers FROM computer "
@@ -50,16 +51,40 @@ public enum ComputerDao {
 
 	private final ConnectionManager connectionManager = ConnectionManager.INSTANCE;
 
+	private String getOrderByValue(Optional<String> orderBy) {
+		String orderByValue = "computer.id";
+		if (orderBy.isPresent()) {
+			switch (orderBy.get()) {
+			case "Name":
+				orderByValue = "computer.name";
+				break;
+			case "Introduced":
+				orderByValue = "computer.introduced";
+				break;
+			case "Discontinued":
+				orderByValue = "computer.discontinued";
+				break;
+			case "Company":
+				orderByValue = "company.name";
+				break;
+			}
+		}
+		return orderByValue;
+	}
+
 	/**
 	 * Return all the computers present in the BDD
 	 * 
 	 * @return List of {@link Computer}
 	 */
-	public List<Computer> getListComputers(Long offset, Long nbComputersByPage) {
+	public List<Computer> getListComputers(Long offset, Long nbComputersByPage, Optional<String> orderBy) {
 		ArrayList<Computer> listComputers = new ArrayList<>();
 
 		try (Connection connection = connectionManager.getConnection()) {
-			PreparedStatement stmt = connection.prepareStatement(SQL_SELECT_ALL_COMPUTERS);
+			// We can't use prepared statement for orderBy value in sql...
+			String sqlQuery = String.format(SQL_SELECT_ALL_COMPUTERS, getOrderByValue(orderBy));
+			
+			PreparedStatement stmt = connection.prepareStatement(sqlQuery);
 			stmt.setLong(1, offset);
 			stmt.setLong(2, nbComputersByPage);
 			logger.info(stmt.toString());
@@ -80,11 +105,14 @@ public enum ComputerDao {
 	 * @param name String
 	 * @return List of {@link Computer}
 	 */
-	public List<Computer> getListComputersByName(Long offset, Long nbComputersByPage, String searchedName) {
+	public List<Computer> getListComputersByName(Long offset, Long nbComputersByPage, String searchedName, Optional<String> orderBy) {
 		ArrayList<Computer> listComputers = new ArrayList<>();
 
 		try (Connection connection = connectionManager.getConnection()) {
-			PreparedStatement stmt = connection.prepareStatement(SQL_SELECT_ALL_COMPUTERS_BYNAME);
+			// We can't use prepared statement for orderBy value in sql...
+			String sqlQuery = String.format(SQL_SELECT_ALL_COMPUTERS_BYNAME, getOrderByValue(orderBy));
+			
+			PreparedStatement stmt = connection.prepareStatement(sqlQuery);
 			stmt.setString(1, "%"+searchedName+"%");
 			stmt.setLong(2, offset);
 			stmt.setLong(3, nbComputersByPage);

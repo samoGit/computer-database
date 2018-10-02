@@ -57,7 +57,7 @@ public class ComputerServiceTst {
 				Optional.ofNullable(LocalDate.parse("15/10/1990", DateTimeFormatter.ofPattern("dd/MM/yyyy"))),
 				Optional.ofNullable(new Company(Long.valueOf(1), "Apple Inc."))));
 
-		List<Computer> actualComputerList = computerService.getListComputers(10L, 2L);
+		List<Computer> actualComputerList = computerService.getListComputers(10L, 2L, Optional.empty());
 
 		for (int i = 0; i < expectedComputerList.size(); i++) {
 			System.out.println("\nexpectedComputerList.get(" + i + ") = ");
@@ -86,7 +86,7 @@ public class ComputerServiceTst {
 				Optional.ofNullable(LocalDate.parse("29/10/2008", DateTimeFormatter.ofPattern("dd/MM/yyyy"))),
 				Optional.empty(), Optional.ofNullable(new Company(27L, "Hewlett-Packard")));
 		expectedComputerList.add(expectedComputer);
-		List<Computer> actualComputerList = computerService.getListComputersByName(0L, 10L, "HP Mini 1000");
+		List<Computer> actualComputerList = computerService.getListComputersByName(0L, 10L, "HP Mini 1000", Optional.empty());
 
 		assertEquals(expectedComputerList, actualComputerList);
 	}
@@ -97,7 +97,7 @@ public class ComputerServiceTst {
 	 */
 	@Test
 	public void testCreateNewComputer() {
-		List<Computer> computerListShouldBeEmpty = computerService.getListComputersByName(0L, 10L, "testCreateNewComputer");
+		List<Computer> computerListShouldBeEmpty = computerService.getListComputersByName(0L, 10L, "testCreateNewComputer", Optional.empty());
 		assertTrue(computerListShouldBeEmpty.isEmpty());
 
 		Optional<String> nameNewPC = Optional.ofNullable("testCreateNewComputer");
@@ -111,7 +111,7 @@ public class ComputerServiceTst {
 			assertTrue(e.getMessage(), false);
 		}
 
-		List<Computer> computerListFound = computerService.getListComputersByName(0L, 10L, "testCreateNewComputer");
+		List<Computer> computerListFound = computerService.getListComputersByName(0L, 10L, "testCreateNewComputer", Optional.empty());
 		assertFalse(computerListFound.isEmpty());
 
 		Computer computerFound = computerListFound.get(0);
@@ -141,12 +141,12 @@ public class ComputerServiceTst {
 			assertTrue(e.getMessage(), false);
 		}
 
-		List<Computer> computerListShouldNotBeEmpty = computerService.getListComputersByName(0L, 10L, "testCreateNewComputer");
+		List<Computer> computerListShouldNotBeEmpty = computerService.getListComputersByName(0L, 10L, "testCreateNewComputer", Optional.empty());
 		assertFalse(computerListShouldNotBeEmpty.isEmpty());
 
 		computerService.deleteComputer(computerListShouldNotBeEmpty.get(0).getId());
 
-		List<Computer> computerListShouldBeEmpty = computerService.getListComputersByName(0L, 10L, "testCreateNewComputer");
+		List<Computer> computerListShouldBeEmpty = computerService.getListComputersByName(0L, 10L, "testCreateNewComputer", Optional.empty());
 		assertTrue(computerListShouldBeEmpty.isEmpty());
 	}
 
@@ -167,7 +167,7 @@ public class ComputerServiceTst {
 			assertTrue(e.getMessage(), false);
 		}
 
-		List<Computer> computerListShouldNotBeEmpty = computerService.getListComputersByName(0L, 10L, "testCreateNewComputer");
+		List<Computer> computerListShouldNotBeEmpty = computerService.getListComputersByName(0L, 10L, "testCreateNewComputer", Optional.empty());
 		assertFalse(computerListShouldNotBeEmpty.isEmpty());
 
 		Computer computerToBeUpdate = computerListShouldNotBeEmpty.get(0);
@@ -175,7 +175,7 @@ public class ComputerServiceTst {
 		computerService.updateComputer(computerToBeUpdate, "name");
 
 		List<Computer> computerListAfterRename = computerService
-				.getListComputersByName(0L, 10L, "testCreateNewComputer_RENAMED");
+				.getListComputersByName(0L, 10L, "testCreateNewComputer_RENAMED", Optional.empty());
 		assertFalse(computerListAfterRename.isEmpty());
 
 		Computer computerAfterRename = computerListAfterRename.get(0);

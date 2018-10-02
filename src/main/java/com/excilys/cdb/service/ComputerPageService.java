@@ -45,16 +45,16 @@ public class ComputerPageService {
 		return pageNumber;
 	}
 
-	public static List<ComputerDto> getListComputerDtos(Long pageNumber, Long nbComputersByPage) {
+	public static List<ComputerDto> getListComputerDtos(Long pageNumber, Long nbComputersByPage, Optional<String> orderBy) {
 		Long ofSet = (pageNumber - 1) * nbComputersByPage;
-		List<Computer> listComputer = computerService.getListComputers(ofSet, nbComputersByPage);
+		List<Computer> listComputer = computerService.getListComputers(ofSet, nbComputersByPage, orderBy);
 		return listComputer.stream().map(c -> new ComputerDto(c)).collect(Collectors.toList());	
 	}
 
 	public static List<ComputerDto> getListComputerDtosByName(Long pageNumber, Long nbComputersByPage,
-			String searchedName) {
+			String searchedName, Optional<String> orderBy) {
 		Long ofSet = (pageNumber - 1) * nbComputersByPage;
-		List<Computer> listComputer = computerService.getListComputersByName(ofSet, nbComputersByPage, searchedName);
+		List<Computer> listComputer = computerService.getListComputersByName(ofSet, nbComputersByPage, searchedName, orderBy);
 		return listComputer.stream().map(c -> new ComputerDto(c)).collect(Collectors.toList());
 	}
 }
