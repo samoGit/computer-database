@@ -5,31 +5,31 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.excilys.cdb.dto.ComputerDto;
+import com.excilys.cdb.model.Computer;
 
 public class ComputerPageService {
+	private final static Long NbComputersByPageDefaultValue = 10L;
 
-	private final Long NbComputersByPageDefaultValue = 10L;
+	private static ComputerService computerService = ComputerService.INSTANCE;
 
-	private ComputerService computerService = ComputerService.INSTANCE;
-	private Long nbComputersByPage;
-	private Long nbComputers;
-	private Long nbPageTotal;
-	private Long pageNumber;
-	private List<ComputerDto> listComputerDtos;
-
-	public ComputerPageService(Optional<String> strNbComputersByPage, Optional<String> strPageNumber) {
-		nbComputersByPage = NbComputersByPageDefaultValue;
+	public static Long getNbComputersByPage(Optional<String> strNbComputersByPage) {
+		Long nbComputersByPage = NbComputersByPageDefaultValue;
 		if (strNbComputersByPage.isPresent() && !"".equals(strNbComputersByPage.get())) {
 			nbComputersByPage = Long.valueOf(strNbComputersByPage.get());
 		}
-
-		nbComputers = computerService.getNbComputers();
-
-		nbPageTotal = nbComputers / nbComputersByPage;
+		return nbComputersByPage;
+	}
+	
+	public static Long getNbPageTotal(Long nbComputersByPage, Long nbComputers) {
+		Long nbPageTotal = nbComputers / nbComputersByPage;
 		if (nbComputers % nbComputersByPage != 0) {
 			nbPageTotal++;
 		}
+		return nbPageTotal;
+	}
 
+	public static Long getPageNumber(Optional<String> strPageNumber, Long nbComputersByPage, Long nbComputers, Long nbPageTotal) {
+		Long pageNumber;
 		if (!strPageNumber.isPresent() || "".equals(strPageNumber.get())) {
 			pageNumber = 1L;
 		} else if ("lastPage".equals(strPageNumber.get())) {
@@ -42,33 +42,19 @@ public class ComputerPageService {
 				pageNumber = nbPageTotal;
 			}
 		}
-
-		listComputerDtos = computerService.getListComputers((pageNumber - 1) * nbComputersByPage, nbComputersByPage)
-				.stream().map(c -> new ComputerDto(c)).collect(Collectors.toList());
-		// Better than this ?
-//        listComputerDtos = new ArrayList<>();
-//        computerService.getListComputers((pageNumber-1)*nbComputersByPage, nbComputersByPage).forEach( (c) -> {
-//            listComputerDtos.add(new ComputerDto(c));
-//        });
-	}
-
-	public Long getNbComputersByPage() {
-		return nbComputersByPage;
-	}
-
-	public Long getNbComputers() {
-		return nbComputers;
-	}
-
-	public Long getNbPageTotal() {
-		return nbPageTotal;
-	}
-
-	public Long getPageNumber() {
 		return pageNumber;
 	}
 
-	public List<ComputerDto> getListComputerDtos() {
-		return listComputerDtos;
+	public static List<ComputerDto> getListComputerDtos(Long pageNumber, Long nbComputersByPage) {
+		Long ofSet = (pageNumber - 1) * nbComputersByPage;
+		List<Computer> listComputer = computerService.getListComputers(ofSet, nbComputersByPage);
+		return listComputer.stream().map(c -> new ComputerDto(c)).collect(Collectors.toList());	
+	}
+
+	public static List<ComputerDto> getListComputerDtosByName(Long pageNumber, Long nbComputersByPage,
+			String searchedName) {
+		Long ofSet = (pageNumber - 1) * nbComputersByPage;
+		List<Computer> listComputer = computerService.getListComputersByName(ofSet, nbComputersByPage, searchedName);
+		return listComputer.stream().map(c -> new ComputerDto(c)).collect(Collectors.toList());
 	}
 }

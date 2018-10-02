@@ -35,15 +35,14 @@ public enum ComputerService {
 	public List<Computer> getListComputers(Long offset, Long nbComputersByPage) {
 		return computerDao.getListComputers(offset, nbComputersByPage);
 	}
-
+	
 	/**
-	 * Find every computers in the BDD with a given name
+	 * Return the list of computer present in the BDD.
 	 * 
-	 * @param name String
-	 * @return a list of {@link Computer}
+	 * @return List of {@link Computer}
 	 */
-	public List<Computer> getListComputersByName(String name) {
-		return computerDao.getListComputersByName(name);
+	public List<Computer> getListComputersByName(Long offset, Long nbComputersByPage, String searchedName) {
+		return computerDao.getListComputersByName(offset, nbComputersByPage, searchedName);
 	}
 
 	/**
@@ -94,5 +93,14 @@ public enum ComputerService {
 	 */
 	public Long getNbComputers() {
 		return computerDao.getNbComputers();
+	}
+	
+	/**
+	 * Return the number of computer present in the BDD which the name respect the pattern "*searchedName*"  
+	 * 
+	 * @return Long
+	 */
+	public Long getNbComputersByName(String searchedName) {
+		return computerDao.getNbComputersByName(searchedName);
 	}
 }

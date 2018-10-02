@@ -31,12 +31,16 @@ public enum ComputerDao {
 			+ "computer.id, computer.name, computer.introduced, computer.discontinued, company.id, company.name "
 			+ "FROM computer LEFT JOIN company ON computer.company_id = company.id "
 			+ "ORDER BY computer.id LIMIT ?,?; ";
-
-	final static String SQL_SELECT_COMPUTERS_FROM_NAME = "SELECT "
+	
+	private final static String SQL_SELECT_ALL_COMPUTERS_BYNAME = "SELECT "
 			+ "computer.id, computer.name, computer.introduced, computer.discontinued, company.id, company.name "
-			+ "FROM computer LEFT JOIN company ON computer.company_id = company.id " + "WHERE computer.name = ?; ";
+			+ "FROM computer LEFT JOIN company ON computer.company_id = company.id "
+			+ "WHERE computer.name LIKE ? "
+			+ "ORDER BY computer.id LIMIT ?,?; ";
 
-	final static String SQL_SELECT_NB_COMPUTERS = "SELECT count(id) as nbComputers FROM computer;";
+	final static String SQL_SELECT_NB_COMPUTERS = "SELECT count(id) as nbComputers FROM computer; ";
+	final static String SQL_SELECT_NB_COMPUTERS_BYNAME = "SELECT count(id) as nbComputers FROM computer "
+			+ "WHERE computer.name LIKE ? ;";
 
 	private final static String SQL_INSERT_COMPUTER = "INSERT INTO computer ";
 	private final static String SQL_DELETE_COMPUTER = "DELETE FROM computer WHERE id=?;";
@@ -69,28 +73,31 @@ public enum ComputerDao {
 		}
 		return listComputers;
 	}
-
+		
 	/**
-	 * Find every computers in the BDD with a given name
+	 * Return all computers present in the BDD which the name respect the pattern "*searchedName*" 
 	 * 
 	 * @param name String
 	 * @return List of {@link Computer}
 	 */
-	public List<Computer> getListComputersByName(String name) {
-		ArrayList<Computer> listComputersFound = new ArrayList<>();
+	public List<Computer> getListComputersByName(Long offset, Long nbComputersByPage, String searchedName) {
+		ArrayList<Computer> listComputers = new ArrayList<>();
+
 		try (Connection connection = connectionManager.getConnection()) {
-			PreparedStatement stmt = connection.prepareStatement(SQL_SELECT_COMPUTERS_FROM_NAME);
-			stmt.setString(1, name);
+			PreparedStatement stmt = connection.prepareStatement(SQL_SELECT_ALL_COMPUTERS_BYNAME);
+			stmt.setString(1, "%"+searchedName+"%");
+			stmt.setLong(2, offset);
+			stmt.setLong(3, nbComputersByPage);
 			logger.info(stmt.toString());
 			ResultSet resultSet = stmt.executeQuery();
 			while (resultSet.next()) {
-				listComputersFound.add(ComputerMapper.getComputer(resultSet));
+				listComputers.add(ComputerMapper.getComputer(resultSet));
 			}
 		} catch (SQLException e) {
 			logger.error(e.getMessage());
 			logger.error(e.getStackTrace().toString());
 		}
-		return listComputersFound;
+		return listComputers;
 	}
 
 	/**
@@ -253,6 +260,28 @@ public enum ComputerDao {
 		Long nbComputer = null;
 		try (Connection connection = connectionManager.getConnection()) {
 			PreparedStatement stmt = connection.prepareStatement(SQL_SELECT_NB_COMPUTERS);
+			ResultSet resultSet = stmt.executeQuery();
+			if (resultSet != null)
+				resultSet.next();
+			nbComputer = resultSet.getLong("nbComputers");
+		} catch (SQLException e) {
+			logger.error(e.getMessage());
+			logger.error(e.getStackTrace().toString());
+		}
+		return nbComputer;
+	}
+	
+
+	/**
+	 * Return the number of computer present in the BDD which the name respect the pattern "*searchedName*"
+	 * 
+	 * @return Long
+	 */
+	public Long getNbComputersByName(String searchedName) {
+		Long nbComputer = null;
+		try (Connection connection = connectionManager.getConnection()) {
+			PreparedStatement stmt = connection.prepareStatement(SQL_SELECT_NB_COMPUTERS_BYNAME);
+			stmt.setString(1, "%"+searchedName+"%");
 			ResultSet resultSet = stmt.executeQuery();
 			if (resultSet != null)
 				resultSet.next();

@@ -1,6 +1,7 @@
 package com.excilys.cdb.servlet;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 import javax.servlet.ServletException;
@@ -12,7 +13,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.excilys.cdb.dto.ComputerDto;
 import com.excilys.cdb.service.ComputerPageService;
+import com.excilys.cdb.service.ComputerService;
 
 /**
  * Servlet implementation class HomeServlet
@@ -21,33 +24,62 @@ import com.excilys.cdb.service.ComputerPageService;
 public class DashboardServlet extends HttpServlet {
 	private static final long serialVersionUID = 1182886835641082355L;
 
+	private final ComputerService computerService = ComputerService.INSTANCE;
 	private final Logger logger = LoggerFactory.getLogger("DashboardServlet");
 
 	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
-	 *      response)
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		logger.info("doGet");
 
-		Optional<String> strNbComputersByPage = Optional.ofNullable(request.getParameter("nbComputersByPage"));
-		Optional<String> strPageNumber = Optional.ofNullable(request.getParameter("pageNumber"));
+		Long nbComputersByPage = ComputerPageService
+				.getNbComputersByPage(Optional.ofNullable(request.getParameter("nbComputersByPage")));
+		request.setAttribute("nbComputersByPage", nbComputersByPage);
 
-		ComputerPageService computerPageService = new ComputerPageService(strNbComputersByPage, strPageNumber);
+		Optional<String> strSearch = Optional.ofNullable(request.getParameter("search"));
+		request.setAttribute("search", strSearch.isPresent() ? strSearch.get() : "");
 
-		request.setAttribute("nbComputersByPage", computerPageService.getNbComputersByPage());
-		request.setAttribute("nbComputers", computerPageService.getNbComputers());
-		request.setAttribute("nbPage", computerPageService.getNbPageTotal());
-		request.setAttribute("pageNumber", computerPageService.getPageNumber());
-		request.setAttribute("listComputerDtos", computerPageService.getListComputerDtos());
+		Long nbComputers = this.getNbComputer(strSearch);
+		request.setAttribute("nbComputers", nbComputers);
+
+		Long nbPageTotal = ComputerPageService.getNbPageTotal(nbComputersByPage, nbComputers);
+		request.setAttribute("nbPage", nbPageTotal);
+
+		Long pageNumber = ComputerPageService.getPageNumber(Optional.ofNullable(request.getParameter("pageNumber")),
+				nbComputersByPage, nbComputers, nbPageTotal);
+		request.setAttribute("pageNumber", pageNumber);
+
+		List<ComputerDto> listComputerDto = this.getListComputerDto(pageNumber, nbComputersByPage, strSearch);
+		request.setAttribute("listComputerDtos", listComputerDto);
 
 		this.getServletContext().getRequestDispatcher("/WEB-INF/views/dashboard.jsp").forward(request, response);
 	}
 
+	private Long getNbComputer(Optional<String> strSearch) {
+		Long nbComputers = 0L;
+		if (!strSearch.isPresent() || "".equals(strSearch.get())) {
+			nbComputers = computerService.getNbComputers();
+		} else {
+			nbComputers = computerService.getNbComputersByName(strSearch.get());
+		}
+		return nbComputers;
+	}
+
+	private List<ComputerDto> getListComputerDto(Long pageNumber, Long nbComputersByPage, Optional<String> strSearch) {
+		List<ComputerDto> listComputerDto;
+		if (strSearch.isPresent() && !"".equals(strSearch.get())) {
+			listComputerDto = ComputerPageService.getListComputerDtosByName(pageNumber, nbComputersByPage,
+					strSearch.get());
+		} else {
+			listComputerDto = ComputerPageService.getListComputerDtos(pageNumber, nbComputersByPage);
+		}
+		return listComputerDto;
+	}
+
 	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
-	 *      response)
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {

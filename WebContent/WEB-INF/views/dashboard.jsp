@@ -27,9 +27,8 @@
 			<div id="actions" class="form-horizontal">
 				<div class="pull-left">
 					<form id="searchForm" action="#" method="GET" class="form-inline">
-
 						<input type="search" id="searchbox" name="search"
-							class="form-control" placeholder="Search name" /> <input
+							class="form-control" placeholder="Search name" value="${search}" /> <input
 							type="submit" id="searchsubmit" value="Filter by name"
 							class="btn btn-primary" />
 					</form>
@@ -102,43 +101,43 @@
 		<div class="container text-center">
 			<ul class="pagination">
 				<li><a
-					href="Dashboard?pageNumber=${pageNumber-1}&nbComputersByPage=${nbComputersByPage}"
+					href="Dashboard?pageNumber=${pageNumber-1}&nbComputersByPage=${nbComputersByPage}&search=${search}"
 					aria-label="Previous"> <span aria-hidden="true">&laquo;</span>
 				</a></li>
 
 				<c:if test="${pageNumber>3}">
 					<li><a
-						href="Dashboard?pageNumber=1&nbComputersByPage=${nbComputersByPage}">1</a></li>
+						href="Dashboard?pageNumber=1&nbComputersByPage=${nbComputersByPage}&search=${search}">1</a></li>
 					<li><a href="#">...</a></li>
 				</c:if>
 
 				<c:if test="${pageNumber>2}">
 					<li><a
-						href="Dashboard?pageNumber=${pageNumber-2}&nbComputersByPage=${nbComputersByPage}">${pageNumber-2}</a></li>
+						href="Dashboard?pageNumber=${pageNumber-2}&nbComputersByPage=${nbComputersByPage}&search=${search}">${pageNumber-2}</a></li>
 				</c:if>
 				<c:if test="${pageNumber>1}">
 					<li><a
-						href="Dashboard?pageNumber=${pageNumber-1}&nbComputersByPage=${nbComputersByPage}">${pageNumber-1}</a></li>
+						href="Dashboard?pageNumber=${pageNumber-1}&nbComputersByPage=${nbComputersByPage}&search=${search}">${pageNumber-1}</a></li>
 				</c:if>
 				<li><a
-					href="Dashboard?pageNumber=${pageNumber}&nbComputersByPage=${nbComputersByPage}"><b>${pageNumber}</b></a></li>
+					href="Dashboard?pageNumber=${pageNumber}&nbComputersByPage=${nbComputersByPage}&search=${search}"><b>${pageNumber}</b></a></li>
 				<c:if test="${pageNumber<=nbPage-1}">
 					<li><a
-						href="Dashboard?pageNumber=${pageNumber+1}&nbComputersByPage=${nbComputersByPage}">${pageNumber+1}</a></li>
+						href="Dashboard?pageNumber=${pageNumber+1}&nbComputersByPage=${nbComputersByPage}&search=${search}">${pageNumber+1}</a></li>
 				</c:if>
 				<c:if test="${pageNumber<=nbPage-2}">
 					<li><a
-						href="Dashboard?pageNumber=${pageNumber+2}&nbComputersByPage=${nbComputersByPage}">${pageNumber+2}</a></li>
+						href="Dashboard?pageNumber=${pageNumber+2}&nbComputersByPage=${nbComputersByPage}&search=${search}">${pageNumber+2}</a></li>
 				</c:if>
 
 				<c:if test="${pageNumber<nbPage-2}">
 					<li><a href="#">...</a></li>
 					<li><a
-						href="Dashboard?pageNumber=${nbPage}&nbComputersByPage=${nbComputersByPage}">${nbPage}</a></li>
+						href="Dashboard?pageNumber=${nbPage}&nbComputersByPage=${nbComputersByPage}&search=${search}">${nbPage}</a></li>
 				</c:if>
 
 				<li><a
-					href="Dashboard?pageNumber=${pageNumber+1}&nbComputersByPage=${nbComputersByPage}"
+					href="Dashboard?pageNumber=${pageNumber+1}&nbComputersByPage=${nbComputersByPage}&search=${search}"
 					aria-label="Next"> <span aria-hidden="true">&raquo;</span>
 				</a></li>
 			</ul>
@@ -146,15 +145,15 @@
 			<div class="btn-group btn-group-sm pull-right" role="group">
 				<button type="button"
 					class="btn btn-default <c:if test="${nbComputersByPage == 10}">btn-primary</c:if>"
-					onclick="location.href='Dashboard?pageNumber=1&nbComputersByPage=10'">10
+					onclick="location.href='Dashboard?pageNumber=1&nbComputersByPage=10&search=${search}'">10
 				</button>
 				<button type="button"
 					class="btn btn-default <c:if test="${nbComputersByPage == 50}">btn-primary</c:if>"
-					onclick="location.href='Dashboard?pageNumber=1&nbComputersByPage=50'">50
+					onclick="location.href='Dashboard?pageNumber=1&nbComputersByPage=50&search=${search}'">50
 				</button>
 				<button type="button"
 					class="btn btn-default <c:if test="${nbComputersByPage == 100}">btn-primary</c:if>"
-					onclick="location.href='Dashboard?pageNumber=1&nbComputersByPage=100'">100
+					onclick="location.href='Dashboard?pageNumber=1&nbComputersByPage=100&search=${search}'">100
 				</button>
 			</div>
 		</div>

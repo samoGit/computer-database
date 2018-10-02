@@ -154,7 +154,7 @@ public class CommandLineInterface {
 	protected void launchMenuShowDetailComputer() {
 		System.out.println("\n\nPlease enter the name of a computer : ");
 		String name = scanner.nextLine();
-		List<Computer> listComputersFound = computerService.getListComputersByName(name);
+		List<Computer> listComputersFound = computerService.getListComputersByName(0L, 10L, name);
 		if (listComputersFound.isEmpty()) {
 			System.out.println("The computer '" + name + "' is not found.");
 		} else {
@@ -245,7 +245,7 @@ public class CommandLineInterface {
 		System.out.println("\nEnter the name of the computer : ");
 		String name = scanner.nextLine();
 
-		List<Computer> listComputersFound = computerService.getListComputersByName(name);
+		List<Computer> listComputersFound = computerService.getListComputersByName(0L, 10L, name);
 
 		if (listComputersFound.isEmpty()) {
 			System.out.println("No computer found with this name.");
