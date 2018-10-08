@@ -31,13 +31,15 @@ public enum ComputerDao {
 	private final static String SQL_SELECT_ALL_COMPUTERS = "SELECT "
 			+ "computer.id, computer.name, computer.introduced, computer.discontinued, company.id, company.name "
 			+ "FROM computer LEFT JOIN company ON computer.company_id = company.id "
-			+ "ORDER BY %s LIMIT ?,?; ";
+			+ "ORDER BY %s IS NOT NULL DESC, %s "
+			+ "LIMIT ?,?; ";
 	
 	private final static String SQL_SELECT_ALL_COMPUTERS_BYNAME = "SELECT "
 			+ "computer.id, computer.name, computer.introduced, computer.discontinued, company.id, company.name "
 			+ "FROM computer LEFT JOIN company ON computer.company_id = company.id "
 			+ "WHERE computer.name LIKE ? "
-			+ "ORDER BY %s LIMIT ?,?; ";
+			+ "ORDER BY %s IS NOT NULL DESC, %s "
+			+ "LIMIT ?,?; ";
 
 	final static String SQL_SELECT_NB_COMPUTERS = "SELECT count(id) as nbComputers FROM computer; ";
 	final static String SQL_SELECT_NB_COMPUTERS_BYNAME = "SELECT count(id) as nbComputers FROM computer "
@@ -82,7 +84,8 @@ public enum ComputerDao {
 
 		try (Connection connection = connectionManager.getConnection()) {
 			// We can't use prepared statement for orderBy value in sql...
-			String sqlQuery = String.format(SQL_SELECT_ALL_COMPUTERS, getOrderByValue(orderBy));
+			String orderByValue = getOrderByValue(orderBy);
+			String sqlQuery = String.format(SQL_SELECT_ALL_COMPUTERS, orderByValue, orderByValue);
 			
 			PreparedStatement stmt = connection.prepareStatement(sqlQuery);
 			stmt.setLong(1, offset);

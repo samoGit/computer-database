@@ -62,19 +62,19 @@
 									class="fa fa-trash-o fa-lg"></i>
 							</a>
 						</span></th>
-						<th><a href="Dashboard?pageNumber=${pageNumber-1}&nbComputersByPage=${nbComputersByPage}&search=${search}&orderBy=Name"
+						<th><a href="Dashboard?pageNumber=${pageNumber}&nbComputersByPage=${nbComputersByPage}&search=${search}&orderBy=Name"
 								<c:if test="${orderBy eq 'Name'}"> style="text-decoration: underline"</c:if>>
 								Computer name
 						</a></th>
-						<th><a href="Dashboard?pageNumber=${pageNumber-1}&nbComputersByPage=${nbComputersByPage}&search=${search}&orderBy=Introduced"
+						<th><a href="Dashboard?pageNumber=${pageNumber}&nbComputersByPage=${nbComputersByPage}&search=${search}&orderBy=Introduced"
 								<c:if test="${orderBy eq 'Introduced'}"> style="text-decoration: underline"</c:if>>
 								Introduced date
 						</a></th>
-						<th><a href="Dashboard?pageNumber=${pageNumber-1}&nbComputersByPage=${nbComputersByPage}&search=${search}&orderBy=Discontinued"
+						<th><a href="Dashboard?pageNumber=${pageNumber}&nbComputersByPage=${nbComputersByPage}&search=${search}&orderBy=Discontinued"
 								<c:if test="${orderBy eq 'Discontinued'}"> style="text-decoration: underline"</c:if>>
 								Discontinued date
 						</a></th>
-						<th><a href="Dashboard?pageNumber=${pageNumber-1}&nbComputersByPage=${nbComputersByPage}&search=${search}&orderBy=Company"
+						<th><a href="Dashboard?pageNumber=${pageNumber}&nbComputersByPage=${nbComputersByPage}&search=${search}&orderBy=Company"
 								<c:if test="${orderBy eq 'Company'}">style="text-decoration: underline;"</c:if> >
 								Company
 						</a></th>
