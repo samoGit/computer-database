@@ -32,7 +32,7 @@ public class DashboardServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		logger.info("doGet");
+		logger.info("\n\ndoGet");
 
 		Optional<String> orderBy = Optional.ofNullable(request.getParameter("orderBy"));
 		request.setAttribute("orderBy", orderBy.isPresent() ? orderBy.get() : "");
@@ -86,7 +86,7 @@ public class DashboardServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		logger.info("doPost");
+		logger.info("\n\ndoPost");
 		doGet(request, response);
 	}
 }

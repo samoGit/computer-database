@@ -38,7 +38,7 @@ public class EditComputerServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		logger.info("doGet");
+		logger.info("\n\ndoGet");
 
 		String pageNumber = request.getParameter("pageNumber");
 		String nbComputersByPage = request.getParameter("nbComputersByPage");
@@ -68,7 +68,7 @@ public class EditComputerServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		logger.info("doPost");
+		logger.info("\n\ndoPost");
 
 		Optional<String> computerId = Optional.ofNullable(request.getParameter("computerId"));
 		Optional<String> computerName = Optional.ofNullable(request.getParameter("computerName"));

@@ -34,7 +34,7 @@ public class AddComputerServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		logger.info("doGet");
+		logger.info("\n\ndoGet");
 
 		Optional<String> pageNumber = Optional.ofNullable(request.getParameter("pageNumber"));
 		Optional<String> nbComputersByPage = Optional.ofNullable(request.getParameter("nbComputersByPage"));
@@ -52,7 +52,7 @@ public class AddComputerServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		logger.info("doPost");
+		logger.info("\n\ndoPost");
 
 		Optional<String> computerName = Optional.ofNullable(request.getParameter("computerName"));
 		Optional<String> strIntroduced = Optional.ofNullable(request.getParameter("dateIntroduced"));

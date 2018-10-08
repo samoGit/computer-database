@@ -83,14 +83,16 @@
 			<artifactId>jstl</artifactId>
 			<version>${jstl.version}</version>
 		</dependency>
-
-		<!-- https://mvnrepository.com/artifact/org.openqa.selenium.client-drivers/selenium-java-client-driver 
+	
+		<!-- https://mvnrepository.com/artifact/com.zaxxer/HikariCP -->
 		<dependency>
-		    <groupId>org.openqa.selenium.client-drivers</groupId>
-		    <artifactId>selenium-java-client-driver</artifactId>
-		    <version>1.0-beta-1</version>
-		    <scope>test</scope>
-		</dependency>-->
+		    <groupId>com.zaxxer</groupId>
+		    <artifactId>HikariCP</artifactId>
+		    <version>3.2.0</version>
+		</dependency>
+
+
+
 
 
 

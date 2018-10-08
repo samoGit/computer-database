@@ -30,7 +30,7 @@ public class DeleteComputerServelet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		logger.info("doGet");
+		logger.info("\n\ndoGet");
 		response.getWriter().append("Served at: ").append(request.getContextPath());
 	}
 
@@ -40,7 +40,7 @@ public class DeleteComputerServelet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		logger.info("doPost");
+		logger.info("\n\ndoPost");
 
 		String selection = request.getParameter("selection");
 		computerService.deleteComputer(selection);
