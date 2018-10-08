@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Built-By: excilys
+Class-Path: mysql-connector-java-5.1.6.jar logback-classic-1.0.13.jar 
+ logback-core-1.0.13.jar slf4j-api-1.7.5.jar slf4j-jdk14-1.8.0-beta2.j
+ ar jstl-1.2.jar HikariCP-3.2.0.jar
+Build-Jdk: 1.8.0_181
+Created-By: Maven Integration for Eclipse
+
