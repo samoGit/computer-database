@@ -68,8 +68,8 @@ public enum ComputerService {
 	 * 
 	 * @param computerId
 	 */
-	public void deleteComputer(Long computerId) {
-		computerDao.deleteComputer(computerId);
+	public void deleteComputer(String listComputersId) {
+		computerDao.deleteComputer(listComputersId);
 	}
 
 	/**

@@ -46,7 +46,7 @@ public enum ComputerDao {
 			+ "WHERE computer.name LIKE ? ;";
 
 	private final static String SQL_INSERT_COMPUTER = "INSERT INTO computer ";
-	private final static String SQL_DELETE_COMPUTER = "DELETE FROM computer WHERE id=?;";
+	private final static String SQL_DELETE_COMPUTER = "DELETE FROM computer WHERE id IN (%s);";
 	private final static String SQL_UPDATE_COMPUTER = "UPDATE computer SET %s = %s  WHERE id = %s;";
 	private final static String SQL_UPDATE_COMPUTER_ALLFIELDS = "UPDATE computer SET name = ?"
 			+ ", introduced = ?, discontinued = ?, company_id = ? WHERE id = ?;";
@@ -113,7 +113,8 @@ public enum ComputerDao {
 
 		try (Connection connection = connectionManager.getConnection()) {
 			// We can't use prepared statement for orderBy value in sql...
-			String sqlQuery = String.format(SQL_SELECT_ALL_COMPUTERS_BYNAME, getOrderByValue(orderBy));
+			String orderByValue = getOrderByValue(orderBy);
+			String sqlQuery = String.format(SQL_SELECT_ALL_COMPUTERS_BYNAME, orderByValue, orderByValue);
 			
 			PreparedStatement stmt = connection.prepareStatement(sqlQuery);
 			stmt.setString(1, "%"+searchedName+"%");
@@ -183,10 +184,10 @@ public enum ComputerDao {
 	 * @param computerId
 	 * @throws SQLException .
 	 */
-	public void deleteComputer(Long computerId) {
+	public void deleteComputer(String listComputersId) {
 		try (Connection connection = connectionManager.getConnection()) {
-			PreparedStatement stmt = connection.prepareStatement(SQL_DELETE_COMPUTER);
-			stmt.setLong(1, computerId);
+			String sqlQuery = String.format(SQL_DELETE_COMPUTER, listComputersId);
+			PreparedStatement stmt = connection.prepareStatement(sqlQuery);
 			logger.info(stmt.toString());
 			stmt.executeUpdate();
 		} catch (SQLException e) {

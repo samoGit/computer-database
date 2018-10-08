@@ -42,13 +42,8 @@ public class DeleteComputerServelet extends HttpServlet {
 			throws ServletException, IOException {
 		logger.info("doPost");
 
-		Optional<String> selection = Optional.ofNullable(request.getParameter("selection"));
-		if (selection.isPresent()) {
-			String[] computersId = selection.get().split(",");
-			for (String id : computersId) {
-				computerService.deleteComputer(Long.valueOf(id));
-			}
-		}
+		String selection = request.getParameter("selection");
+		computerService.deleteComputer(selection);
 
 		Optional<String> pageNumber = Optional.ofNullable(request.getParameter("pageNumber"));
 		Optional<String> nbComputersByPage = Optional.ofNullable(request.getParameter("nbComputersByPage"));
