@@ -1,6 +1,7 @@
 package com.excilys.cdb.model;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 /**
@@ -33,30 +34,57 @@ public class Computer {
 	public Long getId() {
 		return id;
 	}
+
 	public void setId(Long id) {
 		this.id = id;
 	}
+
 	public String getName() {
 		return name;
 	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
+
 	public Optional<LocalDate> getDateIntroduced() {
 		return dateIntroduced;
 	}
+
 	public void setDateIntroduced(Optional<LocalDate> dateIntroduced) {
 		this.dateIntroduced = dateIntroduced;
 	}
+
+	public void setDateIntroducedFromString(Optional<String> dateIntroduced) {
+		if (dateIntroduced.isPresent()) {
+			this.dateIntroduced = Optional
+					.ofNullable(LocalDate.parse(dateIntroduced.get(), DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+		} else {
+			this.dateIntroduced = Optional.empty();
+		}
+	}
+
 	public Optional<LocalDate> getDateDiscontinued() {
 		return dateDiscontinued;
 	}
+
 	public void setDateDiscontinued(Optional<LocalDate> dateDiscontinued) {
 		this.dateDiscontinued = dateDiscontinued;
 	}
+
+	public void setDateDiscontinuedFromString(Optional<String> dateDiscontinued) {
+		if (dateDiscontinued.isPresent()) {
+			this.dateDiscontinued = Optional
+					.ofNullable(LocalDate.parse(dateDiscontinued.get(), DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+		} else {
+			this.dateDiscontinued = Optional.empty();
+		}
+	}
+
 	public Optional<Company> getCompany() {
 		return company;
 	}
+
 	public void setCompany(Optional<Company> company) {
 		this.company = company;
 	}
@@ -112,7 +140,7 @@ public class Computer {
 
 	@Override
 	public String toString() {
-		return "Computer [id=" + id + ", name=" + name + ", dateIntroduced=" + dateIntroduced + ", dateDiscontinued=" + dateDiscontinued
-				+ ", company=" + company + "]";
-	}	
+		return "Computer [id=" + id + ", name=" + name + ", dateIntroduced=" + dateIntroduced + ", dateDiscontinued="
+				+ dateDiscontinued + ", company=" + company + "]";
+	}
 }

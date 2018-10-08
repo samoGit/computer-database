@@ -1,6 +1,8 @@
 package com.excilys.cdb.servlet;
 
 import java.io.IOException;
+import java.util.Optional;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -17,44 +19,35 @@ import com.excilys.cdb.service.ComputerService;
  */
 @WebServlet("/DeleteComputerServelet")
 public class DeleteComputerServelet extends HttpServlet {
-	private static final long serialVersionUID = 1L;
-       
+	private static final long serialVersionUID = -6028278204408049563L;
+	
 	private static ComputerService computerService = ComputerService.INSTANCE;
-	private final Logger logger;
-
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public DeleteComputerServelet() {
-        super();
-        logger = LoggerFactory.getLogger("DashboardServlet");
-    }
+	private final Logger logger = LoggerFactory.getLogger("DashboardServlet");
 
 	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+	 *      response)
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        logger.info("doGet");
-
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		logger.info("\n\ndoGet");
 		response.getWriter().append("Served at: ").append(request.getContextPath());
 	}
 
 	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+	 *      response)
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        logger.info("doPost");
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		logger.info("\n\ndoPost");
 
-        String strSelection = request.getParameter("selection");
-        if (strSelection != null)
-        {
-        	String[] strComputerId = strSelection.split(",");
-        	for (String s : strComputerId) {
-               	computerService.DeleteComputer(Long.valueOf(s));
-        	}
-        }
+		String selection = request.getParameter("selection");
+		computerService.deleteComputer(selection);
 
-        response.sendRedirect("Dashboard");
+		Optional<String> pageNumber = Optional.ofNullable(request.getParameter("pageNumber"));
+		Optional<String> nbComputersByPage = Optional.ofNullable(request.getParameter("nbComputersByPage"));
+		response.sendRedirect("Dashboard?pageNumber=" + (pageNumber.isPresent() ? pageNumber.get() : "1")
+				+ "&nbComputersByPage=" + (nbComputersByPage.isPresent() ? nbComputersByPage.get() : "10"));
 	}
-
 }

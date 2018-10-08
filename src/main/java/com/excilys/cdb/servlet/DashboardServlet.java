@@ -1,8 +1,8 @@
 package com.excilys.cdb.servlet;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -14,7 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.excilys.cdb.dto.ComputerDto;
-import com.excilys.cdb.model.Computer;
+import com.excilys.cdb.service.ComputerPageService;
 import com.excilys.cdb.service.ComputerService;
 
 /**
@@ -22,62 +22,71 @@ import com.excilys.cdb.service.ComputerService;
  */
 @WebServlet("/Dashboard")
 public class DashboardServlet extends HttpServlet {
-	private static final long serialVersionUID = 1L;
-	private static ComputerService computerService = ComputerService.INSTANCE;
-	private final Logger logger;
-       
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public DashboardServlet() {
-        super();
-        logger = LoggerFactory.getLogger("DashboardServlet");
-    }
+	private static final long serialVersionUID = 1182886835641082355L;
+
+	private final ComputerService computerService = ComputerService.INSTANCE;
+	private final Logger logger = LoggerFactory.getLogger("DashboardServlet");
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        logger.info("doGet");
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		logger.info("\n\ndoGet");
 
-        String strNbComputersByPage = request.getParameter("nbComputersByPage");
-		Long nbComputersByPage = (strNbComputersByPage == null || strNbComputersByPage.equals("")) ? 10 : Long.valueOf(strNbComputersByPage);
-        request.setAttribute("nbComputersByPage", nbComputersByPage);
-        
-        Long nbComputers = computerService.getNbComputers();
-        request.setAttribute("nbComputers", nbComputers);
+		Optional<String> orderBy = Optional.ofNullable(request.getParameter("orderBy"));
+		request.setAttribute("orderBy", orderBy.isPresent() ? orderBy.get() : "");
 
-        Long nbPage = nbComputers % nbComputersByPage == 0 ? nbComputers/nbComputersByPage : nbComputers/nbComputersByPage+1;
-        request.setAttribute("nbPage", nbPage);
+		Long nbComputersByPage = ComputerPageService
+				.getNbComputersByPage(Optional.ofNullable(request.getParameter("nbComputersByPage")));
+		request.setAttribute("nbComputersByPage", nbComputersByPage);
 
-        String strPageNumber = request.getParameter("pageNumber");
-        if (strPageNumber == null || strPageNumber.equals("")) {
-        	strPageNumber = "1";
-        }
-        else if (strPageNumber.equals("lastPage")) {
-        	strPageNumber = String.valueOf(nbPage);
-        }
-        Long pageNumber = Long.valueOf(strPageNumber);
-        request.setAttribute("pageNumber", pageNumber);
+		Optional<String> strSearch = Optional.ofNullable(request.getParameter("search"));
+		request.setAttribute("search", strSearch.isPresent() ? strSearch.get() : "");
 
-        List<Computer> listComputers = computerService.getListComputers((pageNumber-1)*nbComputersByPage, nbComputersByPage);
-        List<ComputerDto> listComputerDtos = new ArrayList<>();
-        listComputers.forEach( (c) -> {
-        	listComputerDtos.add(new ComputerDto(c));
-        });
-        System.out.println("listComputers = ");
-        System.out.println(listComputerDtos);
-        request.setAttribute("listComputerDtos", listComputerDtos);
+		Long nbComputers = this.getNbComputer(strSearch);
+		request.setAttribute("nbComputers", nbComputers);
 
-        this.getServletContext().getRequestDispatcher("/WEB-INF/views/dashboard.jsp").forward(request, response);
+		Long nbPageTotal = ComputerPageService.getNbPageTotal(nbComputersByPage, nbComputers);
+		request.setAttribute("nbPage", nbPageTotal);
+
+		Long pageNumber = ComputerPageService.getPageNumber(Optional.ofNullable(request.getParameter("pageNumber")),
+				nbComputersByPage, nbComputers, nbPageTotal);
+		request.setAttribute("pageNumber", pageNumber);
+
+		List<ComputerDto> listComputerDto = this.getListComputerDto(pageNumber, nbComputersByPage, strSearch, orderBy);
+		request.setAttribute("listComputerDtos", listComputerDto);
+
+		this.getServletContext().getRequestDispatcher("/WEB-INF/views/dashboard.jsp").forward(request, response);
+	}
+
+	private Long getNbComputer(Optional<String> strSearch) {
+		Long nbComputers = 0L;
+		if (!strSearch.isPresent() || "".equals(strSearch.get())) {
+			nbComputers = computerService.getNbComputers();
+		} else {
+			nbComputers = computerService.getNbComputersByName(strSearch.get());
+		}
+		return nbComputers;
+	}
+
+	private List<ComputerDto> getListComputerDto(Long pageNumber, Long nbComputersByPage, Optional<String> strSearch, Optional<String> orderBy) {
+		List<ComputerDto> listComputerDto;
+		if (strSearch.isPresent() && !"".equals(strSearch.get())) {
+			listComputerDto = ComputerPageService.getListComputerDtosByName(pageNumber, nbComputersByPage,
+					strSearch.get(), orderBy);
+		} else {
+			listComputerDto = ComputerPageService.getListComputerDtos(pageNumber, nbComputersByPage, orderBy);
+		}
+		return listComputerDto;
 	}
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        logger.info("doPost");
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		logger.info("\n\ndoPost");
 		doGet(request, response);
 	}
-
 }

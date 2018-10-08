@@ -4,8 +4,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,34 +31,96 @@ public enum ComputerDao {
 	private final static String SQL_SELECT_ALL_COMPUTERS = "SELECT "
 			+ "computer.id, computer.name, computer.introduced, computer.discontinued, company.id, company.name "
 			+ "FROM computer LEFT JOIN company ON computer.company_id = company.id "
-			+ "ORDER BY computer.id LIMIT ?,?; ";
-
-	final static String SQL_SELECT_COMPUTERS_FROM_NAME = "SELECT "
+			+ "ORDER BY %s IS NOT NULL DESC, %s "
+			+ "LIMIT ?,?; ";
+	
+	private final static String SQL_SELECT_ALL_COMPUTERS_BYNAME = "SELECT "
 			+ "computer.id, computer.name, computer.introduced, computer.discontinued, company.id, company.name "
 			+ "FROM computer LEFT JOIN company ON computer.company_id = company.id "
-			+ "WHERE computer.name = ?; ";
+			+ "WHERE computer.name LIKE ? "
+			+ "ORDER BY %s IS NOT NULL DESC, %s "
+			+ "LIMIT ?,?; ";
 
-	final static String SQL_SELECT_NB_COMPUTERS = "SELECT count(id) as nbComputers FROM computer;";
-	
+	final static String SQL_SELECT_NB_COMPUTERS = "SELECT count(id) as nbComputers FROM computer; ";
+	final static String SQL_SELECT_NB_COMPUTERS_BYNAME = "SELECT count(id) as nbComputers FROM computer "
+			+ "WHERE computer.name LIKE ? ;";
+
 	private final static String SQL_INSERT_COMPUTER = "INSERT INTO computer ";
-	private final static String SQL_DELETE_COMPUTER = "DELETE FROM computer WHERE id=?;";
+	private final static String SQL_DELETE_COMPUTER = "DELETE FROM computer WHERE id IN (%s);";
 	private final static String SQL_UPDATE_COMPUTER = "UPDATE computer SET %s = %s  WHERE id = %s;";
+	private final static String SQL_UPDATE_COMPUTER_ALLFIELDS = "UPDATE computer SET name = ?"
+			+ ", introduced = ?, discontinued = ?, company_id = ? WHERE id = ?;";
 
 	private final ConnectionManager connectionManager = ConnectionManager.INSTANCE;
+
+	private String getOrderByValue(Optional<String> orderBy) {
+		String orderByValue = "computer.id";
+		if (orderBy.isPresent()) {
+			switch (orderBy.get()) {
+			case "Name":
+				orderByValue = "computer.name";
+				break;
+			case "Introduced":
+				orderByValue = "computer.introduced";
+				break;
+			case "Discontinued":
+				orderByValue = "computer.discontinued";
+				break;
+			case "Company":
+				orderByValue = "company.name";
+				break;
+			}
+		}
+		return orderByValue;
+	}
 
 	/**
 	 * Return all the computers present in the BDD
 	 * 
 	 * @return List of {@link Computer}
 	 */
-	public List<Computer> getListComputers(Long offset, Long nbComputersByPage) {
+	public List<Computer> getListComputers(Long offset, Long nbComputersByPage, Optional<String> orderBy) {
 		ArrayList<Computer> listComputers = new ArrayList<>();
 
 		try (Connection connection = connectionManager.getConnection()) {
-			PreparedStatement stmt = connection.prepareStatement(SQL_SELECT_ALL_COMPUTERS);
+			// We can't use prepared statement for orderBy value in sql...
+			String orderByValue = getOrderByValue(orderBy);
+			String sqlQuery = String.format(SQL_SELECT_ALL_COMPUTERS, orderByValue, orderByValue);
+			
+			PreparedStatement stmt = connection.prepareStatement(sqlQuery);
 			stmt.setLong(1, offset);
 			stmt.setLong(2, nbComputersByPage);
-			logger.info(stmt.toString());			
+			logger.info(stmt.toString());
+			ResultSet resultSet = stmt.executeQuery();
+			while (resultSet.next()) {
+				listComputers.add(ComputerMapper.getComputer(resultSet));
+			}
+		} catch (SQLException e) {
+			logger.error(e.getMessage());
+			logger.error(e.getStackTrace().toString());
+		}
+		return listComputers;
+	}
+		
+	/**
+	 * Return all computers present in the BDD which the name respect the pattern "*searchedName*" 
+	 * 
+	 * @param name String
+	 * @return List of {@link Computer}
+	 */
+	public List<Computer> getListComputersByName(Long offset, Long nbComputersByPage, String searchedName, Optional<String> orderBy) {
+		ArrayList<Computer> listComputers = new ArrayList<>();
+
+		try (Connection connection = connectionManager.getConnection()) {
+			// We can't use prepared statement for orderBy value in sql...
+			String orderByValue = getOrderByValue(orderBy);
+			String sqlQuery = String.format(SQL_SELECT_ALL_COMPUTERS_BYNAME, orderByValue, orderByValue);
+			
+			PreparedStatement stmt = connection.prepareStatement(sqlQuery);
+			stmt.setString(1, "%"+searchedName+"%");
+			stmt.setLong(2, offset);
+			stmt.setLong(3, nbComputersByPage);
+			logger.info(stmt.toString());
 			ResultSet resultSet = stmt.executeQuery();
 			while (resultSet.next()) {
 				listComputers.add(ComputerMapper.getComputer(resultSet));
@@ -69,29 +133,6 @@ public enum ComputerDao {
 	}
 
 	/**
-	 * Find every computers in the BDD with a given name
-	 * 
-	 * @param name String
-	 * @return List of {@link Computer}
-	 */
-	public List<Computer> getListComputersByName(String name) {
-		ArrayList<Computer> listComputersFound = new ArrayList<>();
-		try (Connection connection = connectionManager.getConnection()) {
-			PreparedStatement stmt = connection.prepareStatement(SQL_SELECT_COMPUTERS_FROM_NAME);
-			stmt.setString(1, name);
-			logger.info(stmt.toString());			
-			ResultSet resultSet = stmt.executeQuery();
-			while (resultSet.next()) {
-				listComputersFound.add(ComputerMapper.getComputer(resultSet));
-			}
-		} catch (SQLException e) {
-			logger.error(e.getMessage());
-			logger.error(e.getStackTrace().toString());
-		}
-		return listComputersFound;
-	}
-
-	/**
 	 * Create a new computer in the BDD.
 	 * 
 	 * @param name         String
@@ -99,7 +140,7 @@ public enum ComputerDao {
 	 * @param discontinued LocalDate
 	 * @param idCompany    Long
 	 */
-	public void CreateNewComputer(Computer computer) {
+	public void createNewComputer(Computer computer) {
 		String query = SQL_INSERT_COMPUTER; // (?) VALUES (?);
 
 		String indices = "name";
@@ -143,10 +184,10 @@ public enum ComputerDao {
 	 * @param computerId
 	 * @throws SQLException .
 	 */
-	public void DeleteComputer(Long computerId) {
+	public void deleteComputer(String listComputersId) {
 		try (Connection connection = connectionManager.getConnection()) {
-			PreparedStatement stmt = connection.prepareStatement(SQL_DELETE_COMPUTER);
-			stmt.setLong(1, computerId);
+			String sqlQuery = String.format(SQL_DELETE_COMPUTER, listComputersId);
+			PreparedStatement stmt = connection.prepareStatement(sqlQuery);
 			logger.info(stmt.toString());
 			stmt.executeUpdate();
 		} catch (SQLException e) {
@@ -161,7 +202,7 @@ public enum ComputerDao {
 	 * @param computer {@link Computer}
 	 * @param field    String field of the Table to be updated
 	 */
-	public void UpdateComputer(Computer computer, String field) {
+	public void updateComputer(Computer computer, String field) {
 		String valueWithQuoteIfNeeded = "null";
 		switch (field) {
 		case "id":
@@ -200,7 +241,48 @@ public enum ComputerDao {
 			logger.error(e.getStackTrace().toString());
 		}
 	}
-	
+
+	/**
+	 * 
+	 * @param computer
+	 */
+	public void updateComputer(Computer computer) {
+		try (Connection connection = connectionManager.getConnection()) {
+			PreparedStatement stmt;
+			stmt = connection.prepareStatement(SQL_UPDATE_COMPUTER_ALLFIELDS);
+			stmt.setString(1, computer.getName());
+			
+			if (computer.getDateIntroduced().isPresent()) {
+				stmt.setString(2, computer.getDateIntroduced().get().toString());
+			}
+			else {
+				stmt.setNull(2, Types.DATE);
+			}
+			
+			if (computer.getDateDiscontinued().isPresent()) {
+				stmt.setString(3, computer.getDateDiscontinued().get().toString());
+			}
+			else {
+				stmt.setNull(3, Types.DATE);
+			}
+			
+			if (computer.getCompany().isPresent()) {
+				stmt.setLong(4, computer.getCompany().get().getId());
+			}
+			else {
+				stmt.setNull(4, Types.INTEGER);
+			}
+			
+			stmt.setLong(5, computer.getId());
+			
+			logger.info(stmt.toString());
+			stmt.executeUpdate();
+		} catch (SQLException e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+	}
+
 	/**
 	 * Return the number of computer present in the BDD
 	 * 
@@ -210,6 +292,28 @@ public enum ComputerDao {
 		Long nbComputer = null;
 		try (Connection connection = connectionManager.getConnection()) {
 			PreparedStatement stmt = connection.prepareStatement(SQL_SELECT_NB_COMPUTERS);
+			ResultSet resultSet = stmt.executeQuery();
+			if (resultSet != null)
+				resultSet.next();
+			nbComputer = resultSet.getLong("nbComputers");
+		} catch (SQLException e) {
+			logger.error(e.getMessage());
+			logger.error(e.getStackTrace().toString());
+		}
+		return nbComputer;
+	}
+	
+
+	/**
+	 * Return the number of computer present in the BDD which the name respect the pattern "*searchedName*"
+	 * 
+	 * @return Long
+	 */
+	public Long getNbComputersByName(String searchedName) {
+		Long nbComputer = null;
+		try (Connection connection = connectionManager.getConnection()) {
+			PreparedStatement stmt = connection.prepareStatement(SQL_SELECT_NB_COMPUTERS_BYNAME);
+			stmt.setString(1, "%"+searchedName+"%");
 			ResultSet resultSet = stmt.executeQuery();
 			if (resultSet != null)
 				resultSet.next();

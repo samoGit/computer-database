@@ -27,7 +27,7 @@ public enum CompanyService {
 	public List<Company> getListCompanies() {
 		return companyDao.getListCompanies();
 	}
-	
+
 	/**
 	 * Return the company corresponding to the given id
 	 * 
