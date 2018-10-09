@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
+import com.excilys.cdb.dto.ComputerDto;
 import com.excilys.cdb.mapper.InvalidComputerException;
 import com.excilys.cdb.mapper.InvalidDateException;
 import com.excilys.cdb.model.Company;
@@ -221,15 +222,16 @@ public class CommandLineInterface {
 	 */
 	protected void launchMenuCreateComputer() {
 		System.out.println("\nName : ");
-		Optional<String> newComputerName = Optional.ofNullable(scanner.nextLine());
-		Optional<String> dateIntroduced = this
-				.getDateFromUser("\n(Expected format = 'DD/MM/YYYY'    or    '?' if unknown)\nDate when introduced : ");
-		Optional<String> dateDiscontinued = this.getDateFromUser(
-				"\n(Expected format = 'DD/MM/YYYY'    or    '?' if unknown)\nDate when discontinued : ");
-		Optional<String> companyId = this.getCompanyIdFromUser();
+		ComputerDto computerDto = new ComputerDto();
+		computerDto.setName(Optional.ofNullable(scanner.nextLine()));
+		computerDto.setDateIntroduced(this.getDateFromUser(
+				"\n(Expected format = 'DD/MM/YYYY'    or    '?' if unknown)\nDate when introduced : "));
+		computerDto.setDateDiscontinued(this.getDateFromUser(
+				"\n(Expected format = 'DD/MM/YYYY'    or    '?' if unknown)\nDate when discontinued : "));
+		computerDto.setCompanyId(this.getCompanyIdFromUser());
 		
 		try {
-			computerService.createNewComputer(newComputerName, dateIntroduced, dateDiscontinued, companyId);
+			computerService.createNewComputer(computerDto);
 		}
 		catch (InvalidComputerException | InvalidDateException e) {
 			System.err.println(e.getMessage());

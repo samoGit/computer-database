@@ -8,12 +8,12 @@ import com.excilys.cdb.dto.ComputerDto;
 import com.excilys.cdb.model.Computer;
 
 public class ComputerPageService {
-	private final static Long NbComputersByPageDefaultValue = 10L;
+	public final static Long DEFAULT_NB_COMPUTERS_BY_PAGE = 10L;
 
 	private static ComputerService computerService = ComputerService.INSTANCE;
 
 	public static Long getNbComputersByPage(Optional<String> strNbComputersByPage) {
-		Long nbComputersByPage = NbComputersByPageDefaultValue;
+		Long nbComputersByPage = DEFAULT_NB_COMPUTERS_BY_PAGE;
 		if (strNbComputersByPage.isPresent() && !"".equals(strNbComputersByPage.get())) {
 			nbComputersByPage = Long.valueOf(strNbComputersByPage.get());
 		}
@@ -53,8 +53,8 @@ public class ComputerPageService {
 
 	public static List<ComputerDto> getListComputerDtosByName(Long pageNumber, Long nbComputersByPage,
 			String searchedName, Optional<String> orderBy) {
-		Long ofSet = (pageNumber - 1) * nbComputersByPage;
-		List<Computer> listComputer = computerService.getListComputersByName(ofSet, nbComputersByPage, searchedName, orderBy);
+		Long offSet = (pageNumber - 1) * nbComputersByPage;
+		List<Computer> listComputer = computerService.getListComputersByName(offSet, nbComputersByPage, searchedName, orderBy);
 		return listComputer.stream().map(c -> new ComputerDto(c)).collect(Collectors.toList());
 	}
 }

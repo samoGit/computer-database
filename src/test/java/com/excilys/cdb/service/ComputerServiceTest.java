@@ -13,6 +13,8 @@ import java.util.Optional;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.excilys.cdb.builder.ComputerBuilder;
+import com.excilys.cdb.dto.ComputerDto;
 import com.excilys.cdb.mapper.InvalidComputerException;
 import com.excilys.cdb.mapper.InvalidDateException;
 import com.excilys.cdb.model.Company;
@@ -22,7 +24,7 @@ import com.excilys.cdb.model.Computer;
  * @author samy
  *
  */
-public class ComputerServiceTst {
+public class ComputerServiceTest {
 
 	private static ComputerService computerService;
 
@@ -50,21 +52,29 @@ public class ComputerServiceTst {
 	@Test
 	public void testGetListComputers() {
 		List<Computer> expectedComputerList = new ArrayList<Computer>();
-		expectedComputerList
-				.add(new Computer(22L, "Macintosh II", Optional.empty(), Optional.empty(), Optional.empty()));
-		expectedComputerList.add(new Computer(23L, "Macintosh Plus",
-				Optional.ofNullable(LocalDate.parse("16/01/1986", DateTimeFormatter.ofPattern("dd/MM/yyyy"))),
-				Optional.ofNullable(LocalDate.parse("15/10/1990", DateTimeFormatter.ofPattern("dd/MM/yyyy"))),
-				Optional.ofNullable(new Company(Long.valueOf(1), "Apple Inc."))));
+		expectedComputerList.add(
+			ComputerBuilder.newComputerBuilder().withId(22L).withName("Macintosh II").buildComputer()
+		);
+		expectedComputerList.add(ComputerBuilder.newComputerBuilder()
+												.withId(23L)
+												.withName("Macintosh Plus")
+												.withDateIntroduced(Optional.of(
+														LocalDate.parse("16/01/1986", 
+														DateTimeFormatter.ofPattern("dd/MM/yyyy")))
+													)
+												.withDateDiscontinued(Optional.of(
+														LocalDate.parse("15/10/1990", 
+														DateTimeFormatter.ofPattern("dd/MM/yyyy")))
+													)
+												.withCompany(Optional.ofNullable(
+														new Company(Long.valueOf(1), "Apple Inc."))
+													)
+												.buildComputer()
+			);
 
 		List<Computer> actualComputerList = computerService.getListComputers(10L, 2L, Optional.empty());
 
 		for (int i = 0; i < expectedComputerList.size(); i++) {
-			System.out.println("\nexpectedComputerList.get(" + i + ") = ");
-			System.out.println(expectedComputerList.get(i));
-			System.out.println("actualComputerList.get(" + i + ")");
-			System.out.println(actualComputerList.get(i));
-
 			assertEquals(expectedComputerList.get(i), actualComputerList.get(i));
 		}
 	}
@@ -82,9 +92,18 @@ public class ComputerServiceTst {
 	@Test
 	public void testGetListComputersByName() {
 		List<Computer> expectedComputerList = new ArrayList<Computer>();
-		Computer expectedComputer = new Computer(319L, "HP Mini 1000",
-				Optional.ofNullable(LocalDate.parse("29/10/2008", DateTimeFormatter.ofPattern("dd/MM/yyyy"))),
-				Optional.empty(), Optional.ofNullable(new Company(27L, "Hewlett-Packard")));
+		Computer expectedComputer = ComputerBuilder.newComputerBuilder()
+												   .withId(319L)
+												   .withName("HP Mini 1000")
+												   .withDateIntroduced(Optional.ofNullable(
+														   LocalDate.parse("29/10/2008", 
+														   DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+														))
+												   .withCompany(Optional.ofNullable(
+														   new Company(27L, "Hewlett-Packard")
+														))
+												   .buildComputer();
+
 		expectedComputerList.add(expectedComputer);
 		List<Computer> actualComputerList = computerService.getListComputersByName(0L, 10L, "HP Mini 1000", Optional.empty());
 
@@ -104,9 +123,14 @@ public class ComputerServiceTst {
 		Optional<String> nameNewPC = Optional.ofNullable("testCreateNewComputer");
 		Optional<String> dateIntoducedNewPC = Optional.ofNullable("01/02/2003");
 		Optional<String> dateDiscontinuedNewPC = Optional.ofNullable("04/05/2006");
+
+		ComputerDto computerDto = new  ComputerDto();
+		computerDto.setName(nameNewPC);
+		computerDto.setDateIntroduced(dateIntoducedNewPC);
+		computerDto.setDateDiscontinued(dateDiscontinuedNewPC);
 		
 		try {
-			computerService.createNewComputer(nameNewPC, dateIntoducedNewPC, dateDiscontinuedNewPC, Optional.empty());
+			computerService.createNewComputer(computerDto);
 		}
 		catch (InvalidComputerException | InvalidDateException e) {
 			assertTrue(e.getMessage(), false);
@@ -131,12 +155,13 @@ public class ComputerServiceTst {
 	 */
 	@Test
 	public void testDeleteComputer() {
-		Optional<String> nameNewPC = Optional.of("testCreateNewComputer");
-		Optional<String> dateIntoducedNewPC = Optional.of("01/02/2003");
-		Optional<String> dateDiscontinuedNewPC = Optional.of("04/05/2006");
+		ComputerDto computerDto = new  ComputerDto();
+		computerDto.setName(Optional.of("testCreateNewComputer"));
+		computerDto.setDateIntroduced(Optional.of("01/02/2003"));
+		computerDto.setDateDiscontinued(Optional.of("04/05/2006"));
 		
 		try {
-			computerService.createNewComputer(nameNewPC, dateIntoducedNewPC, dateDiscontinuedNewPC, Optional.empty());
+			computerService.createNewComputer(computerDto);
 		}
 		catch (InvalidComputerException | InvalidDateException e) {
 			assertTrue(e.getMessage(), false);
@@ -157,12 +182,13 @@ public class ComputerServiceTst {
 	 */
 	@Test
 	public void testUpdateComputer() {
-		Optional<String> nameNewPC = Optional.of("testCreateNewComputer");
-		Optional<String> dateIntoducedNewPC = Optional.of("01/02/2003");
-		Optional<String> dateDiscontinuedNewPC = Optional.of("04/05/2006");
+		ComputerDto computerDto = new  ComputerDto();
+		computerDto.setName(Optional.of("testCreateNewComputer"));
+		computerDto.setDateIntroduced(Optional.of("01/02/2003"));
+		computerDto.setDateDiscontinued(Optional.of("04/05/2006"));
 		
 		try {
-			computerService.createNewComputer(nameNewPC, dateIntoducedNewPC, dateDiscontinuedNewPC, Optional.empty());
+			computerService.createNewComputer(computerDto);
 		}
 		catch (InvalidComputerException | InvalidDateException e) {
 			assertTrue(e.getMessage(), false);

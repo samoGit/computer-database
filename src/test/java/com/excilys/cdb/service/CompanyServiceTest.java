@@ -10,7 +10,7 @@ import org.junit.Test;
 
 import com.excilys.cdb.model.Company;
 
-public class CompanyServiceTst {
+public class CompanyServiceTest {
 
 	private static CompanyService companyService;
 

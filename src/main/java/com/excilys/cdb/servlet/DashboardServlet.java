@@ -61,24 +61,20 @@ public class DashboardServlet extends HttpServlet {
 	}
 
 	private Long getNbComputer(Optional<String> strSearch) {
-		Long nbComputers = 0L;
 		if (!strSearch.isPresent() || "".equals(strSearch.get())) {
-			nbComputers = computerService.getNbComputers();
+			return computerService.getNbComputers();
 		} else {
-			nbComputers = computerService.getNbComputersByName(strSearch.get());
+			return computerService.getNbComputersByName(strSearch.get());
 		}
-		return nbComputers;
 	}
 
 	private List<ComputerDto> getListComputerDto(Long pageNumber, Long nbComputersByPage, Optional<String> strSearch, Optional<String> orderBy) {
-		List<ComputerDto> listComputerDto;
 		if (strSearch.isPresent() && !"".equals(strSearch.get())) {
-			listComputerDto = ComputerPageService.getListComputerDtosByName(pageNumber, nbComputersByPage,
+			return ComputerPageService.getListComputerDtosByName(pageNumber, nbComputersByPage,
 					strSearch.get(), orderBy);
 		} else {
-			listComputerDto = ComputerPageService.getListComputerDtos(pageNumber, nbComputersByPage, orderBy);
+			return ComputerPageService.getListComputerDtos(pageNumber, nbComputersByPage, orderBy);
 		}
-		return listComputerDto;
 	}
 
 	/**

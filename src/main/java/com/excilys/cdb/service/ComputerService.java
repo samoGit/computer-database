@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.excilys.cdb.dto.ComputerDto;
 import com.excilys.cdb.mapper.ComputerMapper;
 import com.excilys.cdb.mapper.InvalidComputerException;
 import com.excilys.cdb.mapper.InvalidDateException;
@@ -48,17 +49,12 @@ public enum ComputerService {
 	/**
 	 * Create a new computer in the BDD
 	 * 
-	 * @param name         String
-	 * @param introduced   LocalDate
-	 * @param discontinued LocalDate
-	 * @param company      {@link Company}
+	 * @param computerDto
 	 * @throws InvalidComputerException
-	 * @throws InvalidDateException 
+	 * @throws InvalidDateException
 	 */
-	public void createNewComputer(Optional<String> computerName, Optional<String> strDateIntroduced,
-			Optional<String> strDateDiscontinued, Optional<String> strCompanyId) throws InvalidComputerException, InvalidDateException {
-		
-		Computer newComputer = ComputerMapper.getComputer(computerName, strDateIntroduced, strDateDiscontinued, strCompanyId);
+	public void createNewComputer(ComputerDto computerDto) throws InvalidComputerException, InvalidDateException {	
+		Computer newComputer = ComputerMapper.getComputer(computerDto);
 		logger.info("Create the following computer : " + newComputer);
 		computerDao.createNewComputer(newComputer);
 	}

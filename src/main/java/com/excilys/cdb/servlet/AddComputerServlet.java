@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.excilys.cdb.dto.ComputerDto;
 import com.excilys.cdb.mapper.InvalidComputerException;
 import com.excilys.cdb.mapper.InvalidDateException;
 import com.excilys.cdb.service.CompanyService;
@@ -54,10 +55,11 @@ public class AddComputerServlet extends HttpServlet {
 			throws ServletException, IOException {
 		logger.info("\n\ndoPost");
 
-		Optional<String> computerName = Optional.ofNullable(request.getParameter("computerName"));
-		Optional<String> strIntroduced = Optional.ofNullable(request.getParameter("dateIntroduced"));
-		Optional<String> strDiscontinued = Optional.ofNullable(request.getParameter("dateDiscontinued"));
-		Optional<String> companyId = Optional.ofNullable(request.getParameter("companyId"));
+		ComputerDto computerDto = new ComputerDto();
+		computerDto.setName(Optional.ofNullable(request.getParameter("computerName")));
+		computerDto.setDateIntroduced(Optional.ofNullable(request.getParameter("dateIntroduced")));
+		computerDto.setDateDiscontinued(Optional.ofNullable(request.getParameter("dateDiscontinued")));
+		computerDto.setCompanyId(Optional.ofNullable(request.getParameter("companyId")));
 
 		Optional<String> pageNumber = Optional.ofNullable(request.getParameter("pageNumber"));
 		String pageNumberNeverEmpty = pageNumber.isPresent() ? pageNumber.get() : "1";
@@ -65,25 +67,17 @@ public class AddComputerServlet extends HttpServlet {
 		String nbComputersByPageNeverEmpty = nbComputersByPage.isPresent() ? nbComputersByPage.get() : "10";
 
 		try {
-			computerService.createNewComputer(computerName, strIntroduced, strDiscontinued, companyId);
+			computerService.createNewComputer(computerDto);
 			response.sendRedirect("Dashboard?pageNumber=lastPage&nbComputersByPage="
 					+ nbComputersByPageNeverEmpty);
 		} catch (InvalidComputerException | InvalidDateException e) {
 			String errorMsg = e.getMessage();
 			logger.warn(errorMsg);
 
-			if (computerName.isPresent()) {
-				request.setAttribute("computerName", computerName.get());
-			}
-			if (strIntroduced.isPresent()) {
-				request.setAttribute("dateIntroduced", strIntroduced.get());
-			}
-			if (strDiscontinued.isPresent()) {
-				request.setAttribute("dateDiscontinued", strDiscontinued.get());
-			}
-			if (companyId.isPresent()) {
-				request.setAttribute("companyId", companyId.get());
-			}
+			request.setAttribute("computerName", computerDto.getName());
+			request.setAttribute("dateIntroduced", computerDto.getDateIntroduced());
+			request.setAttribute("dateDiscontinued", computerDto.getDateDiscontinued());
+			request.setAttribute("companyId", computerDto.getCompanyId());
 
 			request.setAttribute("listCompanies", companyService.getListCompanies());
 			request.setAttribute("pageNumber", pageNumberNeverEmpty);
