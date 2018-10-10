@@ -96,6 +96,12 @@ public class PageInfo {
 	
 	public void setPageNumber(Long pageNumber) {
 		this.pageNumber = pageNumber;
+		if (this.pageNumber < 1L) {
+			this.pageNumber = this.nbPageTotal;
+		}
+		else if (this.pageNumber > this.nbPageTotal) {
+			this.pageNumber = 1L;
+		}
 		this.offset = (this.pageNumber - 1) * this.nbComputersByPage;
 	}
 }

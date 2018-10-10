@@ -47,6 +47,7 @@ public enum ComputerDao {
 
 	private final static String SQL_INSERT_COMPUTER = "INSERT INTO computer ";
 	private final static String SQL_DELETE_COMPUTER = "DELETE FROM computer WHERE id IN (%s);";
+	private final static String SQL_DELETE_COMPUTER_WHERE_COMPANY = "DELETE FROM computer WHERE company_id = ?;";
 	private final static String SQL_UPDATE_COMPUTER = "UPDATE computer SET %s = %s  WHERE id = %s;";
 	private final static String SQL_UPDATE_COMPUTER_ALLFIELDS = "UPDATE computer SET name = ?"
 			+ ", introduced = ?, discontinued = ?, company_id = ? WHERE id = ?;";
@@ -323,5 +324,19 @@ public enum ComputerDao {
 			logger.error(e.getStackTrace().toString());
 		}
 		return nbComputer;
+	}
+	
+	/**
+	 * Delete the given computer from the BDD
+	 * 
+	 * @param computerId
+	 * @throws SQLException 
+	 * @throws SQLException .
+	 */
+	public void deleteComputerWhereCompany(Long CompanyId, Connection connection) throws SQLException {
+		PreparedStatement stmt = connection.prepareStatement(SQL_DELETE_COMPUTER_WHERE_COMPANY);
+		stmt.setLong(1, CompanyId);
+		logger.info(stmt.toString());
+		stmt.executeUpdate();
 	}
 }

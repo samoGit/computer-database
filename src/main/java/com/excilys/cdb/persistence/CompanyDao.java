@@ -29,8 +29,10 @@ public enum CompanyDao {
 
 	private final static String SQL_SELECT_ALL_COMPANY = "SELECT id, name FROM company;";
 	private final static String SQL_SELECT_COMPANY_FROM_ID = "SELECT id, name FROM company WHERE ID = ?;";
+	private final static String SQL_DELETE_COMPANY_FROM_ID = "DELETE FROM company WHERE id = ?;";
 
 	private final ConnectionManager connectionManager = ConnectionManager.INSTANCE;
+	private final ComputerDao computerDao = ComputerDao.INSTANCE;
 
 	/**
 	 * Return the list of companies present in the BDD
@@ -73,5 +75,35 @@ public enum CompanyDao {
 			logger.error(e.getStackTrace().toString());
 		}
 		return company;
+	}
+	
+	public void deleteCompany(Long id) {
+		Connection connection = null;
+		try {
+			connection = connectionManager.getConnection();
+			connection.setAutoCommit(false);
+			
+			computerDao.deleteComputerWhereCompany(id, connection);
+			PreparedStatement stmt = connection.prepareStatement(SQL_DELETE_COMPANY_FROM_ID);
+			stmt.setLong(1, id);
+			logger.info(stmt.toString());
+			stmt.executeUpdate();
+			
+			connection.commit();
+			connection.setAutoCommit(true);
+		} catch (SQLException e) {
+			try {
+				connection.rollback();
+			} catch (SQLException e2) {
+				logger.error("ERROR during connection.rollback : " + e2.toString());
+			}
+			logger.error(e.getMessage());
+		} finally {
+			try {
+				connection.close();
+			} catch (SQLException e2) {
+				logger.error("ERROR during connection.close : " + e2.toString());
+			}
+		}
 	}
 }

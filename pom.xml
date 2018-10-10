@@ -18,7 +18,7 @@
 
 		<junit.version>4.12</junit.version>
 		<mysql.version>5.1.6</mysql.version>
-		<ch.qos.logback.version>1.0.13</ch.qos.logback.version>
+		<ch.qos.logback.version>1.2.3</ch.qos.logback.version>
 		<org.slf4j.version>1.8.0-beta2</org.slf4j.version>
 		<javax.servlet.version>3.0.1</javax.servlet.version>
 		<jstl.version>1.2</jstl.version>

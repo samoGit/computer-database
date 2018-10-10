@@ -37,5 +37,9 @@ public enum CompanyService {
 	public Optional<Company> getCompanyFromId(Long id) {
 		return companyDao.getCompanyFromId(id);
 	}
+	
+	public void deleteCompany(Long id) {
+		companyDao.deleteCompany(id);		
+	}
 
 }

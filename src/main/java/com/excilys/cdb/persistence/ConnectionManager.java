@@ -18,8 +18,6 @@ public enum ConnectionManager {
 
 	ConnectionManager() {		        
 		File fileHikariProperties = new File(getClass().getClassLoader().getResource("hikari.properties").getFile());
-		System.err.println("________________________________________________________________________________________________________________" + fileHikariProperties.getAbsolutePath());
-
 		config = new HikariConfig(fileHikariProperties.getAbsolutePath());
 		datasource = new HikariDataSource(config);
 	}

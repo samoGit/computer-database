@@ -123,7 +123,7 @@ public class CommandLineInterface {
 		for (Computer computer : listComputers) {
 			ComputerDto computerDto = new ComputerDto();
 			computerDto.setId(String.valueOf(computer.getId()));
-			computerDto.setCompanyName(String.valueOf(computer.getName()));
+			computerDto.setName(String.valueOf(computer.getName()));
 			computerDto.setDateIntroduced(String
 					.valueOf(computer.getDateIntroduced().isPresent() ? computer.getDateIntroduced().get() : "?"));
 			computerDto.setDateDiscontinued(String
@@ -325,6 +325,16 @@ public class CommandLineInterface {
 	}
 
 	/**
+	 * Launch the menu which allows the user to delete a company AND all the computer linked to it.
+	 */
+	protected void launchMenuDeleteCompany() {
+		Optional<String> companyToBeDeleted = this.getCompanyIdFromUser();
+		if (companyToBeDeleted.isPresent())
+			companyService.deleteCompany(Long.valueOf(companyToBeDeleted.get()));
+	}
+	
+	
+	/**
 	 * Launch the main menu.
 	 */
 	public void launchMainMenu() {
@@ -365,12 +375,14 @@ public class CommandLineInterface {
 				case DELETE_COMPUTER:
 					this.launchMenuDeleteComputer();
 					break;
+				case DELETE_COMPANY:
+					this.launchMenuDeleteCompany();
+					break;				
 				case QUIT:
 					stop = true;
 					break;
 				}
 			}
-
 		}
 	}
 
