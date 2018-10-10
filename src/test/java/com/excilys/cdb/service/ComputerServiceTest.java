@@ -15,6 +15,7 @@ import org.junit.Test;
 
 import com.excilys.cdb.builder.ComputerBuilder;
 import com.excilys.cdb.dto.ComputerDto;
+import com.excilys.cdb.mapper.ComputerMapper;
 import com.excilys.cdb.mapper.InvalidComputerException;
 import com.excilys.cdb.mapper.InvalidDateException;
 import com.excilys.cdb.model.Company;
@@ -130,7 +131,7 @@ public class ComputerServiceTest {
 		computerDto.setDateDiscontinued(dateDiscontinuedNewPC);
 		
 		try {
-			computerService.createNewComputer(computerDto);
+			computerService.createNewComputer(ComputerMapper.getComputer(computerDto));
 		}
 		catch (InvalidComputerException | InvalidDateException e) {
 			assertTrue(e.getMessage(), false);
@@ -161,7 +162,7 @@ public class ComputerServiceTest {
 		computerDto.setDateDiscontinued(Optional.of("04/05/2006"));
 		
 		try {
-			computerService.createNewComputer(computerDto);
+			computerService.createNewComputer(ComputerMapper.getComputer(computerDto));
 		}
 		catch (InvalidComputerException | InvalidDateException e) {
 			assertTrue(e.getMessage(), false);
@@ -188,7 +189,7 @@ public class ComputerServiceTest {
 		computerDto.setDateDiscontinued(Optional.of("04/05/2006"));
 		
 		try {
-			computerService.createNewComputer(computerDto);
+			computerService.createNewComputer(ComputerMapper.getComputer(computerDto));
 		}
 		catch (InvalidComputerException | InvalidDateException e) {
 			assertTrue(e.getMessage(), false);

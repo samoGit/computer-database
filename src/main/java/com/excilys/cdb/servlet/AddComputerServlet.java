@@ -13,8 +13,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.excilys.cdb.dto.ComputerDto;
+import com.excilys.cdb.mapper.ComputerMapper;
 import com.excilys.cdb.mapper.InvalidComputerException;
 import com.excilys.cdb.mapper.InvalidDateException;
+import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.service.CompanyService;
 import com.excilys.cdb.service.ComputerService;
 
@@ -67,7 +69,7 @@ public class AddComputerServlet extends HttpServlet {
 		String nbComputersByPageNeverEmpty = nbComputersByPage.isPresent() ? nbComputersByPage.get() : "10";
 
 		try {
-			computerService.createNewComputer(computerDto);
+			computerService.createNewComputer(ComputerMapper.getComputer(computerDto));
 			response.sendRedirect("Dashboard?pageNumber=lastPage&nbComputersByPage="
 					+ nbComputersByPageNeverEmpty);
 		} catch (InvalidComputerException | InvalidDateException e) {

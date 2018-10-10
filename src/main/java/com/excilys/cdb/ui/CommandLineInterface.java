@@ -8,6 +8,7 @@ import java.util.Scanner;
 import java.util.stream.Collectors;
 
 import com.excilys.cdb.dto.ComputerDto;
+import com.excilys.cdb.mapper.ComputerMapper;
 import com.excilys.cdb.mapper.InvalidComputerException;
 import com.excilys.cdb.mapper.InvalidDateException;
 import com.excilys.cdb.model.Company;
@@ -67,7 +68,8 @@ public class CommandLineInterface {
 		Long offset = nbComputers - NB_COMPUTERS_BY_PAGE;
 		boolean stop = false;
 		while (!stop) {
-			List<Computer> listComputers = computerService.getListComputers(offset, NB_COMPUTERS_BY_PAGE, Optional.empty());
+			List<Computer> listComputers = computerService.getListComputers(offset, NB_COMPUTERS_BY_PAGE,
+					Optional.empty());
 			if (listComputers.isEmpty()) {
 				System.out.println("No computers found.");
 			} else {
@@ -119,20 +121,27 @@ public class CommandLineInterface {
 	private void displayTableComputers(List<Computer> listComputers) {
 		System.out.println(
 				"/--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\");
-		this.displayRowComputer("id", "name", "date introduced", "date discontinued", "company");
+		ComputerDto computerDtoTableHeader = new ComputerDto();
+		computerDtoTableHeader.setId("id");
+		computerDtoTableHeader.setName("name");
+		computerDtoTableHeader.setDateIntroduced("date introduced");
+		computerDtoTableHeader.setDateDiscontinued("date discontinued");
+		computerDtoTableHeader.setCompanyName("company");
+		this.displayRowComputer(computerDtoTableHeader);
 		System.out.println(
 				"|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|");
 		for (Computer computer : listComputers) {
-			String strId = String.valueOf(computer.getId());
-			String strName = String.valueOf(computer.getName());
-			String strIntroduced = String
-					.valueOf(computer.getDateIntroduced().isPresent() ? computer.getDateIntroduced().get() : "?");
-			String strDiscontinued = String
-					.valueOf(computer.getDateDiscontinued().isPresent() ? computer.getDateDiscontinued().get() : "?");
-			String strCompanyName = String
-					.valueOf(computer.getCompany().isPresent() ? computer.getCompany().get().getName() : "?");
+			ComputerDto computerDto = new ComputerDto();
+			computerDto.setId(String.valueOf(computer.getId()));
+			computerDto.setCompanyName(String.valueOf(computer.getName()));
+			computerDto.setDateIntroduced(String
+					.valueOf(computer.getDateIntroduced().isPresent() ? computer.getDateIntroduced().get() : "?"));
+			computerDto.setDateDiscontinued(String
+					.valueOf(computer.getDateDiscontinued().isPresent() ? computer.getDateDiscontinued().get() : "?"));
+			computerDto.setCompanyName(
+					String.valueOf(computer.getCompany().isPresent() ? computer.getCompany().get().getName() : "?"));
 
-			this.displayRowComputer(strId, strName, strIntroduced, strDiscontinued, strCompanyName);
+			this.displayRowComputer(computerDto);
 		}
 		System.out.println(
 				"\\--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------/");
@@ -141,11 +150,12 @@ public class CommandLineInterface {
 	/**
 	 * Display a row in the table of computers.
 	 */
-	private void displayRowComputer(String strId, String strName, String strIntroduced, String strDiscontinued,
-			String strCompanyName) {
-		System.out.println("| " + String.format("%1$8s", strId) + " | " + String.format("%1$70s", strName) + " | "
-				+ String.format("%1$20s", strIntroduced) + " | " + String.format("%1$20s", strDiscontinued) + " | "
-				+ String.format("%1$50s", strCompanyName) + " |");
+	private void displayRowComputer(ComputerDto computerDto) {
+		System.out.println("| " + String.format("%1$8s", computerDto.getId()) + " | "
+				+ String.format("%1$70s", computerDto.getName()) + " | "
+				+ String.format("%1$20s", computerDto.getDateIntroduced()) + " | "
+				+ String.format("%1$20s", computerDto.getDateDiscontinued()) + " | "
+				+ String.format("%1$50s", computerDto.getCompanyName()) + " |");
 	}
 
 	/**
@@ -229,11 +239,10 @@ public class CommandLineInterface {
 		computerDto.setDateDiscontinued(this.getDateFromUser(
 				"\n(Expected format = 'DD/MM/YYYY'    or    '?' if unknown)\nDate when discontinued : "));
 		computerDto.setCompanyId(this.getCompanyIdFromUser());
-		
+
 		try {
-			computerService.createNewComputer(computerDto);
-		}
-		catch (InvalidComputerException | InvalidDateException e) {
+			computerService.createNewComputer(ComputerMapper.getComputer(computerDto));
+		} catch (InvalidComputerException | InvalidDateException e) {
 			System.err.println(e.getMessage());
 		}
 	}

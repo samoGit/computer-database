@@ -53,8 +53,7 @@ public enum ComputerService {
 	 * @throws InvalidComputerException
 	 * @throws InvalidDateException
 	 */
-	public void createNewComputer(ComputerDto computerDto) throws InvalidComputerException, InvalidDateException {	
-		Computer newComputer = ComputerMapper.getComputer(computerDto);
+	public void createNewComputer(Computer newComputer) throws InvalidComputerException, InvalidDateException {	
 		logger.info("Create the following computer : " + newComputer);
 		computerDao.createNewComputer(newComputer);
 	}
