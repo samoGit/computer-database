@@ -20,6 +20,7 @@ import com.excilys.cdb.mapper.InvalidComputerException;
 import com.excilys.cdb.mapper.InvalidDateException;
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
+import com.excilys.cdb.model.PageInfo;
 
 /**
  * @author samy
@@ -53,18 +54,20 @@ public class ComputerServiceTest {
 	@Test
 	public void testGetListComputers() {
 		List<Computer> expectedComputerList = new ArrayList<Computer>();
-		expectedComputerList.add(
-			ComputerBuilder.newComputerBuilder().withId(22L).withName("Macintosh II").buildComputer()
-		);
 		expectedComputerList.add(ComputerBuilder.newComputerBuilder()
-												.withId(23L)
-												.withName("Macintosh Plus")
+				.withId(1L)
+				.withName("doNotDelete1")
+				.withCompany(Optional.ofNullable(new Company(Long.valueOf(1), "Apple Inc.")))
+				.buildComputer());
+		expectedComputerList.add(ComputerBuilder.newComputerBuilder()
+												.withId(12L)
+												.withName("Apple III doNotDelete2")
 												.withDateIntroduced(Optional.of(
-														LocalDate.parse("16/01/1986", 
+														LocalDate.parse("01/05/1980", 
 														DateTimeFormatter.ofPattern("dd/MM/yyyy")))
 													)
 												.withDateDiscontinued(Optional.of(
-														LocalDate.parse("15/10/1990", 
+														LocalDate.parse("01/04/1984", 
 														DateTimeFormatter.ofPattern("dd/MM/yyyy")))
 													)
 												.withCompany(Optional.ofNullable(
@@ -73,9 +76,10 @@ public class ComputerServiceTest {
 												.buildComputer()
 			);
 
-		List<Computer> actualComputerList = computerService.getListComputers(10L, 2L, Optional.empty());
+		PageInfo pageInfo = new PageInfo(Optional.of("1"), Optional.of("2"), Optional.empty(), Optional.empty());
+		List<Computer> actualComputerList = computerService.getListComputers(pageInfo);
 
-		for (int i = 0; i < expectedComputerList.size(); i++) {
+		for (int i = 0; i < 2; i++) {
 			assertEquals(expectedComputerList.get(i), actualComputerList.get(i));
 		}
 	}
@@ -106,7 +110,8 @@ public class ComputerServiceTest {
 												   .buildComputer();
 
 		expectedComputerList.add(expectedComputer);
-		List<Computer> actualComputerList = computerService.getListComputersByName(0L, 10L, "HP Mini 1000", Optional.empty());
+		PageInfo pageInfo = new PageInfo(Optional.of("1"), Optional.of("10"), Optional.of("HP Mini 1000"), Optional.empty());
+		List<Computer> actualComputerList = computerService.getListComputersByName(pageInfo);
 
 		assertEquals(expectedComputerList, actualComputerList);
 	}
@@ -118,7 +123,8 @@ public class ComputerServiceTest {
 	@Test
 	public void testCreateNewComputer() {
 		computerService.deleteComputer("testCreateNewComputer");
-		List<Computer> computerListShouldBeEmpty = computerService.getListComputersByName(0L, 10L, "testCreateNewComputer", Optional.empty());
+		PageInfo pageInfo = new PageInfo(Optional.of("1"), Optional.of("10"), Optional.of("testCreateNewComputer"), Optional.empty());
+		List<Computer> computerListShouldBeEmpty = computerService.getListComputersByName(pageInfo);
 		assertTrue(computerListShouldBeEmpty.isEmpty());
 
 		Optional<String> nameNewPC = Optional.ofNullable("testCreateNewComputer");
@@ -137,7 +143,8 @@ public class ComputerServiceTest {
 			assertTrue(e.getMessage(), false);
 		}
 
-		List<Computer> computerListFound = computerService.getListComputersByName(0L, 10L, "testCreateNewComputer", Optional.empty());
+		PageInfo pageInfo2 = new PageInfo(Optional.of("1"), Optional.of("10"), Optional.of("testCreateNewComputer"), Optional.empty());
+		List<Computer> computerListFound = computerService.getListComputersByName(pageInfo2);
 		assertFalse(computerListFound.isEmpty());
 
 		Computer computerFound = computerListFound.get(0);
@@ -168,12 +175,13 @@ public class ComputerServiceTest {
 			assertTrue(e.getMessage(), false);
 		}
 
-		List<Computer> computerListShouldNotBeEmpty = computerService.getListComputersByName(0L, 10L, "testCreateNewComputer", Optional.empty());
+		PageInfo pageInfo = new PageInfo(Optional.of("1"), Optional.of("10"), Optional.of("testCreateNewComputer"), Optional.empty());
+		List<Computer> computerListShouldNotBeEmpty = computerService.getListComputersByName(pageInfo);
 		assertFalse(computerListShouldNotBeEmpty.isEmpty());
 
 		computerService.deleteComputer(computerListShouldNotBeEmpty.get(0).getId().toString());
 
-		List<Computer> computerListShouldBeEmpty = computerService.getListComputersByName(0L, 10L, "testCreateNewComputer", Optional.empty());
+		List<Computer> computerListShouldBeEmpty = computerService.getListComputersByName(pageInfo);
 		assertTrue(computerListShouldBeEmpty.isEmpty());
 	}
 
@@ -195,15 +203,15 @@ public class ComputerServiceTest {
 			assertTrue(e.getMessage(), false);
 		}
 
-		List<Computer> computerListShouldNotBeEmpty = computerService.getListComputersByName(0L, 10L, "testCreateNewComputer", Optional.empty());
+		PageInfo pageInfo = new PageInfo(Optional.of("1"), Optional.of("10"), Optional.of("testCreateNewComputer"), Optional.empty());
+		List<Computer> computerListShouldNotBeEmpty = computerService.getListComputersByName(pageInfo);
 		assertFalse(computerListShouldNotBeEmpty.isEmpty());
 
 		Computer computerToBeUpdate = computerListShouldNotBeEmpty.get(0);
 		computerToBeUpdate.setName("testCreateNewComputer_RENAMED");
 		computerService.updateComputer(computerToBeUpdate, "name");
 
-		List<Computer> computerListAfterRename = computerService
-				.getListComputersByName(0L, 10L, "testCreateNewComputer_RENAMED", Optional.empty());
+		List<Computer> computerListAfterRename = computerService.getListComputersByName(pageInfo);
 		assertFalse(computerListAfterRename.isEmpty());
 
 		Computer computerAfterRename = computerListAfterRename.get(0);

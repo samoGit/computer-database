@@ -19,8 +19,8 @@ import com.excilys.cdb.mapper.InvalidComputerException;
 import com.excilys.cdb.mapper.InvalidDateException;
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
+import com.excilys.cdb.model.PageInfo;
 import com.excilys.cdb.service.CompanyService;
-import com.excilys.cdb.service.ComputerPageService;
 import com.excilys.cdb.service.ComputerService;
 
 /**
@@ -82,7 +82,7 @@ public class EditComputerServlet extends HttpServlet {
 		Optional<String> pageNumber = Optional.ofNullable(request.getParameter("pageNumber"));
 		String pageNumberNeverEmpty = pageNumber.isPresent() ? pageNumber.get() : "1";		
 		Optional<String> nbComputersByPage = Optional.ofNullable(request.getParameter("nbComputersByPage"));
-		String nbComputersByPageNeverEmpty = ComputerPageService.DEFAULT_NB_COMPUTERS_BY_PAGE.toString();
+		String nbComputersByPageNeverEmpty = PageInfo.DEFAULT_NB_COMPUTERS_BY_PAGE.toString();
 		if (nbComputersByPage.isPresent()) {
 			nbComputersByPageNeverEmpty = nbComputersByPage.get();
 		}

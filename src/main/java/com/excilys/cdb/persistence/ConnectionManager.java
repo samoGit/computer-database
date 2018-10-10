@@ -1,5 +1,6 @@
 package com.excilys.cdb.persistence;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -15,8 +16,11 @@ public enum ConnectionManager {
 	private HikariConfig config;
     private DataSource datasource;
 
-	ConnectionManager() {
-        config = new HikariConfig("/home/excilys/eclipse-workspace/cdb/src/main/resources/hikari.properties");
+	ConnectionManager() {		        
+		File fileHikariProperties = new File(getClass().getClassLoader().getResource("hikari.properties").getFile());
+		System.err.println("________________________________________________________________________________________________________________" + fileHikariProperties.getAbsolutePath());
+
+		config = new HikariConfig(fileHikariProperties.getAbsolutePath());
 		datasource = new HikariDataSource(config);
 	}
 

@@ -7,13 +7,13 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.excilys.cdb.mapper.ComputerMapper;
 import com.excilys.cdb.model.Computer;
+import com.excilys.cdb.model.PageInfo;
 
 /**
  * Singleton that manage interactions with the BDD (for Computer).
@@ -53,10 +53,10 @@ public enum ComputerDao {
 
 	private final ConnectionManager connectionManager = ConnectionManager.INSTANCE;
 
-	private String getOrderByValue(Optional<String> orderBy) {
+	private String getOrderByValue(String orderBy) {
 		String orderByValue = "computer.id";
-		if (orderBy.isPresent()) {
-			switch (orderBy.get()) {
+		if (!"".equals(orderBy)) {
+			switch (orderBy) {
 			case "Name":
 				orderByValue = "computer.name";
 				break;
@@ -79,17 +79,17 @@ public enum ComputerDao {
 	 * 
 	 * @return List of {@link Computer}
 	 */
-	public List<Computer> getListComputers(Long offset, Long nbComputersByPage, Optional<String> orderBy) {
+	public List<Computer> getListComputers(PageInfo pageInfo) {
 		ArrayList<Computer> listComputers = new ArrayList<>();
 
 		try (Connection connection = connectionManager.getConnection()) {
 			// We can't use prepared statement for orderBy value in sql...
-			String orderByValue = getOrderByValue(orderBy);
+			String orderByValue = getOrderByValue(pageInfo.getOrderBy());
 			String sqlQuery = String.format(SQL_SELECT_ALL_COMPUTERS, orderByValue, orderByValue);
 			
 			PreparedStatement stmt = connection.prepareStatement(sqlQuery);
-			stmt.setLong(1, offset);
-			stmt.setLong(2, nbComputersByPage);
+			stmt.setLong(1, pageInfo.getOffset());
+			stmt.setLong(2, pageInfo.getNbComputersByPage());
 			logger.info(stmt.toString());
 			ResultSet resultSet = stmt.executeQuery();
 			while (resultSet.next()) {
@@ -108,18 +108,18 @@ public enum ComputerDao {
 	 * @param name String
 	 * @return List of {@link Computer}
 	 */
-	public List<Computer> getListComputersByName(Long offset, Long nbComputersByPage, String searchedName, Optional<String> orderBy) {
+	public List<Computer> getListComputersByName(PageInfo pageInfo) {
 		ArrayList<Computer> listComputers = new ArrayList<>();
 
 		try (Connection connection = connectionManager.getConnection()) {
 			// We can't use prepared statement for orderBy value in sql...
-			String orderByValue = getOrderByValue(orderBy);
+			String orderByValue = getOrderByValue(pageInfo.getOrderBy());
 			String sqlQuery = String.format(SQL_SELECT_ALL_COMPUTERS_BYNAME, orderByValue, orderByValue);
 			
 			PreparedStatement stmt = connection.prepareStatement(sqlQuery);
-			stmt.setString(1, "%"+searchedName+"%");
-			stmt.setLong(2, offset);
-			stmt.setLong(3, nbComputersByPage);
+			stmt.setString(1, "%"+pageInfo.getSearchedName()+"%");
+			stmt.setLong(2, pageInfo.getOffset());
+			stmt.setLong(3, pageInfo.getNbComputersByPage());
 			logger.info(stmt.toString());
 			ResultSet resultSet = stmt.executeQuery();
 			while (resultSet.next()) {

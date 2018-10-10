@@ -3,6 +3,7 @@ package com.excilys.cdb.servlet;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -14,7 +15,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.excilys.cdb.dto.ComputerDto;
-import com.excilys.cdb.service.ComputerPageService;
+import com.excilys.cdb.model.Computer;
+import com.excilys.cdb.model.PageInfo;
 import com.excilys.cdb.service.ComputerService;
 
 /**
@@ -34,46 +36,29 @@ public class DashboardServlet extends HttpServlet {
 			throws ServletException, IOException {
 		logger.info("\n\ndoGet");
 
-		Optional<String> orderBy = Optional.ofNullable(request.getParameter("orderBy"));
-		request.setAttribute("orderBy", orderBy.isPresent() ? orderBy.get() : "");
+		PageInfo pageInfo = new PageInfo(Optional.ofNullable(request.getParameter("pageNumber")), 
+										 Optional.ofNullable(request.getParameter("nbComputersByPage")), 
+										 Optional.ofNullable(request.getParameter("search")), 
+										 Optional.ofNullable(request.getParameter("orderBy")));
 
-		Long nbComputersByPage = ComputerPageService
-				.getNbComputersByPage(Optional.ofNullable(request.getParameter("nbComputersByPage")));
-		request.setAttribute("nbComputersByPage", nbComputersByPage);
-
-		Optional<String> strSearch = Optional.ofNullable(request.getParameter("search"));
-		request.setAttribute("search", strSearch.isPresent() ? strSearch.get() : "");
-
-		Long nbComputers = this.getNbComputer(strSearch);
-		request.setAttribute("nbComputers", nbComputers);
-
-		Long nbPageTotal = ComputerPageService.getNbPageTotal(nbComputersByPage, nbComputers);
-		request.setAttribute("nbPage", nbPageTotal);
-
-		Long pageNumber = ComputerPageService.getPageNumber(Optional.ofNullable(request.getParameter("pageNumber")),
-				nbComputersByPage, nbComputers, nbPageTotal);
-		request.setAttribute("pageNumber", pageNumber);
-
-		List<ComputerDto> listComputerDto = this.getListComputerDto(pageNumber, nbComputersByPage, strSearch, orderBy);
-		request.setAttribute("listComputerDtos", listComputerDto);
+		request.setAttribute("pageNumber", pageInfo.getPageNumber());
+		request.setAttribute("nbComputersByPage", pageInfo.getNbComputersByPage());		
+		request.setAttribute("search", pageInfo.getSearchedName());
+		request.setAttribute("orderBy", pageInfo.getOrderBy());
+		request.setAttribute("nbComputers", pageInfo.getNbComputers());
+		request.setAttribute("nbPage", pageInfo.getNbPageTotal());
+		request.setAttribute("listComputerDtos", this.getListComputerDto(pageInfo));
 
 		this.getServletContext().getRequestDispatcher("/WEB-INF/views/dashboard.jsp").forward(request, response);
 	}
 
-	private Long getNbComputer(Optional<String> strSearch) {
-		if (!strSearch.isPresent() || "".equals(strSearch.get())) {
-			return computerService.getNbComputers();
+	private List<ComputerDto> getListComputerDto(PageInfo pageInfo) {
+		if (!"".equals(pageInfo.getSearchedName())) {
+			List<Computer> listComputer = computerService.getListComputersByName(pageInfo);
+			return listComputer.stream().map(c -> new ComputerDto(c)).collect(Collectors.toList());
 		} else {
-			return computerService.getNbComputersByName(strSearch.get());
-		}
-	}
-
-	private List<ComputerDto> getListComputerDto(Long pageNumber, Long nbComputersByPage, Optional<String> strSearch, Optional<String> orderBy) {
-		if (strSearch.isPresent() && !"".equals(strSearch.get())) {
-			return ComputerPageService.getListComputerDtosByName(pageNumber, nbComputersByPage,
-					strSearch.get(), orderBy);
-		} else {
-			return ComputerPageService.getListComputerDtos(pageNumber, nbComputersByPage, orderBy);
+			List<Computer> listComputer = computerService.getListComputers(pageInfo);
+			return listComputer.stream().map(c -> new ComputerDto(c)).collect(Collectors.toList());	
 		}
 	}
 

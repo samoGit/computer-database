@@ -13,6 +13,7 @@ import com.excilys.cdb.mapper.InvalidComputerException;
 import com.excilys.cdb.mapper.InvalidDateException;
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
+import com.excilys.cdb.model.PageInfo;
 import com.excilys.cdb.service.CompanyService;
 import com.excilys.cdb.service.ComputerService;
 
@@ -22,8 +23,6 @@ import com.excilys.cdb.service.ComputerService;
  * @author samy
  */
 public class CommandLineInterface {
-
-	public static final Long NB_COMPUTERS_BY_PAGE = Long.valueOf(20);
 
 	private CompanyService companyService;
 	private ComputerService computerService;
@@ -63,13 +62,10 @@ public class CommandLineInterface {
 	 * Display info about all computers.
 	 */
 	protected void displayAllComputers() {
-		Long nbComputers = computerService.getNbComputers();
-
-		Long offset = nbComputers - NB_COMPUTERS_BY_PAGE;
+		PageInfo pageInfo = new PageInfo(Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
 		boolean stop = false;
 		while (!stop) {
-			List<Computer> listComputers = computerService.getListComputers(offset, NB_COMPUTERS_BY_PAGE,
-					Optional.empty());
+			List<Computer> listComputers = computerService.getListComputers(pageInfo);
 			if (listComputers.isEmpty()) {
 				System.out.println("No computers found.");
 			} else {
@@ -96,16 +92,10 @@ public class CommandLineInterface {
 			if (userChoice.isPresent()) {
 				switch (userChoice.get()) {
 				case NEXT_PAGE:
-					offset += NB_COMPUTERS_BY_PAGE;
-					if (offset >= nbComputers) {
-						offset = Long.valueOf(0);
-					}
+					pageInfo.setPageNumber(pageInfo.getPageNumber()+1);
 					break;
 				case PREVIOUS_PAGE:
-					offset -= NB_COMPUTERS_BY_PAGE;
-					if (offset < 0) {
-						offset = nbComputers - NB_COMPUTERS_BY_PAGE;
-					}
+					pageInfo.setPageNumber(pageInfo.getPageNumber()-1);
 					break;
 				case BACK_TO_MENU:
 					stop = true;
@@ -165,7 +155,8 @@ public class CommandLineInterface {
 	protected void launchMenuShowDetailComputer() {
 		System.out.println("\n\nPlease enter the name of a computer : ");
 		String name = scanner.nextLine();
-		List<Computer> listComputersFound = computerService.getListComputersByName(0L, 10L, name, Optional.empty());
+		PageInfo pageInfo = new PageInfo(Optional.empty(), Optional.empty(), Optional.of(name), Optional.empty());
+		List<Computer> listComputersFound = computerService.getListComputersByName(pageInfo);
 		if (listComputersFound.isEmpty()) {
 			System.out.println("The computer '" + name + "' is not found.");
 		} else {
@@ -256,7 +247,8 @@ public class CommandLineInterface {
 		System.out.println("\nEnter the name of the computer : ");
 		String name = scanner.nextLine();
 
-		List<Computer> listComputersFound = computerService.getListComputersByName(0L, 10L, name, Optional.empty());
+		PageInfo pageInfo = new PageInfo(Optional.empty(), Optional.empty(), Optional.of(name), Optional.empty());
+		List<Computer> listComputersFound = computerService.getListComputersByName(pageInfo);
 
 		if (listComputersFound.isEmpty()) {
 			System.out.println("No computer found with this name.");

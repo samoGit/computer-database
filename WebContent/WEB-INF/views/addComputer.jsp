@@ -54,8 +54,8 @@
 						<fieldset>
 							<div class="form-group">
 								<label for="computerName">Computer name</label> <input
-									type="text" class="form-control" id="computerName"
-									name="computerName" placeholder="Computer name" value="${computerName}">
+									type="text" class="form-control" id="computerName" 
+									name="computerName" placeholder="Computer name" value="${computerName}" required>
 							</div>
 							<div class="form-group">
 								<label for="dateIntroduced">Introduced date</label> <input
@@ -75,7 +75,6 @@
 										<option 
 											value="${company.id}"
 											<c:if test="${company.id == companyId}"> selected="selected"</c:if>>
-										>
 											${company.name}
 										</option>
 									</c:forEach>

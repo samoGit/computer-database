@@ -70,12 +70,10 @@ public class ComputerMapper {
 	}
 
 	public static Computer getComputer(ComputerDto computerDto) throws InvalidComputerException, InvalidDateException {
-
 		Long id = null;
 		if (!"".equals(computerDto.getId())) {
 			id = Long.valueOf(computerDto.getId());
 		}
-
 		if ("".equals(computerDto.getName())) {
 			throw new InvalidComputerException("Computer name value should not be empty.");
 		}
@@ -101,12 +99,8 @@ public class ComputerMapper {
 			}
 		}
 
-		return ComputerBuilder.newComputerBuilder()
-							  .withId(id)
-							  .withName(computerDto.getName())
-							  .withDateIntroduced(dateIntroduced)
-							  .withDateDiscontinued(dateDiscontinued)
-							  .withCompany(company)
-							  .buildComputer();
+		return ComputerBuilder.newComputerBuilder().withId(id).withName(computerDto.getName())
+							  .withDateIntroduced(dateIntroduced).withDateDiscontinued(dateDiscontinued)
+							  .withCompany(company).buildComputer();
 	}
 }
