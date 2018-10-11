@@ -5,10 +5,12 @@ import static org.junit.Assert.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.excilys.cdb.model.Company;
+import com.excilys.cdb.persistence.ConnectionManager;
 
 public class CompanyServiceTest {
 
@@ -17,6 +19,12 @@ public class CompanyServiceTest {
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		companyService = CompanyService.INSTANCE;
+		ConnectionManager.INSTANCE.activateTestMode();
+	}
+
+	@AfterClass
+	public static void setUpAfterClass() throws Exception {
+		ConnectionManager.INSTANCE.deactivateTestMode();
 	}
 
 	@Test

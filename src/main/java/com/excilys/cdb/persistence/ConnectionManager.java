@@ -25,4 +25,13 @@ public enum ConnectionManager {
 	public Connection getConnection() throws SQLException {
 		return datasource.getConnection();
 	}
+	
+	public void activateTestMode() {
+		config.setJdbcUrl("jdbc:mysql://127.0.0.1:3306/computer-database-db-test?useSSL=false");
+		datasource = new HikariDataSource(config);
+	}
+	public void deactivateTestMode() {
+		config.setJdbcUrl("jdbc:mysql://127.0.0.1:3306/computer-database-db?useSSL=false");
+		datasource = new HikariDataSource(config);
+	}
 }

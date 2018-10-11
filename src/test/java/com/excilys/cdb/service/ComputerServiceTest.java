@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -21,6 +22,7 @@ import com.excilys.cdb.mapper.InvalidDateException;
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.model.PageInfo;
+import com.excilys.cdb.persistence.ConnectionManager;
 
 /**
  * @author samy
@@ -30,12 +32,15 @@ public class ComputerServiceTest {
 
 	private static ComputerService computerService;
 
-	/**
-	 * @throws java.lang.Exception
-	 */
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		computerService = ComputerService.INSTANCE;
+		ConnectionManager.INSTANCE.activateTestMode();
+	}
+
+	@AfterClass
+	public static void setUpAfterClass() throws Exception {
+		ConnectionManager.INSTANCE.deactivateTestMode();
 	}
 
 	/**
@@ -55,19 +60,19 @@ public class ComputerServiceTest {
 	public void testGetListComputers() {
 		List<Computer> expectedComputerList = new ArrayList<Computer>();
 		expectedComputerList.add(ComputerBuilder.newComputerBuilder()
-				.withId(1L)
-				.withName("doNotDelete1")
+				.withId(579L)
+				.withName("0000")
 				.withCompany(Optional.ofNullable(new Company(Long.valueOf(1), "Apple Inc.")))
 				.buildComputer());
 		expectedComputerList.add(ComputerBuilder.newComputerBuilder()
-												.withId(12L)
-												.withName("Apple III doNotDelete2")
+												.withId(580L)
+												.withName("0001")
 												.withDateIntroduced(Optional.of(
-														LocalDate.parse("01/05/1980", 
+														LocalDate.parse("01/01/2001", 
 														DateTimeFormatter.ofPattern("dd/MM/yyyy")))
 													)
 												.withDateDiscontinued(Optional.of(
-														LocalDate.parse("01/04/1984", 
+														LocalDate.parse("02/02/2002", 
 														DateTimeFormatter.ofPattern("dd/MM/yyyy")))
 													)
 												.withCompany(Optional.ofNullable(
@@ -76,7 +81,7 @@ public class ComputerServiceTest {
 												.buildComputer()
 			);
 
-		PageInfo pageInfo = new PageInfo(Optional.of("1"), Optional.of("2"), Optional.empty(), Optional.empty());
+		PageInfo pageInfo = new PageInfo(Optional.of("1"), Optional.of("2"), Optional.empty(), Optional.of("Name"));
 		List<Computer> actualComputerList = computerService.getListComputers(pageInfo);
 
 		for (int i = 0; i < 2; i++) {
