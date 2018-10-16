@@ -17,17 +17,17 @@ public class DateMapper {
 	 * @return Optional of LocalDate
 	 * @throws InvalidDateException
 	 */
-	public static Optional<LocalDate> getLocalDate(Optional<String> strDate, String dateFieldName) throws InvalidDateException {
+	public static Optional<LocalDate> getLocalDate(String strDate, String dateFieldName) throws InvalidDateException {
 		Optional<LocalDate> date = Optional.empty();
 		try {
-			if (strDate.isPresent() && !"".equals(strDate.get())) {
-				date = Optional.ofNullable(LocalDate.parse(strDate.get(), DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+			if (!"".equals(strDate)) {
+				date = Optional.ofNullable(LocalDate.parse(strDate, DateTimeFormatter.ofPattern("yyyy-MM-dd")));
 			}
 		} catch (DateTimeException e) {
 			try {
-				date = Optional.ofNullable(LocalDate.parse(strDate.get(), DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+				date = Optional.ofNullable(LocalDate.parse(strDate, DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 			} catch (DateTimeException dateTimeException) {
-				throw new InvalidDateException("The date " + dateFieldName + " ('" + strDate.get() + "') has an incorect format. The expected date format is dd/MM/yyyy");
+				throw new InvalidDateException("The date " + dateFieldName + " ('" + strDate + "') has an incorect format. The expected date format is dd/MM/yyyy");
 			}
 		}
 		return date;

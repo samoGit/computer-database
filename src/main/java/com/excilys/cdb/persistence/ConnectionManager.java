@@ -1,9 +1,12 @@
 package com.excilys.cdb.persistence;
 
+import java.io.File;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import javax.sql.DataSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -11,16 +14,41 @@ import com.zaxxer.hikari.HikariDataSource;
 public enum ConnectionManager {
 
 	INSTANCE;
-	
+
 	private HikariConfig config;
-    private DataSource datasource;
+	private HikariDataSource datasource;
+	private boolean isTestModeActivated;
+	private final Logger logger = LoggerFactory.getLogger("ComputerDao");
 
 	ConnectionManager() {
-        config = new HikariConfig("/home/excilys/eclipse-workspace/cdb/src/main/resources/hikari.properties");
+		File fileHikariProperties = new File(getClass().getClassLoader().getResource("hikari.properties").getFile());
+		config = new HikariConfig(fileHikariProperties.getAbsolutePath());
 		datasource = new HikariDataSource(config);
+		isTestModeActivated = false;
+
+		// Register JDBC driver (just for test)
+		try {
+			Class.forName("org.h2.Driver");
+		} catch (ClassNotFoundException e) {
+			logger.error("Impossible to register JDBC driver.");
+		}
 	}
 
 	public Connection getConnection() throws SQLException {
-		return datasource.getConnection();
+		if (isTestModeActivated) {
+			return DriverManager.getConnection("jdbc:h2:mem:cbd_test;"
+					+ "INIT=RUNSCRIPT FROM '/home/excilys/eclipse-workspace/cdb/src/test/resources/scripts/dbtest.sql'",
+					"ADMINCDBTEST", "qwerty1234");
+		} else {
+			return datasource.getConnection();
+		}
+	}
+
+	public void activateTestMode() {
+		isTestModeActivated = true;
+	}
+
+	public void deactivateTestMode() {
+		isTestModeActivated = false;
 	}
 }

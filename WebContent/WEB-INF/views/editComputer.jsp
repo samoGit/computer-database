@@ -57,7 +57,7 @@
 							<div class="form-group">
 								<label for="computerName">Computer name</label> <input
 									type="text" class="form-control" id="computerName" name="computerName" 
-									value="${computerName}">
+									value="${computerName}" required>
 							</div>
 							<div class="form-group">
 								<label for="dateIntroduced">Introduced date</label> <input
@@ -72,6 +72,7 @@
 							<div class="form-group">
 								<label for="companyId">Company</label> <select
 									class="form-control" id="companyId"  name="companyId">
+									<option value="">-</option>
 									<c:forEach var="company" items="${listCompanies}">
 										<option value="${company.id}" 
 											<c:if test="${company.name == companyName}"> selected="selected"</c:if>>

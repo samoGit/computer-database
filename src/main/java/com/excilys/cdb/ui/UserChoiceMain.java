@@ -5,7 +5,8 @@ import java.util.Optional;
 public enum UserChoiceMain {
 	DISPLAY_COMPUTERS(1, "Display the list of Computers"), DISPLAY_COMPANIES(2, "Display the list of Companies"),
 	SHOW_COMPUTER_DETAILS(3, "Show computer details"), CREATE_COMPUTER(4, "Create a computer"),
-	UPDATE_COMPUTER(5, "Update a computer"), DELETE_COMPUTER(6, "Delete a computer"), QUIT(0, "Quit");
+	UPDATE_COMPUTER(5, "Update a computer"), DELETE_COMPUTER(6, "Delete a computer"),
+	DELETE_COMPANY(7, "Delete company"), QUIT(0, "Quit");
 
 	private final Integer value;
 	private final String message;

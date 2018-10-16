@@ -22,15 +22,6 @@ public class Computer {
 	public Computer() {
 	}
 
-	public Computer(Long id, String name, Optional<LocalDate> dateIntroduced, Optional<LocalDate> dateDiscontinued,
-			Optional<Company> company) {
-		this.id = id;
-		this.name = name;
-		this.dateIntroduced = dateIntroduced;
-		this.dateDiscontinued = dateDiscontinued;
-		this.company = company;
-	}
-
 	public Long getId() {
 		return id;
 	}

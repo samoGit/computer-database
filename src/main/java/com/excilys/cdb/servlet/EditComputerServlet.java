@@ -13,11 +13,13 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.excilys.cdb.dto.ComputerDto;
 import com.excilys.cdb.mapper.ComputerMapper;
 import com.excilys.cdb.mapper.InvalidComputerException;
 import com.excilys.cdb.mapper.InvalidDateException;
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
+import com.excilys.cdb.model.PageInfo;
 import com.excilys.cdb.service.CompanyService;
 import com.excilys.cdb.service.ComputerService;
 
@@ -70,19 +72,23 @@ public class EditComputerServlet extends HttpServlet {
 			throws ServletException, IOException {
 		logger.info("\n\ndoPost");
 
-		Optional<String> computerId = Optional.ofNullable(request.getParameter("computerId"));
-		Optional<String> computerName = Optional.ofNullable(request.getParameter("computerName"));
-		Optional<String> strIntroduced = Optional.ofNullable(request.getParameter("dateIntroduced"));
-		Optional<String> strDiscontinued = Optional.ofNullable(request.getParameter("dateDiscontinued"));
-		Optional<String> companyId = Optional.ofNullable(request.getParameter("companyId"));
-
+		ComputerDto computerDto = new ComputerDto();
+		computerDto.setId(Optional.ofNullable(request.getParameter("computerId")));
+		computerDto.setName(Optional.ofNullable(request.getParameter("computerName")));
+		computerDto.setDateIntroduced(Optional.ofNullable(request.getParameter("dateIntroduced")));
+		computerDto.setDateDiscontinued(Optional.ofNullable(request.getParameter("dateDiscontinued")));
+		computerDto.setCompanyId(Optional.ofNullable(request.getParameter("companyId")));
+		
 		Optional<String> pageNumber = Optional.ofNullable(request.getParameter("pageNumber"));
-		String pageNumberNeverEmpty = pageNumber.isPresent() ? pageNumber.get() : "1";
+		String pageNumberNeverEmpty = pageNumber.isPresent() ? pageNumber.get() : "1";		
 		Optional<String> nbComputersByPage = Optional.ofNullable(request.getParameter("nbComputersByPage"));
-		String nbComputersByPageNeverEmpty = nbComputersByPage.isPresent() ? nbComputersByPage.get() : "10";
+		String nbComputersByPageNeverEmpty = PageInfo.DEFAULT_NB_COMPUTERS_BY_PAGE.toString();
+		if (nbComputersByPage.isPresent()) {
+			nbComputersByPageNeverEmpty = nbComputersByPage.get();
+		}
 
 		try {
-			Computer computer = ComputerMapper.getComputer(computerId, computerName, strIntroduced, strDiscontinued, companyId); 
+			Computer computer = ComputerMapper.getComputer(computerDto); 
 			logger.info("computer to be update = " + computer);
 			computerService.updateComputer(computer);
 			
@@ -92,21 +98,11 @@ public class EditComputerServlet extends HttpServlet {
 			String errorMsg = e.getMessage();
 			logger.warn(errorMsg);
 
-			if (computerId.isPresent()) {
-				request.setAttribute("computerId", computerId.get());
-			}
-			if (computerName.isPresent()) {
-				request.setAttribute("computerName", computerName.get());
-			}
-			if (strIntroduced.isPresent()) {
-				request.setAttribute("dateIntroduced", strIntroduced.get());
-			}
-			if (strDiscontinued.isPresent()) {
-				request.setAttribute("dateDiscontinued", strDiscontinued.get());
-			}
-			if (companyId.isPresent()) {
-				request.setAttribute("companyId", companyId.get());
-			}
+			request.setAttribute("computerId", computerDto.getCompanyId());
+			request.setAttribute("computerName", computerDto.getName());
+			request.setAttribute("dateIntroduced", computerDto.getDateIntroduced());
+			request.setAttribute("dateDiscontinued", computerDto.getDateDiscontinued());
+			request.setAttribute("companyId", computerDto.getCompanyId());
 
 			request.setAttribute("listCompanies", companyService.getListCompanies());
 			request.setAttribute("pageNumber", pageNumberNeverEmpty);
@@ -115,5 +111,5 @@ public class EditComputerServlet extends HttpServlet {
 			
 			this.getServletContext().getRequestDispatcher("/WEB-INF/views/editComputer.jsp").forward(request, response);
 		}
-	}
+	}	
 }

@@ -1,16 +1,14 @@
 package com.excilys.cdb.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.excilys.cdb.mapper.ComputerMapper;
 import com.excilys.cdb.mapper.InvalidComputerException;
 import com.excilys.cdb.mapper.InvalidDateException;
-import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
+import com.excilys.cdb.model.PageInfo;
 import com.excilys.cdb.persistence.ComputerDao;
 
 /**
@@ -32,8 +30,8 @@ public enum ComputerService {
 	 * 
 	 * @return List of {@link Computer}
 	 */
-	public List<Computer> getListComputers(Long offset, Long nbComputersByPage, Optional<String> orderBy) {
-		return computerDao.getListComputers(offset, nbComputersByPage, orderBy);
+	public List<Computer> getListComputers(PageInfo pageInfo) {
+		return computerDao.getListComputers(pageInfo);
 	}
 	
 	/**
@@ -41,24 +39,18 @@ public enum ComputerService {
 	 * 
 	 * @return List of {@link Computer}
 	 */
-	public List<Computer> getListComputersByName(Long offset, Long nbComputersByPage, String searchedName, Optional<String> orderBy) {
-		return computerDao.getListComputersByName(offset, nbComputersByPage, searchedName, orderBy);
+	public List<Computer> getListComputersByName(PageInfo pageInfo) {
+		return computerDao.getListComputersByName(pageInfo);
 	}
 
 	/**
 	 * Create a new computer in the BDD
 	 * 
-	 * @param name         String
-	 * @param introduced   LocalDate
-	 * @param discontinued LocalDate
-	 * @param company      {@link Company}
+	 * @param computerDto
 	 * @throws InvalidComputerException
-	 * @throws InvalidDateException 
+	 * @throws InvalidDateException
 	 */
-	public void createNewComputer(Optional<String> computerName, Optional<String> strDateIntroduced,
-			Optional<String> strDateDiscontinued, Optional<String> strCompanyId) throws InvalidComputerException, InvalidDateException {
-		
-		Computer newComputer = ComputerMapper.getComputer(computerName, strDateIntroduced, strDateDiscontinued, strCompanyId);
+	public void createNewComputer(Computer newComputer) throws InvalidComputerException, InvalidDateException {	
 		logger.info("Create the following computer : " + newComputer);
 		computerDao.createNewComputer(newComputer);
 	}

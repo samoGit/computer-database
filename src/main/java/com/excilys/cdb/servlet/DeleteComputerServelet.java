@@ -20,7 +20,7 @@ import com.excilys.cdb.service.ComputerService;
 @WebServlet("/DeleteComputerServelet")
 public class DeleteComputerServelet extends HttpServlet {
 	private static final long serialVersionUID = -6028278204408049563L;
-	
+
 	private static ComputerService computerService = ComputerService.INSTANCE;
 	private final Logger logger = LoggerFactory.getLogger("DashboardServlet");
 
