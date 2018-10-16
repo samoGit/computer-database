@@ -82,15 +82,14 @@ public enum CompanyDao {
 		try {
 			connection = connectionManager.getConnection();
 			connection.setAutoCommit(false);
-			
+
 			computerDao.deleteComputerWhereCompany(id, connection);
 			PreparedStatement stmt = connection.prepareStatement(SQL_DELETE_COMPANY_FROM_ID);
 			stmt.setLong(1, id);
 			logger.info(stmt.toString());
 			stmt.executeUpdate();
-			
+
 			connection.commit();
-			connection.setAutoCommit(true);
 		} catch (SQLException e) {
 			try {
 				connection.rollback();
