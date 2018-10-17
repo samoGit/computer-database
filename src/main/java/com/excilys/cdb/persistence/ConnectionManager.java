@@ -7,20 +7,20 @@ import java.sql.SQLException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Repository;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
-public enum ConnectionManager {
-
-	INSTANCE;
+@Repository
+public class ConnectionManager {
 
 	private HikariConfig config;
 	private HikariDataSource datasource;
 	private boolean isTestModeActivated;
 	private final Logger logger = LoggerFactory.getLogger("ComputerDao");
 
-	ConnectionManager() {
+	public ConnectionManager() {
 		File fileHikariProperties = new File(getClass().getClassLoader().getResource("hikari.properties").getFile());
 		config = new HikariConfig(fileHikariProperties.getAbsolutePath());
 		datasource = new HikariDataSource(config);

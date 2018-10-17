@@ -10,6 +10,8 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import com.excilys.cdb.mapper.ComputerMapper;
 import com.excilys.cdb.model.Computer;
@@ -20,11 +22,8 @@ import com.excilys.cdb.model.PageInfo;
  * 
  * @author samy
  */
-public enum ComputerDao {
-	/**
-	 * Instance of {@link ComputerDao} (for Singleton pattern).
-	 */
-	INSTANCE;
+@Repository
+public class ComputerDao {
 
 	private final Logger logger = LoggerFactory.getLogger("ComputerDao");
 
@@ -52,7 +51,10 @@ public enum ComputerDao {
 	private final static String SQL_UPDATE_COMPUTER_ALLFIELDS = "UPDATE computer SET name = ?"
 			+ ", introduced = ?, discontinued = ?, company_id = ? WHERE id = ?;";
 
-	private final ConnectionManager connectionManager = ConnectionManager.INSTANCE;
+	@Autowired
+	private ConnectionManager connectionManager;
+	@Autowired
+	private ComputerMapper computerMapper;
 
 	private String getOrderByValue(String orderBy) {
 		String orderByValue = "computer.id";
@@ -94,7 +96,7 @@ public enum ComputerDao {
 			logger.info(stmt.toString());
 			ResultSet resultSet = stmt.executeQuery();
 			while (resultSet.next()) {
-				listComputers.add(ComputerMapper.getComputer(resultSet));
+				listComputers.add(computerMapper.getComputer(resultSet));
 			}
 		} catch (SQLException e) {
 			logger.error(e.getMessage());
@@ -124,7 +126,7 @@ public enum ComputerDao {
 			logger.info(stmt.toString());
 			ResultSet resultSet = stmt.executeQuery();
 			while (resultSet.next()) {
-				listComputers.add(ComputerMapper.getComputer(resultSet));
+				listComputers.add(computerMapper.getComputer(resultSet));
 			}
 		} catch (SQLException e) {
 			logger.error(e.getMessage());

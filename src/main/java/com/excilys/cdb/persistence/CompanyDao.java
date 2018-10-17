@@ -10,6 +10,8 @@ import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import com.excilys.cdb.mapper.CompanyMapper;
 import com.excilys.cdb.model.Company;
@@ -19,11 +21,8 @@ import com.excilys.cdb.model.Company;
  * 
  * @author samy
  */
-public enum CompanyDao {
-	/**
-	 * Instance of {@link CompanyDao} (for Singleton pattern).
-	 */
-	INSTANCE;
+@Repository
+public class CompanyDao {
 
 	private final Logger logger = LoggerFactory.getLogger("CompanyDao");
 
@@ -31,8 +30,10 @@ public enum CompanyDao {
 	private final static String SQL_SELECT_COMPANY_FROM_ID = "SELECT id, name FROM company WHERE ID = ?;";
 	private final static String SQL_DELETE_COMPANY_FROM_ID = "DELETE FROM company WHERE id = ?;";
 
-	private final ConnectionManager connectionManager = ConnectionManager.INSTANCE;
-	private final ComputerDao computerDao = ComputerDao.INSTANCE;
+	@Autowired
+	private ConnectionManager connectionManager;	
+	@Autowired
+	private ComputerDao computerDao;
 
 	/**
 	 * Return the list of companies present in the BDD

@@ -2,13 +2,18 @@ package com.excilys.cdb.model;
 
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.excilys.cdb.service.ComputerService;
 
+//@Component
 public class PageInfo {
 
 	public final static Long DEFAULT_NB_COMPUTERS_BY_PAGE = 10L;
 
-	private final ComputerService computerService = ComputerService.INSTANCE;
+//	@Autowired
+//	private ComputerService computerService;
 
 	private Long pageNumber;
 	private Long nbComputersByPage;
@@ -19,9 +24,9 @@ public class PageInfo {
 	private String orderBy;
 
 	public PageInfo(Optional<String> pageNumber, Optional<String> nbComputersByPage, Optional<String> searchedName,
-			Optional<String> orderBy) {
+			Optional<String> orderBy, Long nbComputers) {
 		this.nbComputersByPage = getNbComputersByPage(nbComputersByPage);
-		this.nbComputers = getNbComputers(searchedName);
+		this.nbComputers = nbComputers;
 		this.nbPageTotal = getNbPageTotal(this.nbComputersByPage, this.nbComputers);
 		this.pageNumber = getPageNumber(pageNumber, this.nbPageTotal);
 		this.offset = (this.pageNumber - 1) * this.nbComputersByPage;
@@ -36,14 +41,6 @@ public class PageInfo {
 		}
 		else {
 			return DEFAULT_NB_COMPUTERS_BY_PAGE;
-		}
-	}
-	
-	private Long getNbComputers(Optional<String> searchedName) {
-		if (!searchedName.isPresent() || "".equals(searchedName.get())) {
-			return computerService.getNbComputers();
-		} else {
-			return computerService.getNbComputersByName(searchedName.get());
 		}
 	}
 

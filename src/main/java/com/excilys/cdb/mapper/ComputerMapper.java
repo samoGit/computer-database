@@ -6,6 +6,9 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.excilys.cdb.builder.ComputerBuilder;
 import com.excilys.cdb.dto.ComputerDto;
 import com.excilys.cdb.model.Company;
@@ -19,9 +22,11 @@ import com.excilys.cdb.service.CompanyService;
  * @author samy
  *
  */
+@Component
 public class ComputerMapper {
 
-	private static CompanyService companyService = CompanyService.INSTANCE;
+	@Autowired
+	private CompanyService companyService;
 
 	/**
 	 * This class only provides static methods and should not be instantiated
@@ -38,7 +43,7 @@ public class ComputerMapper {
 	 *                      error occurs or this method is called on a closed result
 	 *                      set
 	 */
-	public static Computer getComputer(ResultSet resultSet) throws SQLException {
+	public Computer getComputer(ResultSet resultSet) throws SQLException {
 		Long id = resultSet.getLong("computer.id");
 		String name = resultSet.getString("computer.name");
 
@@ -69,7 +74,7 @@ public class ComputerMapper {
 							  .buildComputer();
 	}
 
-	public static Computer getComputer(ComputerDto computerDto) throws InvalidComputerException, InvalidDateException {
+	public Computer getComputer(ComputerDto computerDto) throws InvalidComputerException, InvalidDateException {
 		Long id = null;
 		if (!"".equals(computerDto.getId())) {
 			id = Long.valueOf(computerDto.getId());

@@ -7,6 +7,10 @@ import java.util.Optional;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
+
 import com.excilys.cdb.dto.ComputerDto;
 import com.excilys.cdb.mapper.ComputerMapper;
 import com.excilys.cdb.mapper.InvalidComputerException;
@@ -22,10 +26,15 @@ import com.excilys.cdb.service.ComputerService;
  * 
  * @author samy
  */
+@Component
 public class CommandLineInterface {
 
+	@Autowired
 	private CompanyService companyService;
+	@Autowired
 	private ComputerService computerService;
+	@Autowired
+	private ComputerMapper computerMapper;
 
 	/**
 	 * Manage interaction with the user.
@@ -36,8 +45,6 @@ public class CommandLineInterface {
 	 * Constructor, init services.
 	 */
 	public CommandLineInterface() {
-		companyService = CompanyService.INSTANCE;
-		computerService = ComputerService.INSTANCE;
 		scanner = new Scanner(System.in);
 	}
 
@@ -62,7 +69,7 @@ public class CommandLineInterface {
 	 * Display info about all computers.
 	 */
 	protected void displayAllComputers() {
-		PageInfo pageInfo = new PageInfo(Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
+		PageInfo pageInfo = new PageInfo(Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), computerService.getNbComputers());
 		boolean stop = false;
 		while (!stop) {
 			List<Computer> listComputers = computerService.getListComputers(pageInfo);
@@ -155,7 +162,7 @@ public class CommandLineInterface {
 	protected void launchMenuShowDetailComputer() {
 		System.out.println("\n\nPlease enter the name of a computer : ");
 		String name = scanner.nextLine();
-		PageInfo pageInfo = new PageInfo(Optional.empty(), Optional.empty(), Optional.of(name), Optional.empty());
+		PageInfo pageInfo = new PageInfo(Optional.empty(), Optional.empty(), Optional.of(name), Optional.empty(), computerService.getNbComputers());
 		List<Computer> listComputersFound = computerService.getListComputersByName(pageInfo);
 		if (listComputersFound.isEmpty()) {
 			System.out.println("The computer '" + name + "' is not found.");
@@ -232,7 +239,7 @@ public class CommandLineInterface {
 		computerDto.setCompanyId(this.getCompanyIdFromUser());
 
 		try {
-			computerService.createNewComputer(ComputerMapper.getComputer(computerDto));
+			computerService.createNewComputer(computerMapper.getComputer(computerDto));
 		} catch (InvalidComputerException | InvalidDateException e) {
 			System.err.println(e.getMessage());
 		}
@@ -247,7 +254,7 @@ public class CommandLineInterface {
 		System.out.println("\nEnter the name of the computer : ");
 		String name = scanner.nextLine();
 
-		PageInfo pageInfo = new PageInfo(Optional.empty(), Optional.empty(), Optional.of(name), Optional.empty());
+		PageInfo pageInfo = new PageInfo(Optional.empty(), Optional.empty(), Optional.of(name), Optional.empty(), computerService.getNbComputers());
 		List<Computer> listComputersFound = computerService.getListComputersByName(pageInfo);
 
 		if (listComputersFound.isEmpty()) {
@@ -393,6 +400,7 @@ public class CommandLineInterface {
 	 */
 	public static void main(String[] args) {
 		System.out.println("Hello !");
+
 		CommandLineInterface CLI = new CommandLineInterface();
 		CLI.launchMainMenu();
 		System.out.println("Goodbye !");

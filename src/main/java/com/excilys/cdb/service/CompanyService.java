@@ -3,6 +3,9 @@ package com.excilys.cdb.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.persistence.CompanyDao;
 
@@ -11,13 +14,11 @@ import com.excilys.cdb.persistence.CompanyDao;
  * 
  * @author samy
  */
-public enum CompanyService {
-	/**
-	 * Instance of {@link CompanyService} (for Singleton pattern).
-	 */
-	INSTANCE;
+@Service
+public class CompanyService {
 
-	private CompanyDao companyDao = CompanyDao.INSTANCE;
+	@Autowired
+	private CompanyDao companyDao;
 
 	/**
 	 * Return the list of companies present in the BDD

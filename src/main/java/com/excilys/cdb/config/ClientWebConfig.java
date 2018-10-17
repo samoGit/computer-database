@@ -11,6 +11,7 @@ import org.springframework.web.servlet.view.JstlView;
 
 @EnableWebMvc
 @Configuration
+//@ComponentScan(basePackages = {"com.excilys.cdb.service, com.excilys.cdb.persistence, com.excilys.cdb.servlet"}) ???
 public class ClientWebConfig implements WebMvcConfigurer {
 
 	@Override

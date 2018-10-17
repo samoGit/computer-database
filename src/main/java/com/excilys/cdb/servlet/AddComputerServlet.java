@@ -3,6 +3,7 @@ package com.excilys.cdb.servlet;
 import java.io.IOException;
 import java.util.Optional;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -11,6 +12,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import com.excilys.cdb.dto.ComputerDto;
 import com.excilys.cdb.mapper.ComputerMapper;
@@ -23,12 +27,24 @@ import com.excilys.cdb.service.ComputerService;
  * Servlet implementation class AddComputerServlet
  */
 @WebServlet("/AddComputer")
+@Component
 public class AddComputerServlet extends HttpServlet {
 	private static final long serialVersionUID = 1491265413354643955L;
-	
-	private static CompanyService companyService = CompanyService.INSTANCE;
-	private static ComputerService computerService = ComputerService.INSTANCE;
+
+	@Autowired
+	private CompanyService companyService;
+	@Autowired
+	private ComputerService computerService;
+	@Autowired
+	private ComputerMapper computerMapper;
+
 	private final Logger logger = LoggerFactory.getLogger("AddComputerServlet");
+
+	@Override
+	public void init(ServletConfig config) throws ServletException {
+		super.init(config);
+		SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
+	}
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
@@ -68,7 +84,7 @@ public class AddComputerServlet extends HttpServlet {
 		String nbComputersByPageNeverEmpty = nbComputersByPage.isPresent() ? nbComputersByPage.get() : "10";
 
 		try {
-			computerService.createNewComputer(ComputerMapper.getComputer(computerDto));
+			computerService.createNewComputer(computerMapper.getComputer(computerDto));
 			response.sendRedirect("Dashboard?pageNumber=lastPage&nbComputersByPage="
 					+ nbComputersByPageNeverEmpty);
 		} catch (InvalidComputerException | InvalidDateException e) {

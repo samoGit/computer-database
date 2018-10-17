@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -13,6 +14,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import com.excilys.cdb.dto.ComputerDto;
 import com.excilys.cdb.model.Computer;
@@ -26,8 +29,16 @@ import com.excilys.cdb.service.ComputerService;
 public class DashboardServlet extends HttpServlet {
 	private static final long serialVersionUID = 1182886835641082355L;
 
-	private final ComputerService computerService = ComputerService.INSTANCE;
+	@Autowired
+	private ComputerService computerService;
+
 	private final Logger logger = LoggerFactory.getLogger("DashboardServlet");
+
+	@Override
+	public void init(ServletConfig config) throws ServletException {
+		super.init(config);
+		SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
+	}
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
@@ -36,10 +47,12 @@ public class DashboardServlet extends HttpServlet {
 			throws ServletException, IOException {
 		logger.info("\n\ndoGet");
 
+		Long nbComputers = getNbComputers(Optional.ofNullable(request.getParameter("search")));
 		PageInfo pageInfo = new PageInfo(Optional.ofNullable(request.getParameter("pageNumber")), 
 										 Optional.ofNullable(request.getParameter("nbComputersByPage")), 
 										 Optional.ofNullable(request.getParameter("search")), 
-										 Optional.ofNullable(request.getParameter("orderBy")));
+										 Optional.ofNullable(request.getParameter("orderBy")), 
+										 nbComputers);
 
 		request.setAttribute("pageNumber", pageInfo.getPageNumber());
 		request.setAttribute("nbComputersByPage", pageInfo.getNbComputersByPage());		
@@ -59,6 +72,14 @@ public class DashboardServlet extends HttpServlet {
 		} else {
 			List<Computer> listComputer = computerService.getListComputers(pageInfo);
 			return listComputer.stream().map(c -> new ComputerDto(c)).collect(Collectors.toList());	
+		}
+	}
+	
+	private Long getNbComputers(Optional<String> searchedName) {
+		if (!searchedName.isPresent() || "".equals(searchedName.get())) {
+			return computerService.getNbComputers();
+		} else {
+			return computerService.getNbComputersByName(searchedName.get());
 		}
 	}
 

@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.excilys.cdb.mapper.InvalidComputerException;
 import com.excilys.cdb.mapper.InvalidDateException;
@@ -16,13 +18,12 @@ import com.excilys.cdb.persistence.ComputerDao;
  * 
  * @author samy
  */
-public enum ComputerService {
-	/**
-	 * Instance of {@link ComputerService} (for Singleton pattern).
-	 */
-	INSTANCE;
+@Service
+public class ComputerService {
 
-	private ComputerDao computerDao = ComputerDao.INSTANCE;
+	@Autowired
+	private ComputerDao computerDao;
+
 	private final Logger logger = LoggerFactory.getLogger("ComputerService");
 
 	/**
