@@ -24,6 +24,7 @@
 		<jstl.version>1.2</jstl.version>
 		<HikariCP.version>3.2.0</HikariCP.version>
 		<h2.version>1.4.196</h2.version>
+		<org.springframework.version>5.0.8.RELEASE</org.springframework.version>
 	</properties>
 
 	<build>
@@ -59,7 +60,7 @@
 			<artifactId>mysql-connector-java</artifactId>
 			<version>${mysql.version}</version>
 		</dependency>
-
+		
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
@@ -99,6 +100,12 @@
 		    <artifactId>h2</artifactId>
 		    <version>${h2.version}</version>
 		    <!-- <scope>test</scope> -->
+		</dependency>
+
+		<dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-webmvc</artifactId>
+		    <version>${org.springframework.version}</version>
 		</dependency>
 
 
