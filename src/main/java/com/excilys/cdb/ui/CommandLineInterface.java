@@ -7,6 +7,8 @@ import java.util.Optional;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
@@ -28,17 +30,14 @@ import com.excilys.cdb.service.ComputerService;
  */
 @Component
 public class CommandLineInterface {
-
+	
 	@Autowired
 	private CompanyService companyService;
 	@Autowired
 	private ComputerService computerService;
 	@Autowired
 	private ComputerMapper computerMapper;
-
-	/**
-	 * Manage interaction with the user.
-	 */
+		
 	private Scanner scanner;
 
 	/**
@@ -46,6 +45,12 @@ public class CommandLineInterface {
 	 */
 	public CommandLineInterface() {
 		scanner = new Scanner(System.in);
+	}
+
+	@PostConstruct
+	public void init() {
+		SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
+		// Do not work : computerService is still null...
 	}
 
 	/**
@@ -400,7 +405,6 @@ public class CommandLineInterface {
 	 */
 	public static void main(String[] args) {
 		System.out.println("Hello !");
-
 		CommandLineInterface CLI = new CommandLineInterface();
 		CLI.launchMainMenu();
 		System.out.println("Goodbye !");

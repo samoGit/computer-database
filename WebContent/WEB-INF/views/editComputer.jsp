@@ -46,7 +46,7 @@
 			<div class="row">
 				<div class="col-xs-8 col-xs-offset-2 box">
 					<div class="label label-default pull-right">id: ${computerId}</div>
-					<h1>Edit Computer  dateIntroduced=${dateIntroduced}</h1>
+					<h1>Edit Computer</h1>
 
 					<form
 						action="EditComputer?pageNumber=${pageNumber}&nbComputersByPage=${nbComputersByPage}"

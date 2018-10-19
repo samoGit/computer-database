@@ -1,19 +1,12 @@
 package com.excilys.cdb.persistence;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Types;
-import java.util.ArrayList;
+import java.sql.Date;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import com.excilys.cdb.mapper.ComputerMapper;
 import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.model.PageInfo;
 
@@ -24,8 +17,6 @@ import com.excilys.cdb.model.PageInfo;
  */
 @Repository
 public class ComputerDao {
-
-	private final Logger logger = LoggerFactory.getLogger("ComputerDao");
 
 	private final static String SQL_SELECT_ALL_COMPUTERS = "SELECT "
 			+ "computer.id, computer.name, computer.introduced, computer.discontinued, company.id, company.name "
@@ -44,19 +35,18 @@ public class ComputerDao {
 	final static String SQL_SELECT_NB_COMPUTERS_BYNAME = "SELECT count(id) as nbComputers FROM computer "
 			+ "WHERE computer.name LIKE ? ;";
 
-	private final static String SQL_INSERT_COMPUTER = "INSERT INTO computer ";
+	private final static String SQL_INSERT_COMPUTER = "INSERT INTO computer (name, introduced, discontinued, company_id) VALUES (?, ?, ?, ?);";
 	private final static String SQL_DELETE_COMPUTER = "DELETE FROM computer WHERE id IN (%s);";
-	private final static String SQL_DELETE_COMPUTER_WHERE_COMPANY = "DELETE FROM computer WHERE company_id = ?;";
 	private final static String SQL_UPDATE_COMPUTER = "UPDATE computer SET %s = %s  WHERE id = %s;";
 	private final static String SQL_UPDATE_COMPUTER_ALLFIELDS = "UPDATE computer SET name = ?"
 			+ ", introduced = ?, discontinued = ?, company_id = ? WHERE id = ?;";
 
 	@Autowired
-	private ConnectionManager connectionManager;
+	JdbcTemplate jdbcTemplate;	
 	@Autowired
-	private ComputerMapper computerMapper;
+	private ComputerRowMapper computerRowMapper;
 
-	private String getOrderByValue(String orderBy) {
+	private String getSqlQueryWithOrderByValue(String sqlQuery, String orderBy) {
 		String orderByValue = "computer.id";
 		if (!"".equals(orderBy)) {
 			switch (orderBy) {
@@ -74,7 +64,7 @@ public class ComputerDao {
 				break;
 			}
 		}
-		return orderByValue;
+		return String.format(sqlQuery, orderByValue, orderByValue);
 	}
 
 	/**
@@ -83,26 +73,11 @@ public class ComputerDao {
 	 * @return List of {@link Computer}
 	 */
 	public List<Computer> getListComputers(PageInfo pageInfo) {
-		ArrayList<Computer> listComputers = new ArrayList<>();
-
-		try (Connection connection = connectionManager.getConnection()) {
-			// We can't use prepared statement for orderBy value in sql...
-			String orderByValue = getOrderByValue(pageInfo.getOrderBy());
-			String sqlQuery = String.format(SQL_SELECT_ALL_COMPUTERS, orderByValue, orderByValue);
-			
-			PreparedStatement stmt = connection.prepareStatement(sqlQuery);
-			stmt.setLong(1, pageInfo.getOffset());
-			stmt.setLong(2, pageInfo.getNbComputersByPage());
-			logger.info(stmt.toString());
-			ResultSet resultSet = stmt.executeQuery();
-			while (resultSet.next()) {
-				listComputers.add(computerMapper.getComputer(resultSet));
-			}
-		} catch (SQLException e) {
-			logger.error(e.getMessage());
-			logger.error(e.getStackTrace().toString());
-		}
-		return listComputers;
+		// We can't use prepared statement for orderBy value in sql...
+		String sqlQuery = getSqlQueryWithOrderByValue(SQL_SELECT_ALL_COMPUTERS, pageInfo.getOrderBy());
+		return jdbcTemplate.query(sqlQuery, 
+								  new Object[] {pageInfo.getOffset(), pageInfo.getNbComputersByPage()},  
+								  computerRowMapper);
 	}
 		
 	/**
@@ -112,27 +87,15 @@ public class ComputerDao {
 	 * @return List of {@link Computer}
 	 */
 	public List<Computer> getListComputersByName(PageInfo pageInfo) {
-		ArrayList<Computer> listComputers = new ArrayList<>();
-
-		try (Connection connection = connectionManager.getConnection()) {
-			// We can't use prepared statement for orderBy value in sql...
-			String orderByValue = getOrderByValue(pageInfo.getOrderBy());
-			String sqlQuery = String.format(SQL_SELECT_ALL_COMPUTERS_BYNAME, orderByValue, orderByValue);
-			
-			PreparedStatement stmt = connection.prepareStatement(sqlQuery);
-			stmt.setString(1, "%"+pageInfo.getSearchedName()+"%");
-			stmt.setLong(2, pageInfo.getOffset());
-			stmt.setLong(3, pageInfo.getNbComputersByPage());
-			logger.info(stmt.toString());
-			ResultSet resultSet = stmt.executeQuery();
-			while (resultSet.next()) {
-				listComputers.add(computerMapper.getComputer(resultSet));
-			}
-		} catch (SQLException e) {
-			logger.error(e.getMessage());
-			logger.error(e.getStackTrace().toString());
-		}
-		return listComputers;
+		// We can't use prepared statement for orderBy value in sql...
+		String sqlQuery = getSqlQueryWithOrderByValue(SQL_SELECT_ALL_COMPUTERS_BYNAME, pageInfo.getOrderBy());
+		return jdbcTemplate.query(	sqlQuery, 
+								  	new Object[] {
+								  			"%"+pageInfo.getSearchedName()+"%", 
+								  			pageInfo.getOffset(), 
+								  			pageInfo.getNbComputersByPage()
+									},  
+								  	computerRowMapper);
 	}
 
 	/**
@@ -144,41 +107,11 @@ public class ComputerDao {
 	 * @param idCompany    Long
 	 */
 	public void createNewComputer(Computer computer) {
-		String query = SQL_INSERT_COMPUTER; // (?) VALUES (?);
-
-		String indices = "name";
-		String values = "?";
-		if (computer.getDateIntroduced().isPresent()) {
-			indices += ", introduced";
-			values += ", ?";
-		}
-		if (computer.getDateDiscontinued().isPresent()) {
-			indices += ", discontinued";
-			values += ", ?";
-		}
-		if (computer.getCompany().isPresent()) {
-			indices += ", company_id";
-			values += ", ?";
-		}
-		query += " (" + indices + ") VALUES (" + values + ");";
-
-		try (Connection connection = connectionManager.getConnection()) {
-			PreparedStatement stmt = connection.prepareStatement(query);
-
-			int num = 1;
-			stmt.setString(num++, computer.getName());
-			if (computer.getDateIntroduced().isPresent())
-				stmt.setString(num++, computer.getDateIntroduced().get().toString());
-			if (computer.getDateDiscontinued().isPresent())
-				stmt.setString(num++, computer.getDateDiscontinued().get().toString());
-			if (computer.getCompany().isPresent())
-				stmt.setLong(num++, computer.getCompany().get().getId());
-			logger.info(stmt.toString());
-			stmt.executeUpdate();
-		} catch (SQLException e) {
-			logger.error(e.getMessage());
-			logger.error(e.getStackTrace().toString());
-		}
+		jdbcTemplate.update(SQL_INSERT_COMPUTER, 
+							computer.getName(),
+							computer.getDateIntroduced().isPresent() ? Date.valueOf(computer.getDateIntroduced().get()) : null,
+							computer.getDateDiscontinued().isPresent() ? Date.valueOf(computer.getDateDiscontinued().get()) : null,
+							computer.getCompany().isPresent() ? computer.getCompany().get().getId() : null);
 	}
 
 	/**
@@ -188,15 +121,9 @@ public class ComputerDao {
 	 * @throws SQLException .
 	 */
 	public void deleteComputer(String listComputersId) {
-		try (Connection connection = connectionManager.getConnection()) {
-			String sqlQuery = String.format(SQL_DELETE_COMPUTER, listComputersId);
-			PreparedStatement stmt = connection.prepareStatement(sqlQuery);
-			logger.info(stmt.toString());
-			stmt.executeUpdate();
-		} catch (SQLException e) {
-			logger.error(e.getMessage());
-			logger.error(e.getStackTrace().toString());
-		}
+		// We can't use prepared statement for list of values in sql... >>> WHERE id IN (%s)
+		String sqlQuery = String.format(SQL_DELETE_COMPUTER, listComputersId);
+		jdbcTemplate.update(sqlQuery);
 	}
 
 	/**
@@ -232,17 +159,8 @@ public class ComputerDao {
 		if (!valueWithQuoteIfNeeded.equals("null"))
 			valueWithQuoteIfNeeded = "\"" + valueWithQuoteIfNeeded + "\"";
 
-		try (Connection connection = connectionManager.getConnection()) {
-			String query = String.format(SQL_UPDATE_COMPUTER, field, valueWithQuoteIfNeeded, computer.getId());
-			PreparedStatement stmt;
-			stmt = connection.prepareStatement(query);
-			logger.info(stmt.toString());
-			logger.info(stmt.toString());
-			stmt.executeUpdate();
-		} catch (SQLException e) {
-			logger.error(e.getMessage());
-			logger.error(e.getStackTrace().toString());
-		}
+		String sqlQuery = String.format(SQL_UPDATE_COMPUTER, field, valueWithQuoteIfNeeded, computer.getId());
+		jdbcTemplate.update(sqlQuery);
 	}
 
 	/**
@@ -250,40 +168,12 @@ public class ComputerDao {
 	 * @param computer
 	 */
 	public void updateComputer(Computer computer) {
-		try (Connection connection = connectionManager.getConnection()) {
-			PreparedStatement stmt;
-			stmt = connection.prepareStatement(SQL_UPDATE_COMPUTER_ALLFIELDS);
-			stmt.setString(1, computer.getName());
-			
-			if (computer.getDateIntroduced().isPresent()) {
-				stmt.setString(2, computer.getDateIntroduced().get().toString());
-			}
-			else {
-				stmt.setNull(2, Types.DATE);
-			}
-			
-			if (computer.getDateDiscontinued().isPresent()) {
-				stmt.setString(3, computer.getDateDiscontinued().get().toString());
-			}
-			else {
-				stmt.setNull(3, Types.DATE);
-			}
-			
-			if (computer.getCompany().isPresent()) {
-				stmt.setLong(4, computer.getCompany().get().getId());
-			}
-			else {
-				stmt.setNull(4, Types.INTEGER);
-			}
-			
-			stmt.setLong(5, computer.getId());
-			
-			logger.info(stmt.toString());
-			stmt.executeUpdate();
-		} catch (SQLException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		}
+		jdbcTemplate.update(SQL_UPDATE_COMPUTER_ALLFIELDS, 
+							computer.getName(),
+							computer.getDateIntroduced().isPresent() ? Date.valueOf(computer.getDateIntroduced().get()) : null,
+							computer.getDateDiscontinued().isPresent() ? Date.valueOf(computer.getDateDiscontinued().get()) : null,
+							computer.getCompany().isPresent() ? computer.getCompany().get().getId() : null,
+							computer.getId());
 	}
 
 	/**
@@ -292,18 +182,7 @@ public class ComputerDao {
 	 * @return Long
 	 */
 	public Long getNbComputers() {
-		Long nbComputer = null;
-		try (Connection connection = connectionManager.getConnection()) {
-			PreparedStatement stmt = connection.prepareStatement(SQL_SELECT_NB_COMPUTERS);
-			ResultSet resultSet = stmt.executeQuery();
-			if (resultSet != null)
-				resultSet.next();
-			nbComputer = resultSet.getLong("nbComputers");
-		} catch (SQLException e) {
-			logger.error(e.getMessage());
-			logger.error(e.getStackTrace().toString());
-		}
-		return nbComputer;
+		return jdbcTemplate.queryForObject(SQL_SELECT_NB_COMPUTERS, Long.class);
 	}
 	
 
@@ -313,32 +192,8 @@ public class ComputerDao {
 	 * @return Long
 	 */
 	public Long getNbComputersByName(String searchedName) {
-		Long nbComputer = null;
-		try (Connection connection = connectionManager.getConnection()) {
-			PreparedStatement stmt = connection.prepareStatement(SQL_SELECT_NB_COMPUTERS_BYNAME);
-			stmt.setString(1, "%"+searchedName+"%");
-			ResultSet resultSet = stmt.executeQuery();
-			if (resultSet != null)
-				resultSet.next();
-			nbComputer = resultSet.getLong("nbComputers");
-		} catch (SQLException e) {
-			logger.error(e.getMessage());
-			logger.error(e.getStackTrace().toString());
-		}
-		return nbComputer;
-	}
-	
-	/**
-	 * Delete the given computer from the BDD
-	 * 
-	 * @param computerId
-	 * @throws SQLException 
-	 * @throws SQLException .
-	 */
-	public void deleteComputerWhereCompany(Long CompanyId, Connection connection) throws SQLException {
-		PreparedStatement stmt = connection.prepareStatement(SQL_DELETE_COMPUTER_WHERE_COMPANY);
-		stmt.setLong(1, CompanyId);
-		logger.info(stmt.toString());
-		stmt.executeUpdate();
+		return jdbcTemplate.queryForObject(	SQL_SELECT_NB_COMPUTERS_BYNAME, 
+											new Object[] {"%"+searchedName+"%"}, 
+											Long.class);
 	}
 }

@@ -9,9 +9,11 @@ import org.springframework.web.context.support.AnnotationConfigWebApplicationCon
 
 public class MainWebAppInitializer implements WebApplicationInitializer {
 	@Override
-	public void onStartup(final ServletContext sc) throws ServletException {
-		AnnotationConfigWebApplicationContext root = new AnnotationConfigWebApplicationContext();
-		root.scan("com.excilys.cdb");
-		sc.addListener(new ContextLoaderListener(root));
+	public void onStartup(final ServletContext servletContext) throws ServletException {
+	    AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext();
+	    context.register(AppConfig.class);
+	    ContextLoaderListener contextLoaderListener = new ContextLoaderListener(context);
+	    servletContext.addListener(contextLoaderListener);
 	}
 }
+
