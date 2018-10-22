@@ -30,9 +30,7 @@ public class AppConfig {
 		} catch (ClassNotFoundException e) {
 			logger.error("Driver not found", e);
 		}
-
 		jdbcTemplate = new JdbcTemplate(dataSource);
-		jdbcTemplate.setResultsMapCaseInsensitive(true);
 	}
 
 	@Bean

@@ -2,18 +2,9 @@ package com.excilys.cdb.model;
 
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import com.excilys.cdb.service.ComputerService;
-
-//@Component
 public class PageInfo {
 
 	public final static Long DEFAULT_NB_COMPUTERS_BY_PAGE = 10L;
-
-//	@Autowired
-//	private ComputerService computerService;
 
 	private Long pageNumber;
 	private Long nbComputersByPage;

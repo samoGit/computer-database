@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import com.excilys.cdb.service.ComputerService;
@@ -22,7 +21,6 @@ import com.excilys.cdb.service.ComputerService;
  * Servlet implementation class DeleteComputerServelet
  */
 @WebServlet("/DeleteComputerServelet")
-@Component
 public class DeleteComputerServelet extends HttpServlet {
 	private static final long serialVersionUID = -6028278204408049563L;
 

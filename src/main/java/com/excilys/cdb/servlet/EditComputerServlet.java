@@ -14,7 +14,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import com.excilys.cdb.dto.ComputerDto;
@@ -31,7 +30,6 @@ import com.excilys.cdb.service.ComputerService;
  * Servlet implementation class EditComputerServlet
  */
 @WebServlet("/EditComputer")
-@Component
 public class EditComputerServlet extends HttpServlet {
 	private static final long serialVersionUID = 6852085386625285312L;
 

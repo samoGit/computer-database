@@ -7,12 +7,12 @@ import java.util.Optional;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
-import javax.annotation.PostConstruct;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
+import com.excilys.cdb.config.AppConfig;
 import com.excilys.cdb.dto.ComputerDto;
 import com.excilys.cdb.mapper.ComputerMapper;
 import com.excilys.cdb.mapper.InvalidComputerException;
@@ -28,30 +28,21 @@ import com.excilys.cdb.service.ComputerService;
  * 
  * @author samy
  */
+//@Configuration
+//@ComponentScan(basePackages ={"com.excilys.cdb.config", "com.excilys.cdb.mapper", "com.excilys.cdb.persistence",
+//		"com.excilys.cdb.service", "com.excilys.cdb.servlet", "com.excilys.cdb.ui"})
+
 @Component
 public class CommandLineInterface {
-	
+
 	@Autowired
 	private CompanyService companyService;
 	@Autowired
 	private ComputerService computerService;
 	@Autowired
 	private ComputerMapper computerMapper;
-		
-	private Scanner scanner;
 
-	/**
-	 * Constructor, init services.
-	 */
-	public CommandLineInterface() {
-		scanner = new Scanner(System.in);
-	}
-
-	@PostConstruct
-	public void init() {
-		SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
-		// Do not work : computerService is still null...
-	}
+	private Scanner scanner = new Scanner(System.in);
 
 	/**
 	 * Display info about all companies.
@@ -81,7 +72,7 @@ public class CommandLineInterface {
 			if (listComputers.isEmpty()) {
 				System.out.println("No computers found.");
 			} else {
-				this.displayTableComputers(listComputers);
+				displayTableComputers(listComputers);
 			}
 
 			System.out.println("\n\nWhat do you want to do ?");
@@ -129,7 +120,7 @@ public class CommandLineInterface {
 		computerDtoTableHeader.setDateIntroduced("date introduced");
 		computerDtoTableHeader.setDateDiscontinued("date discontinued");
 		computerDtoTableHeader.setCompanyName("company");
-		this.displayRowComputer(computerDtoTableHeader);
+		displayRowComputer(computerDtoTableHeader);
 		System.out.println(
 				"|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|");
 		for (Computer computer : listComputers) {
@@ -143,7 +134,7 @@ public class CommandLineInterface {
 			computerDto.setCompanyName(
 					String.valueOf(computer.getCompany().isPresent() ? computer.getCompany().get().getName() : "?"));
 
-			this.displayRowComputer(computerDto);
+			displayRowComputer(computerDto);
 		}
 		System.out.println(
 				"\\--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------/");
@@ -172,7 +163,7 @@ public class CommandLineInterface {
 		if (listComputersFound.isEmpty()) {
 			System.out.println("The computer '" + name + "' is not found.");
 		} else {
-			this.displayTableComputers(listComputersFound);
+			displayTableComputers(listComputersFound);
 		}
 	}
 
@@ -217,7 +208,7 @@ public class CommandLineInterface {
 		List<String> listCompanyId = companyService.getListCompanies().stream().map(c -> c.getId().toString())
 				.collect(Collectors.toList());
 		while (!companyUnknown) {
-			this.displayAllCompanies();
+			displayAllCompanies();
 			System.out.println("Please enter a company id (or '?') : ");
 			String strCompanyId = scanner.nextLine();
 			if (strCompanyId.equals("?"))
@@ -237,11 +228,11 @@ public class CommandLineInterface {
 		System.out.println("\nName : ");
 		ComputerDto computerDto = new ComputerDto();
 		computerDto.setName(Optional.ofNullable(scanner.nextLine()));
-		computerDto.setDateIntroduced(this.getDateFromUser(
+		computerDto.setDateIntroduced(getDateFromUser(
 				"\n(Expected format = 'DD/MM/YYYY'    or    '?' if unknown)\nDate when introduced : "));
-		computerDto.setDateDiscontinued(this.getDateFromUser(
+		computerDto.setDateDiscontinued(getDateFromUser(
 				"\n(Expected format = 'DD/MM/YYYY'    or    '?' if unknown)\nDate when discontinued : "));
-		computerDto.setCompanyId(this.getCompanyIdFromUser());
+		computerDto.setCompanyId(getCompanyIdFromUser());
 
 		try {
 			computerService.createNewComputer(computerMapper.getComputer(computerDto));
@@ -267,7 +258,7 @@ public class CommandLineInterface {
 		} else if (listComputersFound.size() == 1) {
 			return Optional.ofNullable(listComputersFound.get(0));
 		} else {
-			this.displayTableComputers(listComputersFound);
+			displayTableComputers(listComputersFound);
 			System.out.println("Multiple computer have the same name, please enter the id of the computer : ");
 			String strID = scanner.nextLine();
 
@@ -285,7 +276,7 @@ public class CommandLineInterface {
 	 * Launch the menu which allows the user to delete a computer
 	 */
 	protected void launchMenuDeleteComputer() {
-		Optional<Computer> computerToBeDeleted = this.launchMenuChooseComputer();
+		Optional<Computer> computerToBeDeleted = launchMenuChooseComputer();
 		if (computerToBeDeleted.isPresent())
 			computerService.deleteComputer(computerToBeDeleted.get().getId().toString());
 	}
@@ -294,7 +285,7 @@ public class CommandLineInterface {
 	 * Launch the menu which allows the user to update a computer
 	 */
 	protected void launchMenuUpdateComputer() {
-		Optional<Computer> computerToBeUpdate = this.launchMenuChooseComputer();
+		Optional<Computer> computerToBeUpdate = launchMenuChooseComputer();
 		if (!computerToBeUpdate.isPresent())
 			return;
 
@@ -318,14 +309,14 @@ public class CommandLineInterface {
 			String newName = scanner.nextLine();
 			computerToBeUpdate.get().setName(newName);
 		} else if (field.equals("introduced")) {
-			Optional<String> dateIntroduced = this.getDateFromUser("Enter the new date : ");
+			Optional<String> dateIntroduced = getDateFromUser("Enter the new date : ");
 			computerToBeUpdate.get().setDateIntroducedFromString(dateIntroduced);
 		} else if (field.equals("discontinued")) {
-			Optional<String> dateDiscontinued = this.getDateFromUser("Enter the new date : ");
+			Optional<String> dateDiscontinued = getDateFromUser("Enter the new date : ");
 			computerToBeUpdate.get().setDateDiscontinuedFromString(dateDiscontinued);
 		} else if (field.equals("company")) {
 			field = "company_id";
-			Optional<String> companyId = this.getCompanyIdFromUser();
+			Optional<String> companyId = getCompanyIdFromUser();
 			Optional<Company> company = Optional.empty();
 			if (companyId.isPresent()) {
 				company = companyService.getCompanyFromId(Long.valueOf(companyId.get()));
@@ -340,7 +331,7 @@ public class CommandLineInterface {
 	 * Launch the menu which allows the user to delete a company AND all the computer linked to it.
 	 */
 	protected void launchMenuDeleteCompany() {
-		Optional<String> companyToBeDeleted = this.getCompanyIdFromUser();
+		Optional<String> companyToBeDeleted = getCompanyIdFromUser();
 		if (companyToBeDeleted.isPresent())
 			companyService.deleteCompany(Long.valueOf(companyToBeDeleted.get()));
 	}
@@ -370,25 +361,25 @@ public class CommandLineInterface {
 			if (userChoice.isPresent()) {
 				switch (userChoice.get()) {
 				case DISPLAY_COMPUTERS:
-					this.displayAllComputers();
+					displayAllComputers();
 					break;
 				case DISPLAY_COMPANIES:
-					this.displayAllCompanies();
+					displayAllCompanies();
 					break;
 				case SHOW_COMPUTER_DETAILS:
-					this.launchMenuShowDetailComputer();
+					launchMenuShowDetailComputer();
 					break;
 				case CREATE_COMPUTER:
-					this.launchMenuCreateComputer();
+					launchMenuCreateComputer();
 					break;
 				case UPDATE_COMPUTER:
-					this.launchMenuUpdateComputer();
+					launchMenuUpdateComputer();
 					break;
 				case DELETE_COMPUTER:
-					this.launchMenuDeleteComputer();
+					launchMenuDeleteComputer();
 					break;
 				case DELETE_COMPANY:
-					this.launchMenuDeleteCompany();
+					launchMenuDeleteCompany();
 					break;				
 				case QUIT:
 					stop = true;
@@ -405,8 +396,12 @@ public class CommandLineInterface {
 	 */
 	public static void main(String[] args) {
 		System.out.println("Hello !");
-		CommandLineInterface CLI = new CommandLineInterface();
-		CLI.launchMainMenu();
-		System.out.println("Goodbye !");
+
+		@SuppressWarnings("resource")
+		ApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
+        CommandLineInterface CLI = context.getBean(CommandLineInterface.class);
+        CLI.launchMainMenu();
+
+        System.out.println("Goodbye !");
 	}
 }

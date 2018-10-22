@@ -62,7 +62,9 @@ public class ComputerService {
 	 * @param computerId
 	 */
 	public void deleteComputer(String listComputersId) {
-		computerDao.deleteComputer(listComputersId);
+		if (!"".equals(listComputersId)) {
+			computerDao.deleteComputer(listComputersId);
+		}
 	}
 
 	/**
