@@ -28,10 +28,6 @@ import com.excilys.cdb.service.ComputerService;
  * 
  * @author samy
  */
-//@Configuration
-//@ComponentScan(basePackages ={"com.excilys.cdb.config", "com.excilys.cdb.mapper", "com.excilys.cdb.persistence",
-//		"com.excilys.cdb.service", "com.excilys.cdb.servlet", "com.excilys.cdb.ui"})
-
 @Component
 public class CommandLineInterface {
 

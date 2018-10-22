@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.persistence.CompanyDao;
@@ -39,6 +40,7 @@ public class CompanyService {
 		return companyDao.getCompanyFromId(id);
 	}
 	
+	@Transactional(rollbackFor = Throwable.class)
 	public void deleteCompany(Long id) {
 		companyDao.deleteCompany(id);		
 	}
