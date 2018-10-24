@@ -61,7 +61,7 @@ public class CommandLineInterface {
 	 * Display info about all computers.
 	 */
 	protected void displayAllComputers() {
-		PageInfo pageInfo = new PageInfo(Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), computerService.getNbComputers());
+		PageInfo pageInfo = new PageInfo("", "", "", "", computerService.getNbComputers());
 		boolean stop = false;
 		while (!stop) {
 			List<Computer> listComputers = computerService.getListComputers(pageInfo);
@@ -154,7 +154,7 @@ public class CommandLineInterface {
 	protected void launchMenuShowDetailComputer() {
 		System.out.println("\n\nPlease enter the name of a computer : ");
 		String name = scanner.nextLine();
-		PageInfo pageInfo = new PageInfo(Optional.empty(), Optional.empty(), Optional.of(name), Optional.empty(), computerService.getNbComputers());
+		PageInfo pageInfo = new PageInfo("", "", name, "", computerService.getNbComputers());
 		List<Computer> listComputersFound = computerService.getListComputersByName(pageInfo);
 		if (listComputersFound.isEmpty()) {
 			System.out.println("The computer '" + name + "' is not found.");
@@ -246,7 +246,7 @@ public class CommandLineInterface {
 		System.out.println("\nEnter the name of the computer : ");
 		String name = scanner.nextLine();
 
-		PageInfo pageInfo = new PageInfo(Optional.empty(), Optional.empty(), Optional.of(name), Optional.empty(), computerService.getNbComputers());
+		PageInfo pageInfo = new PageInfo("", "", name, "", computerService.getNbComputers());
 		List<Computer> listComputersFound = computerService.getListComputersByName(pageInfo);
 
 		if (listComputersFound.isEmpty()) {

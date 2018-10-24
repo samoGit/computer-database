@@ -14,21 +14,19 @@ public class PageInfo {
 	private String searchedName;
 	private String orderBy;
 
-	public PageInfo(Optional<String> pageNumber, Optional<String> nbComputersByPage, Optional<String> searchedName,
-			Optional<String> orderBy, Long nbComputers) {
+	public PageInfo(String pageNumber, String nbComputersByPage, String searchedName, String orderBy, Long nbComputers) {
 		this.nbComputersByPage = getNbComputersByPage(nbComputersByPage);
 		this.nbComputers = nbComputers;
 		this.nbPageTotal = getNbPageTotal(this.nbComputersByPage, this.nbComputers);
 		this.pageNumber = getPageNumber(pageNumber, this.nbPageTotal);
 		this.offset = (this.pageNumber - 1) * this.nbComputersByPage;
-		
-		this.searchedName = searchedName.isPresent() ? searchedName.get() : "";
-		this.orderBy = orderBy.isPresent() ? orderBy.get() : "";
+		this.searchedName = searchedName;
+		this.orderBy = orderBy;
 	}
 	
-	private Long getNbComputersByPage(Optional<String> nbComputersByPage) {
-		if (nbComputersByPage.isPresent()) {
-			return Long.valueOf(nbComputersByPage.get());
+	private Long getNbComputersByPage(String nbComputersByPage) {
+		if (!"".equals(nbComputersByPage)) {
+			return Long.valueOf(nbComputersByPage);
 		}
 		else {
 			return DEFAULT_NB_COMPUTERS_BY_PAGE;
@@ -43,13 +41,13 @@ public class PageInfo {
 		return nbPageTotal;
 	}
 	
-	private Long getPageNumber(Optional<String> strPageNumber, Long nbPageTotal) {
+	private Long getPageNumber(String strPageNumber, Long nbPageTotal) {
 		Long pageNumber = 1L;
-		if (strPageNumber.isPresent()) {
-			if ("lastPage".equals(strPageNumber.get())) {
+		if (!"".equals(strPageNumber)) {
+			if ("lastPage".equals(strPageNumber)) {
 				pageNumber = nbPageTotal;
 			} else {
-				pageNumber = Long.valueOf(strPageNumber.get());
+				pageNumber = Long.valueOf(strPageNumber);
 				if (pageNumber < 1L) {
 					pageNumber = 1L;
 				} else if (pageNumber > nbPageTotal) {

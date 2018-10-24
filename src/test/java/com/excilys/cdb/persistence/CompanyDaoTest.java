@@ -38,10 +38,11 @@ public class CompanyDaoTest {
 
 	@Test
 	public void testGetCompanyFromId() {
-		Optional<Company> actualCompanyFound = companyDao.getCompanyFromId(2L);
-		assertTrue(actualCompanyFound.isPresent());
+		Optional<Company> companyNotFound = companyDao.getCompanyFromId(-3L);
+		assertFalse(companyNotFound.isPresent());
+
+		Optional<Company> companyFound = companyDao.getCompanyFromId(9L);
+		assertTrue(companyFound.isPresent());
 		
-		actualCompanyFound = companyDao.getCompanyFromId(3L);
-		assertFalse(actualCompanyFound.isPresent());
 	}
 }
