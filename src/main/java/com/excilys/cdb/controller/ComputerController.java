@@ -1,6 +1,7 @@
 package com.excilys.cdb.controller;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -9,13 +10,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import com.excilys.cdb.dto.ComputerDto;
+import com.excilys.cdb.mapper.ComputerMapper;
+import com.excilys.cdb.mapper.InvalidComputerException;
+import com.excilys.cdb.mapper.InvalidDateException;
+import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.model.PageInfo;
+import com.excilys.cdb.service.CompanyService;
 import com.excilys.cdb.service.ComputerService;
 
 @Controller
@@ -26,10 +33,14 @@ public class ComputerController {
 	private final Logger logger = LoggerFactory.getLogger("DashboardServlet");
 
 	private final ComputerService computerService;
+	private final CompanyService companyService;
+	private final ComputerMapper computerMapper;
 
 	@Autowired
-	public ComputerController(ComputerService computerService) {
+	public ComputerController(ComputerService computerService, CompanyService companyService, ComputerMapper computerMapper) {
 		this.computerService = computerService;
+		this.companyService = companyService;
+		this.computerMapper = computerMapper;
 	}
 
 	private Long getNbComputers(String searchedName) {
@@ -56,14 +67,11 @@ public class ComputerController {
 			@RequestParam(required = false, defaultValue = "1") String pageNumber,
 			@RequestParam(required = false, defaultValue = "") String nbComputersByPage,
 			@RequestParam(required = false, defaultValue = "") String orderBy) {
-		logger.info(" ------------------- model = " + model);
-		logger.info(" ------------------- search = " + search);
+		logger.info(" ------------------- getDashboard");
 
 		Long nbComputers = getNbComputers(search);
 		logger.info(" ------------------- nbComputers = " + nbComputers);
-
 		PageInfo pageInfo = new PageInfo(pageNumber, nbComputersByPage, search, orderBy, nbComputers);
-
 		model.addAttribute("pageNumber", pageInfo.getPageNumber());
 		model.addAttribute("nbComputersByPage", pageInfo.getNbComputersByPage());
 		model.addAttribute("search", pageInfo.getSearchedName());
@@ -74,4 +82,148 @@ public class ComputerController {
 
 		return "dashboard";
 	}
+
+	@GetMapping("AddComputer")
+	public String getAddComputer(ModelMap model, 
+			@RequestParam(required = false, defaultValue = "1") String pageNumber,
+			@RequestParam(required = false, defaultValue = "10") String nbComputersByPage,
+			@RequestParam(required = false, defaultValue = "") String orderBy) {
+		logger.info(" ------------------- getAddComputer");
+
+		model.addAttribute("pageNumber", pageNumber);
+		model.addAttribute("nbComputersByPage", nbComputersByPage);
+		model.addAttribute("listCompanies", companyService.getListCompanies());
+
+		return "addComputer";
+	}
+	
+	@PostMapping("AddComputer")
+	public String postAddComputer(ModelMap model, 
+			@RequestParam(required = false, defaultValue = "1") String pageNumber,
+			@RequestParam(required = false, defaultValue = "10") String nbComputersByPage,
+			@RequestParam(required = false, defaultValue = "") String orderBy,
+			@RequestParam String computerName,
+			@RequestParam String dateIntroduced,
+			@RequestParam String dateDiscontinued,
+			@RequestParam String companyId) {
+		logger.info(" ------------------- postAddComputer");
+
+		ComputerDto computerDto = new ComputerDto();
+		computerDto.setName(Optional.ofNullable(computerName));
+		computerDto.setDateIntroduced(Optional.ofNullable(dateIntroduced));
+		computerDto.setDateDiscontinued(Optional.ofNullable(dateDiscontinued));
+		computerDto.setCompanyId(Optional.ofNullable(companyId));
+
+		try {
+			computerService.createNewComputer(computerMapper.getComputer(computerDto));
+			model.addAttribute("pageNumber", "lastPage");
+			model.addAttribute("nbComputersByPage", nbComputersByPage);
+			return "redirect:Dashboard";
+		} catch (InvalidComputerException | InvalidDateException e) {
+			String errorMsg = e.getMessage();
+			logger.warn(errorMsg);
+
+			model.addAttribute("computerName", computerDto.getName());
+			model.addAttribute("dateIntroduced", computerDto.getDateIntroduced());
+			model.addAttribute("dateDiscontinued", computerDto.getDateDiscontinued());
+			model.addAttribute("companyId", computerDto.getCompanyId());
+
+			model.addAttribute("listCompanies", companyService.getListCompanies());
+			model.addAttribute("pageNumber", pageNumber);
+			model.addAttribute("nbComputersByPage", nbComputersByPage);
+			model.addAttribute("errorMsg", errorMsg);
+
+			return "addComputer";
+		}
+	}
+
+	@PostMapping("DeleteComputer")
+	public String postDeleteComputer(ModelMap model, 
+			@RequestParam(required = false, defaultValue = "") String search,
+			@RequestParam(required = false, defaultValue = "1") String pageNumber,
+			@RequestParam(required = false, defaultValue = "10") String nbComputersByPage,
+			@RequestParam(required = false, defaultValue = "") String orderBy,
+			@RequestParam String selection) {
+		logger.info(" ------------------- postDeleteComputer");
+
+		computerService.deleteComputer(selection);
+		model.addAttribute("pageNumber", pageNumber);
+		model.addAttribute("nbComputersByPage", nbComputersByPage);
+		model.addAttribute("search", search);
+		model.addAttribute("orderBy", orderBy);
+
+		return "redirect:Dashboard"; 
+	}
+
+	@GetMapping("EditComputer")
+	public String getEditComputer(ModelMap model, 
+			@RequestParam(required = false, defaultValue = "1") String pageNumber, 
+			@RequestParam(required = false, defaultValue = "10") String nbComputersByPage, 
+			@RequestParam String computerId, 
+			@RequestParam String computerName, 
+			@RequestParam String dateIntroduced, 
+			@RequestParam String dateDiscontinued, 
+			@RequestParam String companyName) {
+		logger.info(" ------------------- getEditComputer");
+
+		List<Company> listCompanies = companyService.getListCompanies();
+		model.addAttribute("pageNumber", pageNumber);
+		model.addAttribute("nbComputersByPage", nbComputersByPage);
+		model.addAttribute("computerId", computerId);
+		model.addAttribute("computerName", computerName);
+		model.addAttribute("dateIntroduced", dateIntroduced);
+		model.addAttribute("dateDiscontinued", dateDiscontinued);
+		model.addAttribute("companyName", companyName);
+		model.addAttribute("listCompanies", listCompanies);
+
+		return "editComputer";
+	}
+	
+	@PostMapping("EditComputer")
+	public String postEditComputer(ModelMap model, 
+			@RequestParam(required = false, defaultValue = "1") String pageNumber, 
+			@RequestParam(required = false, defaultValue = "10") String nbComputersByPage, 
+			@RequestParam String computerId, 
+			@RequestParam String computerName, 
+			@RequestParam String dateIntroduced, 
+			@RequestParam String dateDiscontinued, 
+			@RequestParam String companyId) {
+		logger.info(" ------------------- postEditComputer");
+
+		ComputerDto computerDto = new ComputerDto();
+		computerDto.setId(Optional.ofNullable(computerId));
+		computerDto.setName(Optional.ofNullable(computerName));
+		computerDto.setDateIntroduced(Optional.ofNullable(dateIntroduced));
+		computerDto.setDateDiscontinued(Optional.ofNullable(dateDiscontinued));
+		computerDto.setCompanyId(Optional.ofNullable(companyId));
+		
+		try {
+			Computer computer = computerMapper.getComputer(computerDto); 
+			logger.info("computer to be update = " + computer);
+			computerService.updateComputer(computer);		
+			
+			model.addAttribute("pageNumber", pageNumber);
+			model.addAttribute("nbComputersByPage", nbComputersByPage);
+			return "redirect:Dashboard";
+		} catch (InvalidComputerException | InvalidDateException e) {
+			String errorMsg = e.getMessage();
+			logger.warn(errorMsg);
+			
+			model.addAttribute("computerId", computerDto.getCompanyId());
+			model.addAttribute("computerName", computerDto.getName());
+			model.addAttribute("dateIntroduced", computerDto.getDateIntroduced());
+			model.addAttribute("dateDiscontinued", computerDto.getDateDiscontinued());
+			model.addAttribute("companyId", computerDto.getCompanyId());
+			model.addAttribute("listCompanies", companyService.getListCompanies());
+			model.addAttribute("pageNumber", pageNumber);
+			model.addAttribute("nbComputersByPage", nbComputersByPage);
+			model.addAttribute("errorMsg", errorMsg);
+			return "editComputer";			
+		}
+	}
 }
+
+
+
+
+

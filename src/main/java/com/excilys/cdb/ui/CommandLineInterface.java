@@ -12,7 +12,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
 
-import com.excilys.cdb.config.AppConfig;
+import com.excilys.cdb.config.CliAppConfig;
 import com.excilys.cdb.dto.ComputerDto;
 import com.excilys.cdb.mapper.ComputerMapper;
 import com.excilys.cdb.mapper.InvalidComputerException;
@@ -394,7 +394,7 @@ public class CommandLineInterface {
 		System.out.println("Hello !");
 
 		@SuppressWarnings("resource")
-		ApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
+		ApplicationContext context = new AnnotationConfigApplicationContext(CliAppConfig.class);
         CommandLineInterface CLI = context.getBean(CommandLineInterface.class);
         CLI.launchMainMenu();
 

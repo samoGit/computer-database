@@ -43,7 +43,7 @@
 		</div>
 
 		<form id="deleteForm"
-			action="DeleteComputerServelet?pageNumber=${pageNumber}&nbComputersByPage=${nbComputersByPage}"
+			action="DeleteComputer?pageNumber=${pageNumber}&nbComputersByPage=${nbComputersByPage}"
 			method="POST">
 			<input type="hidden" name="selection" value="">
 		</form>
@@ -90,8 +90,8 @@
 							<td><a
 								href="EditComputer?computerId=${computer.id}
 									&computerName=${computer.name}
-									&dateDiscontinued=${computer.dateIntroduced}
-									&dateIntroduced=${computer.dateDiscontinued}
+									&dateIntroduced=${computer.dateIntroduced}
+									&dateDiscontinued=${computer.dateDiscontinued}
 									&companyName=${computer.companyName}
 									&pageNumber=${pageNumber}
 									&nbComputersByPage=${nbComputersByPage}"

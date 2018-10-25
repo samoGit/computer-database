@@ -1,7 +1,5 @@
 package com.excilys.cdb.model;
 
-import java.util.Optional;
-
 public class PageInfo {
 
 	public final static Long DEFAULT_NB_COMPUTERS_BY_PAGE = 10L;

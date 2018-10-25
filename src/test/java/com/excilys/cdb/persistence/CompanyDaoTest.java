@@ -1,8 +1,5 @@
 package com.excilys.cdb.persistence;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -15,12 +12,14 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
-import com.excilys.cdb.config.AppConfig;
+import com.excilys.cdb.config.CliAppConfig;
 import com.excilys.cdb.model.Company;
 
+import junit.framework.TestCase;
+
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = AppConfig.class)
-public class CompanyDaoTest {
+@ContextConfiguration(classes = CliAppConfig.class)
+public class CompanyDaoTest extends TestCase {
 
 	@Autowired
 	private CompanyDao companyDao;

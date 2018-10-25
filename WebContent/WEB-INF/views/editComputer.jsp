@@ -75,7 +75,7 @@
 									<option value="">-</option>
 									<c:forEach var="company" items="${listCompanies}">
 										<option value="${company.id}" 
-											<c:if test="${company.name == companyName}"> selected="selected"</c:if>>
+											<c:if test="${company.name == companyName || company.id == companyId}"> selected="selected"</c:if>>
 											${company.name}</option>
 									</c:forEach>
 								</select>

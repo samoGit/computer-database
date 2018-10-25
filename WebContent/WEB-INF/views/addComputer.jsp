@@ -60,12 +60,12 @@
 							<div class="form-group">
 								<label for="dateIntroduced">Introduced date</label> <input
 									type="date" class="form-control" id="dateIntroduced"
-									name="dateIntroduced" placeholder="Introduced date" value="${introduced}">
+									name="dateIntroduced" placeholder="Introduced date" value="${dateIntroduced}">
 							</div>
 							<div class="form-group">
 								<label for="dateDiscontinued">Discontinued date</label> <input
 									type="date" class="form-control" id="dateDiscontinued"
-									name="dateDiscontinued" placeholder="Discontinued date" value="${discontinued}">
+									name="dateDiscontinued" placeholder="Discontinued date" value="${dateDiscontinued}">
 							</div>
 							<div class="form-group">
 								<label for="companyId">Company</label> <select
