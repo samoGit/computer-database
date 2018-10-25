@@ -1,3 +1,8 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jstl/fmt"%>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -21,14 +26,17 @@
 
 </head>
 
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-
 <body>
 	<header class="navbar navbar-inverse navbar-fixed-top">
 		<div class="container">
 			<a class="navbar-brand"
 				href="Dashboard?pageNumber=1&nbComputersByPage=${nbComputersByPage}">
-				Application - Computer Database </a>
+				<fmt:message key="label.subTitle" />
+			</a>
+            <div class="pull-right">
+            	<a href="?lang=fr">FR</a>
+            	<a href="?lang=en">EN</a>
+			</div>			
 		</div>
 	</header>
 
@@ -47,28 +55,28 @@
 
 			<div class="row">
 				<div class="col-xs-8 col-xs-offset-2 box">
-					<h1>Add Computer</h1>
+					<h1><fmt:message key="label.addComputer" /></h1>
 					<form
 						action="AddComputer?pageNumber=${pageNumber}&nbComputersByPage=${nbComputersByPage}"
 						method="POST">
 						<fieldset>
 							<div class="form-group">
-								<label for="computerName">Computer name</label> <input
+								<label for="computerName"><fmt:message key="label.computerName" /></label> <input
 									type="text" class="form-control" id="computerName" 
 									name="computerName" placeholder="Computer name" value="${computerName}" required>
 							</div>
 							<div class="form-group">
-								<label for="dateIntroduced">Introduced date</label> <input
+								<label for="dateIntroduced"><fmt:message key="label.introducedDate" /></label> <input
 									type="date" class="form-control" id="dateIntroduced"
 									name="dateIntroduced" placeholder="Introduced date" value="${dateIntroduced}">
 							</div>
 							<div class="form-group">
-								<label for="dateDiscontinued">Discontinued date</label> <input
+								<label for="dateDiscontinued"><fmt:message key="label.discontinuedDate" /></label> <input
 									type="date" class="form-control" id="dateDiscontinued"
 									name="dateDiscontinued" placeholder="Discontinued date" value="${dateDiscontinued}">
 							</div>
 							<div class="form-group">
-								<label for="companyId">Company</label> <select
+								<label for="companyId"><fmt:message key="label.company" /></label> <select
 									class="form-control" id="companyId" name="companyId">
 									<option value="">-</option>
 									<c:forEach var="company" items="${listCompanies}">
@@ -82,10 +90,10 @@
 							</div>
 						</fieldset>
 						<div class="actions pull-right">
-							<input type="submit" value="Add" class="btn btn-primary">
+							<input type="submit" value='<fmt:message key="label.add" />' class="btn btn-primary">
 							or <a
 								href="Dashboard?pageNumber=${pageNumber}&nbComputersByPage=${nbComputersByPage}"
-								class="btn btn-default">Cancel</a>
+								class="btn btn-default"><fmt:message key="label.cancel" /></a>
 						</div>
 					</form>
 				</div>

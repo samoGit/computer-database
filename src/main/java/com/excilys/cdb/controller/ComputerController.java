@@ -220,6 +220,12 @@ public class ComputerController {
 			return "editComputer";			
 		}
 	}
+	
+	@GetMapping(value = "/index")
+	public String index() {
+	    logger.info("INTO index");
+	    return "index";
+	}
 }
 
 
