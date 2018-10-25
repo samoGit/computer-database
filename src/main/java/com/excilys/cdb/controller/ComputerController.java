@@ -114,27 +114,26 @@ public class ComputerController {
 		computerDto.setDateDiscontinued(Optional.ofNullable(dateDiscontinued));
 		computerDto.setCompanyId(Optional.ofNullable(companyId));
 
+		model.addAttribute("nbComputersByPage", nbComputersByPage);
+
 		try {
 			computerService.createNewComputer(computerMapper.getComputer(computerDto));
-			model.addAttribute("pageNumber", "lastPage");
-			model.addAttribute("nbComputersByPage", nbComputersByPage);
-			return "redirect:Dashboard";
 		} catch (InvalidComputerException | InvalidDateException e) {
 			String errorMsg = e.getMessage();
 			logger.warn(errorMsg);
-
+			model.addAttribute("errorMsg", errorMsg);
 			model.addAttribute("computerName", computerDto.getName());
 			model.addAttribute("dateIntroduced", computerDto.getDateIntroduced());
 			model.addAttribute("dateDiscontinued", computerDto.getDateDiscontinued());
 			model.addAttribute("companyId", computerDto.getCompanyId());
-
 			model.addAttribute("listCompanies", companyService.getListCompanies());
 			model.addAttribute("pageNumber", pageNumber);
-			model.addAttribute("nbComputersByPage", nbComputersByPage);
-			model.addAttribute("errorMsg", errorMsg);
-
 			return "addComputer";
 		}
+		
+		model.addAttribute("pageNumber", "lastPage");
+		return "redirect:Dashboard";
+		
 	}
 
 	@PostMapping("DeleteComputer")

@@ -12,16 +12,13 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 @Configuration
 @EnableWebMvc
-@ComponentScan("com.excilys.cdb.config, "
-			 + "com.excilys.cdb.mapper, "
-			 + "com.excilys.cdb.persistence, "
-			 + "com.excilys.cdb.service, "
-			 + "com.excilys.cdb.controller")
+@ComponentScan("com.excilys.cdb.config, " + "com.excilys.cdb.mapper, " + "com.excilys.cdb.persistence, "
+		+ "com.excilys.cdb.service, " + "com.excilys.cdb.controller")
 public class WebMvcConfig implements WebMvcConfigurer {
 
 	@Override
 	public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
-	    configurer.enable();
+		configurer.enable();
 	}
 
 	@Override
