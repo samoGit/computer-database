@@ -1,7 +1,12 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+
 <!DOCTYPE html>
 <html>
 <head>
-<title>Computer Database</title>
+<title><fmt:message key="label.title" /></title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta charset="utf-8">
 <!-- Bootstrap -->
@@ -10,40 +15,50 @@
 <link href="css/main.css" rel="stylesheet" media="screen">
 </head>
 
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-
 <body>
 	<header class="navbar navbar-inverse navbar-fixed-top">
 		<div class="container">
 			<a class="navbar-brand"
-				href="Dashboard?pageNumber=1&nbComputersByPage=${nbComputersByPage}">
-				Application - Computer Database </a>
+				href="Dashboard?pageNumber=1&nbComputersByPage=${nbComputersByPage}&lang=${lang}">
+				<fmt:message key="label.subTitle" />
+			</a>
+            <div class="pull-right btnLang" style="margin-top: 7.5px;">
+            ${pageContext.response.locale}
+             	<a	class="btn btn-default <c:if test="${pageContext.response.locale.language eq 'fr'}">btn-primary</c:if>" 
+            		href="Dashboard?lang=fr&pageNumber=${pageNumber}&nbComputersByPage=${nbComputersByPage}">FR</a> 
+            	<a	class="btn btn-default <c:if test="${pageContext.response.locale.language eq 'en'}">btn-primary</c:if>" 
+            		href="Dashboard?lang=en&pageNumber=${pageNumber}&nbComputersByPage=${nbComputersByPage}">EN</a> -->
+			</div>			
 		</div>
 	</header>
 
 	<section id="main">
 		<div class="container">
-			<h1 id="homeTitle">${nbComputers} computers found</h1>
+			<h1 id="homeTitle">${nbComputers} <fmt:message key="label.computersFound" /></h1>
 			<div id="actions" class="form-horizontal">
 				<div class="pull-left">
 					<form id="searchForm" action="#" method="GET" class="form-inline">
 						<input type="search" id="searchbox" name="search"
-							class="form-control" placeholder="Search name" value="${search}" /> <input
-							type="submit" id="searchsubmit" value="Filter by name"
+							class="form-control" placeholder='<fmt:message key="label.search" />' value="${search}" />
+						<input type="submit" id="searchsubmit" value='<fmt:message key="label.filterByName" />'
 							class="btn btn-primary" />
 					</form>
 				</div>
 				<div class="pull-right">
 					<a class="btn btn-success" id="addComputer"
-						href="AddComputer?pageNumber=${pageNumber}&nbComputersByPage=${nbComputersByPage}">Add
-						Computer</a> <a class="btn btn-default" id="editComputer" href="#"
-						onclick="$.fn.toggleEditMode();">Edit</a>
+						href="AddComputer?pageNumber=${pageNumber}&nbComputersByPage=${nbComputersByPage}">
+						<fmt:message key="label.addComputer" />
+					</a> 
+					<a class="btn btn-default" id="editComputer" href="#"
+						onclick="$.fn.toggleEditMode();">
+						<fmt:message key="label.edit" />
+					</a>
 				</div>
 			</div>
 		</div>
 
 		<form id="deleteForm"
-			action="DeleteComputerServelet?pageNumber=${pageNumber}&nbComputersByPage=${nbComputersByPage}"
+			action="DeleteComputer?pageNumber=${pageNumber}&nbComputersByPage=${nbComputersByPage}"
 			method="POST">
 			<input type="hidden" name="selection" value="">
 		</form>
@@ -52,9 +67,6 @@
 			<table class="table table-striped table-bordered">
 				<thead>
 					<tr>
-						<!-- Variable declarations for passing labels as parameters -->
-						<!-- Table header for Computer Name -->
-
 						<th class="editMode" style="width: 60px; height: 22px;"><input
 							type="checkbox" id="selectall" /> <span
 							style="vertical-align: top;"> - <a href="#"
@@ -62,22 +74,26 @@
 									class="fa fa-trash-o fa-lg"></i>
 							</a>
 						</span></th>
-						<th><a href="Dashboard?pageNumber=${pageNumber}&nbComputersByPage=${nbComputersByPage}&search=${search}&orderBy=Name"
-								<c:if test="${orderBy eq 'Name'}"> style="text-decoration: underline"</c:if>>
-								Computer name
-						</a></th>
-						<th><a href="Dashboard?pageNumber=${pageNumber}&nbComputersByPage=${nbComputersByPage}&search=${search}&orderBy=Introduced"
-								<c:if test="${orderBy eq 'Introduced'}"> style="text-decoration: underline"</c:if>>
-								Introduced date
-						</a></th>
-						<th><a href="Dashboard?pageNumber=${pageNumber}&nbComputersByPage=${nbComputersByPage}&search=${search}&orderBy=Discontinued"
-								<c:if test="${orderBy eq 'Discontinued'}"> style="text-decoration: underline"</c:if>>
-								Discontinued date
-						</a></th>
-						<th><a href="Dashboard?pageNumber=${pageNumber}&nbComputersByPage=${nbComputersByPage}&search=${search}&orderBy=Company"
-								<c:if test="${orderBy eq 'Company'}">style="text-decoration: underline;"</c:if> >
-								Company
-						</a></th>
+						<th><a
+							href="Dashboard?pageNumber=${pageNumber}&nbComputersByPage=${nbComputersByPage}&search=${search}&orderBy=Name"
+							<c:if test="${orderBy eq 'Name'}"> style="text-decoration: underline"</c:if>>
+								<fmt:message key="label.computerName" />
+							</a></th>
+						<th><a
+							href="Dashboard?pageNumber=${pageNumber}&nbComputersByPage=${nbComputersByPage}&search=${search}&orderBy=Introduced"
+							<c:if test="${orderBy eq 'Introduced'}"> style="text-decoration: underline"</c:if>>
+								<fmt:message key="label.introducedDate" />
+							</a></th>
+						<th><a
+							href="Dashboard?pageNumber=${pageNumber}&nbComputersByPage=${nbComputersByPage}&search=${search}&orderBy=Discontinued"
+							<c:if test="${orderBy eq 'Discontinued'}"> style="text-decoration: underline"</c:if>>
+								<fmt:message key="label.discontinuedDate" />
+							</a></th>
+						<th><a
+							href="Dashboard?pageNumber=${pageNumber}&nbComputersByPage=${nbComputersByPage}&search=${search}&orderBy=Company"
+							<c:if test="${orderBy eq 'Company'}">style="text-decoration: underline;"</c:if>>
+								<fmt:message key="label.company" />
+							</a></th>
 					</tr>
 				</thead>
 
@@ -90,8 +106,8 @@
 							<td><a
 								href="EditComputer?computerId=${computer.id}
 									&computerName=${computer.name}
-									&dateDiscontinued=${computer.dateIntroduced}
-									&dateIntroduced=${computer.dateDiscontinued}
+									&dateIntroduced=${computer.dateIntroduced}
+									&dateDiscontinued=${computer.dateDiscontinued}
 									&companyName=${computer.companyName}
 									&pageNumber=${pageNumber}
 									&nbComputersByPage=${nbComputersByPage}"

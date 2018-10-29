@@ -1,14 +1,8 @@
 package com.excilys.cdb.model;
 
-import java.util.Optional;
-
-import com.excilys.cdb.service.ComputerService;
-
 public class PageInfo {
 
 	public final static Long DEFAULT_NB_COMPUTERS_BY_PAGE = 10L;
-
-	private final ComputerService computerService = ComputerService.INSTANCE;
 
 	private Long pageNumber;
 	private Long nbComputersByPage;
@@ -18,32 +12,22 @@ public class PageInfo {
 	private String searchedName;
 	private String orderBy;
 
-	public PageInfo(Optional<String> pageNumber, Optional<String> nbComputersByPage, Optional<String> searchedName,
-			Optional<String> orderBy) {
+	public PageInfo(String pageNumber, String nbComputersByPage, String searchedName, String orderBy, Long nbComputers) {
 		this.nbComputersByPage = getNbComputersByPage(nbComputersByPage);
-		this.nbComputers = getNbComputers(searchedName);
+		this.nbComputers = nbComputers;
 		this.nbPageTotal = getNbPageTotal(this.nbComputersByPage, this.nbComputers);
 		this.pageNumber = getPageNumber(pageNumber, this.nbPageTotal);
 		this.offset = (this.pageNumber - 1) * this.nbComputersByPage;
-		
-		this.searchedName = searchedName.isPresent() ? searchedName.get() : "";
-		this.orderBy = orderBy.isPresent() ? orderBy.get() : "";
+		this.searchedName = searchedName;
+		this.orderBy = orderBy;
 	}
 	
-	private Long getNbComputersByPage(Optional<String> nbComputersByPage) {
-		if (nbComputersByPage.isPresent()) {
-			return Long.valueOf(nbComputersByPage.get());
+	private Long getNbComputersByPage(String nbComputersByPage) {
+		if (!"".equals(nbComputersByPage)) {
+			return Long.valueOf(nbComputersByPage);
 		}
 		else {
 			return DEFAULT_NB_COMPUTERS_BY_PAGE;
-		}
-	}
-	
-	private Long getNbComputers(Optional<String> searchedName) {
-		if (!searchedName.isPresent() || "".equals(searchedName.get())) {
-			return computerService.getNbComputers();
-		} else {
-			return computerService.getNbComputersByName(searchedName.get());
 		}
 	}
 
@@ -55,13 +39,13 @@ public class PageInfo {
 		return nbPageTotal;
 	}
 	
-	private Long getPageNumber(Optional<String> strPageNumber, Long nbPageTotal) {
+	private Long getPageNumber(String strPageNumber, Long nbPageTotal) {
 		Long pageNumber = 1L;
-		if (strPageNumber.isPresent()) {
-			if ("lastPage".equals(strPageNumber.get())) {
+		if (!"".equals(strPageNumber)) {
+			if ("lastPage".equals(strPageNumber)) {
 				pageNumber = nbPageTotal;
 			} else {
-				pageNumber = Long.valueOf(strPageNumber.get());
+				pageNumber = Long.valueOf(strPageNumber);
 				if (pageNumber < 1L) {
 					pageNumber = 1L;
 				} else if (pageNumber > nbPageTotal) {

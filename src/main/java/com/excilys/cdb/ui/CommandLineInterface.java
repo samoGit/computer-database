@@ -7,6 +7,12 @@ import java.util.Optional;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.stereotype.Component;
+
+import com.excilys.cdb.config.CliAppConfig;
 import com.excilys.cdb.dto.ComputerDto;
 import com.excilys.cdb.mapper.ComputerMapper;
 import com.excilys.cdb.mapper.InvalidComputerException;
@@ -14,6 +20,7 @@ import com.excilys.cdb.mapper.InvalidDateException;
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.model.PageInfo;
+import com.excilys.cdb.persistence.DataBaseAccessException;
 import com.excilys.cdb.service.CompanyService;
 import com.excilys.cdb.service.ComputerService;
 
@@ -22,24 +29,17 @@ import com.excilys.cdb.service.ComputerService;
  * 
  * @author samy
  */
+@Component
 public class CommandLineInterface {
 
+	@Autowired
 	private CompanyService companyService;
+	@Autowired
 	private ComputerService computerService;
+	@Autowired
+	private ComputerMapper computerMapper;
 
-	/**
-	 * Manage interaction with the user.
-	 */
-	private Scanner scanner;
-
-	/**
-	 * Constructor, init services.
-	 */
-	public CommandLineInterface() {
-		companyService = CompanyService.INSTANCE;
-		computerService = ComputerService.INSTANCE;
-		scanner = new Scanner(System.in);
-	}
+	private Scanner scanner = new Scanner(System.in);
 
 	/**
 	 * Display info about all companies.
@@ -60,16 +60,17 @@ public class CommandLineInterface {
 
 	/**
 	 * Display info about all computers.
+	 * @throws DataBaseAccessException 
 	 */
-	protected void displayAllComputers() {
-		PageInfo pageInfo = new PageInfo(Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
+	protected void displayAllComputers() throws DataBaseAccessException {
+		PageInfo pageInfo = new PageInfo("", "", "", "", computerService.getNbComputers());
 		boolean stop = false;
 		while (!stop) {
 			List<Computer> listComputers = computerService.getListComputers(pageInfo);
 			if (listComputers.isEmpty()) {
 				System.out.println("No computers found.");
 			} else {
-				this.displayTableComputers(listComputers);
+				displayTableComputers(listComputers);
 			}
 
 			System.out.println("\n\nWhat do you want to do ?");
@@ -92,10 +93,10 @@ public class CommandLineInterface {
 			if (userChoice.isPresent()) {
 				switch (userChoice.get()) {
 				case NEXT_PAGE:
-					pageInfo.setPageNumber(pageInfo.getPageNumber()+1);
+					pageInfo.setPageNumber(pageInfo.getPageNumber() + 1);
 					break;
 				case PREVIOUS_PAGE:
-					pageInfo.setPageNumber(pageInfo.getPageNumber()-1);
+					pageInfo.setPageNumber(pageInfo.getPageNumber() - 1);
 					break;
 				case BACK_TO_MENU:
 					stop = true;
@@ -117,7 +118,7 @@ public class CommandLineInterface {
 		computerDtoTableHeader.setDateIntroduced("date introduced");
 		computerDtoTableHeader.setDateDiscontinued("date discontinued");
 		computerDtoTableHeader.setCompanyName("company");
-		this.displayRowComputer(computerDtoTableHeader);
+		displayRowComputer(computerDtoTableHeader);
 		System.out.println(
 				"|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|");
 		for (Computer computer : listComputers) {
@@ -131,7 +132,7 @@ public class CommandLineInterface {
 			computerDto.setCompanyName(
 					String.valueOf(computer.getCompany().isPresent() ? computer.getCompany().get().getName() : "?"));
 
-			this.displayRowComputer(computerDto);
+			displayRowComputer(computerDto);
 		}
 		System.out.println(
 				"\\--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------/");
@@ -151,16 +152,17 @@ public class CommandLineInterface {
 	/**
 	 * Launch the menu which allows the user to select a computer (with its name)
 	 * and displays all the information known about this computer
+	 * @throws DataBaseAccessException 
 	 */
-	protected void launchMenuShowDetailComputer() {
+	protected void launchMenuShowDetailComputer() throws DataBaseAccessException {
 		System.out.println("\n\nPlease enter the name of a computer : ");
 		String name = scanner.nextLine();
-		PageInfo pageInfo = new PageInfo(Optional.empty(), Optional.empty(), Optional.of(name), Optional.empty());
+		PageInfo pageInfo = new PageInfo("", "", name, "", computerService.getNbComputers());
 		List<Computer> listComputersFound = computerService.getListComputersByName(pageInfo);
 		if (listComputersFound.isEmpty()) {
 			System.out.println("The computer '" + name + "' is not found.");
 		} else {
-			this.displayTableComputers(listComputersFound);
+			displayTableComputers(listComputersFound);
 		}
 	}
 
@@ -205,7 +207,7 @@ public class CommandLineInterface {
 		List<String> listCompanyId = companyService.getListCompanies().stream().map(c -> c.getId().toString())
 				.collect(Collectors.toList());
 		while (!companyUnknown) {
-			this.displayAllCompanies();
+			displayAllCompanies();
 			System.out.println("Please enter a company id (or '?') : ");
 			String strCompanyId = scanner.nextLine();
 			if (strCompanyId.equals("?"))
@@ -220,19 +222,20 @@ public class CommandLineInterface {
 
 	/**
 	 * Launch the menu which allows the user to create a new computer
+	 * @throws DataBaseAccessException 
 	 */
-	protected void launchMenuCreateComputer() {
+	protected void launchMenuCreateComputer() throws DataBaseAccessException {
 		System.out.println("\nName : ");
 		ComputerDto computerDto = new ComputerDto();
 		computerDto.setName(Optional.ofNullable(scanner.nextLine()));
-		computerDto.setDateIntroduced(this.getDateFromUser(
-				"\n(Expected format = 'DD/MM/YYYY'    or    '?' if unknown)\nDate when introduced : "));
-		computerDto.setDateDiscontinued(this.getDateFromUser(
+		computerDto.setDateIntroduced(
+				getDateFromUser("\n(Expected format = 'DD/MM/YYYY'    or    '?' if unknown)\nDate when introduced : "));
+		computerDto.setDateDiscontinued(getDateFromUser(
 				"\n(Expected format = 'DD/MM/YYYY'    or    '?' if unknown)\nDate when discontinued : "));
-		computerDto.setCompanyId(this.getCompanyIdFromUser());
+		computerDto.setCompanyId(getCompanyIdFromUser());
 
 		try {
-			computerService.createNewComputer(ComputerMapper.getComputer(computerDto));
+			computerService.createNewComputer(computerMapper.getComputer(computerDto));
 		} catch (InvalidComputerException | InvalidDateException e) {
 			System.err.println(e.getMessage());
 		}
@@ -242,12 +245,13 @@ public class CommandLineInterface {
 	 * Launch the menu which allows the user to choose a computer
 	 * 
 	 * @return {@link Computer}
+	 * @throws DataBaseAccessException 
 	 */
-	private Optional<Computer> launchMenuChooseComputer() {
+	private Optional<Computer> launchMenuChooseComputer() throws DataBaseAccessException {
 		System.out.println("\nEnter the name of the computer : ");
 		String name = scanner.nextLine();
 
-		PageInfo pageInfo = new PageInfo(Optional.empty(), Optional.empty(), Optional.of(name), Optional.empty());
+		PageInfo pageInfo = new PageInfo("", "", name, "", computerService.getNbComputers());
 		List<Computer> listComputersFound = computerService.getListComputersByName(pageInfo);
 
 		if (listComputersFound.isEmpty()) {
@@ -255,7 +259,7 @@ public class CommandLineInterface {
 		} else if (listComputersFound.size() == 1) {
 			return Optional.ofNullable(listComputersFound.get(0));
 		} else {
-			this.displayTableComputers(listComputersFound);
+			displayTableComputers(listComputersFound);
 			System.out.println("Multiple computer have the same name, please enter the id of the computer : ");
 			String strID = scanner.nextLine();
 
@@ -271,18 +275,20 @@ public class CommandLineInterface {
 
 	/**
 	 * Launch the menu which allows the user to delete a computer
+	 * @throws DataBaseAccessException 
 	 */
-	protected void launchMenuDeleteComputer() {
-		Optional<Computer> computerToBeDeleted = this.launchMenuChooseComputer();
+	protected void launchMenuDeleteComputer() throws DataBaseAccessException {
+		Optional<Computer> computerToBeDeleted = launchMenuChooseComputer();
 		if (computerToBeDeleted.isPresent())
 			computerService.deleteComputer(computerToBeDeleted.get().getId().toString());
 	}
 
 	/**
 	 * Launch the menu which allows the user to update a computer
+	 * @throws DataBaseAccessException 
 	 */
-	protected void launchMenuUpdateComputer() {
-		Optional<Computer> computerToBeUpdate = this.launchMenuChooseComputer();
+	protected void launchMenuUpdateComputer() throws DataBaseAccessException {
+		Optional<Computer> computerToBeUpdate = launchMenuChooseComputer();
 		if (!computerToBeUpdate.isPresent())
 			return;
 
@@ -306,14 +312,14 @@ public class CommandLineInterface {
 			String newName = scanner.nextLine();
 			computerToBeUpdate.get().setName(newName);
 		} else if (field.equals("introduced")) {
-			Optional<String> dateIntroduced = this.getDateFromUser("Enter the new date : ");
+			Optional<String> dateIntroduced = getDateFromUser("Enter the new date : ");
 			computerToBeUpdate.get().setDateIntroducedFromString(dateIntroduced);
 		} else if (field.equals("discontinued")) {
-			Optional<String> dateDiscontinued = this.getDateFromUser("Enter the new date : ");
+			Optional<String> dateDiscontinued = getDateFromUser("Enter the new date : ");
 			computerToBeUpdate.get().setDateDiscontinuedFromString(dateDiscontinued);
 		} else if (field.equals("company")) {
 			field = "company_id";
-			Optional<String> companyId = this.getCompanyIdFromUser();
+			Optional<String> companyId = getCompanyIdFromUser();
 			Optional<Company> company = Optional.empty();
 			if (companyId.isPresent()) {
 				company = companyService.getCompanyFromId(Long.valueOf(companyId.get()));
@@ -325,15 +331,15 @@ public class CommandLineInterface {
 	}
 
 	/**
-	 * Launch the menu which allows the user to delete a company AND all the computer linked to it.
+	 * Launch the menu which allows the user to delete a company AND all the
+	 * computer linked to it.
 	 */
 	protected void launchMenuDeleteCompany() {
-		Optional<String> companyToBeDeleted = this.getCompanyIdFromUser();
+		Optional<String> companyToBeDeleted = getCompanyIdFromUser();
 		if (companyToBeDeleted.isPresent())
 			companyService.deleteCompany(Long.valueOf(companyToBeDeleted.get()));
 	}
-	
-	
+
 	/**
 	 * Launch the main menu.
 	 */
@@ -355,35 +361,41 @@ public class CommandLineInterface {
 			String strChoice = scanner.nextLine();
 
 			Optional<UserChoiceMain> userChoice = UserChoiceMain.fromString(strChoice);
-			if (userChoice.isPresent()) {
-				switch (userChoice.get()) {
-				case DISPLAY_COMPUTERS:
-					this.displayAllComputers();
-					break;
-				case DISPLAY_COMPANIES:
-					this.displayAllCompanies();
-					break;
-				case SHOW_COMPUTER_DETAILS:
-					this.launchMenuShowDetailComputer();
-					break;
-				case CREATE_COMPUTER:
-					this.launchMenuCreateComputer();
-					break;
-				case UPDATE_COMPUTER:
-					this.launchMenuUpdateComputer();
-					break;
-				case DELETE_COMPUTER:
-					this.launchMenuDeleteComputer();
-					break;
-				case DELETE_COMPANY:
-					this.launchMenuDeleteCompany();
-					break;				
-				case QUIT:
-					stop = true;
-					break;
+			try {
+				if (userChoice.isPresent()) {
+					switch (userChoice.get()) {
+					case DISPLAY_COMPUTERS:
+							displayAllComputers();
+						break;
+					case DISPLAY_COMPANIES:
+						displayAllCompanies();
+						break;
+					case SHOW_COMPUTER_DETAILS:
+						launchMenuShowDetailComputer();
+						break;
+					case CREATE_COMPUTER:
+						launchMenuCreateComputer();
+						break;
+					case UPDATE_COMPUTER:
+						launchMenuUpdateComputer();
+						break;
+					case DELETE_COMPUTER:
+						launchMenuDeleteComputer();
+						break;
+					case DELETE_COMPANY:
+						launchMenuDeleteCompany();
+						break;
+					case QUIT:
+						stop = true;
+						break;
+					}
 				}
+			} catch (DataBaseAccessException e) {
+				System.err.println("ERROR : an error occur while accessing the database");
+				e.printStackTrace();
 			}
 		}
+
 	}
 
 	/**
@@ -391,9 +403,11 @@ public class CommandLineInterface {
 	 * 
 	 * @param args String[] not used
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] edrsze) {
 		System.out.println("Hello !");
-		CommandLineInterface CLI = new CommandLineInterface();
+		@SuppressWarnings("resource")
+		ApplicationContext context = new AnnotationConfigApplicationContext(CliAppConfig.class);
+		CommandLineInterface CLI = context.getBean(CommandLineInterface.class);
 		CLI.launchMainMenu();
 		System.out.println("Goodbye !");
 	}
