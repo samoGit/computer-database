@@ -91,10 +91,10 @@ public class CommandLineInterface {
 			if (userChoice.isPresent()) {
 				switch (userChoice.get()) {
 				case NEXT_PAGE:
-					pageInfo.setPageNumber(pageInfo.getPageNumber()+1);
+					pageInfo.setPageNumber(pageInfo.getPageNumber() + 1);
 					break;
 				case PREVIOUS_PAGE:
-					pageInfo.setPageNumber(pageInfo.getPageNumber()-1);
+					pageInfo.setPageNumber(pageInfo.getPageNumber() - 1);
 					break;
 				case BACK_TO_MENU:
 					stop = true;
@@ -224,8 +224,8 @@ public class CommandLineInterface {
 		System.out.println("\nName : ");
 		ComputerDto computerDto = new ComputerDto();
 		computerDto.setName(Optional.ofNullable(scanner.nextLine()));
-		computerDto.setDateIntroduced(getDateFromUser(
-				"\n(Expected format = 'DD/MM/YYYY'    or    '?' if unknown)\nDate when introduced : "));
+		computerDto.setDateIntroduced(
+				getDateFromUser("\n(Expected format = 'DD/MM/YYYY'    or    '?' if unknown)\nDate when introduced : "));
 		computerDto.setDateDiscontinued(getDateFromUser(
 				"\n(Expected format = 'DD/MM/YYYY'    or    '?' if unknown)\nDate when discontinued : "));
 		computerDto.setCompanyId(getCompanyIdFromUser());
@@ -324,15 +324,15 @@ public class CommandLineInterface {
 	}
 
 	/**
-	 * Launch the menu which allows the user to delete a company AND all the computer linked to it.
+	 * Launch the menu which allows the user to delete a company AND all the
+	 * computer linked to it.
 	 */
 	protected void launchMenuDeleteCompany() {
 		Optional<String> companyToBeDeleted = getCompanyIdFromUser();
 		if (companyToBeDeleted.isPresent())
 			companyService.deleteCompany(Long.valueOf(companyToBeDeleted.get()));
 	}
-	
-	
+
 	/**
 	 * Launch the main menu.
 	 */
@@ -376,7 +376,7 @@ public class CommandLineInterface {
 					break;
 				case DELETE_COMPANY:
 					launchMenuDeleteCompany();
-					break;				
+					break;
 				case QUIT:
 					stop = true;
 					break;
@@ -390,14 +390,12 @@ public class CommandLineInterface {
 	 * 
 	 * @param args String[] not used
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] edrsze) {
 		System.out.println("Hello !");
-
 		@SuppressWarnings("resource")
 		ApplicationContext context = new AnnotationConfigApplicationContext(CliAppConfig.class);
-        CommandLineInterface CLI = context.getBean(CommandLineInterface.class);
-        CLI.launchMainMenu();
-
-        System.out.println("Goodbye !");
+		CommandLineInterface CLI = context.getBean(CommandLineInterface.class);
+		CLI.launchMainMenu();
+		System.out.println("Goodbye !");
 	}
 }

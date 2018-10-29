@@ -27,3 +27,7 @@ input[type='checkbox'] {
     border-radius: 5px;
     white-space: nowrap;
 }
+
+div.btnLang {
+	margin-top : 7.5px;
+}

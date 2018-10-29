@@ -33,9 +33,9 @@
 				href="Dashboard?pageNumber=1&nbComputersByPage=${nbComputersByPage}">
 				<fmt:message key="label.subTitle" />
 			</a>
-            <div class="pull-right">
-            	<a href="?lang=fr">FR</a>
-            	<a href="?lang=en">EN</a>
+            <div class="pull-right btnLang" style="margin-top: 7.5px;">
+            	<a class="btn btn-default <c:if test="${lang eq 'fr'}">btn-primary</c:if>" href="?lang=fr&pageNumber=${pageNumber}&nbComputersByPage=${nbComputersByPage}">FR</a>
+            	<a class="btn btn-default <c:if test="${lang eq 'en'}">btn-primary</c:if>" href="?lang=en&pageNumber=${pageNumber}&nbComputersByPage=${nbComputersByPage}">EN</a>
 			</div>			
 		</div>
 	</header>

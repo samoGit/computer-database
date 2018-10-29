@@ -184,7 +184,6 @@ public class ComputerDao {
 	public Long getNbComputers() {
 		return jdbcTemplate.queryForObject(SQL_SELECT_NB_COMPUTERS, Long.class);
 	}
-	
 
 	/**
 	 * Return the number of computer present in the BDD which the name respect the pattern "*searchedName*"
