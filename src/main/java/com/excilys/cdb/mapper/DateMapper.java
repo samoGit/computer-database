@@ -27,7 +27,7 @@ public class DateMapper {
 			try {
 				date = Optional.ofNullable(LocalDate.parse(strDate, DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 			} catch (DateTimeException dateTimeException) {
-				throw new InvalidDateException("The date " + dateFieldName + " ('" + strDate + "') has an incorect format. The expected date format is dd/MM/yyyy");
+				throw new InvalidDateException();
 			}
 		}
 		return date;

@@ -20,6 +20,7 @@ import com.excilys.cdb.mapper.InvalidDateException;
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.model.PageInfo;
+import com.excilys.cdb.persistence.DataBaseAccessException;
 import com.excilys.cdb.service.CompanyService;
 import com.excilys.cdb.service.ComputerService;
 
@@ -59,8 +60,9 @@ public class CommandLineInterface {
 
 	/**
 	 * Display info about all computers.
+	 * @throws DataBaseAccessException 
 	 */
-	protected void displayAllComputers() {
+	protected void displayAllComputers() throws DataBaseAccessException {
 		PageInfo pageInfo = new PageInfo("", "", "", "", computerService.getNbComputers());
 		boolean stop = false;
 		while (!stop) {
@@ -150,8 +152,9 @@ public class CommandLineInterface {
 	/**
 	 * Launch the menu which allows the user to select a computer (with its name)
 	 * and displays all the information known about this computer
+	 * @throws DataBaseAccessException 
 	 */
-	protected void launchMenuShowDetailComputer() {
+	protected void launchMenuShowDetailComputer() throws DataBaseAccessException {
 		System.out.println("\n\nPlease enter the name of a computer : ");
 		String name = scanner.nextLine();
 		PageInfo pageInfo = new PageInfo("", "", name, "", computerService.getNbComputers());
@@ -219,8 +222,9 @@ public class CommandLineInterface {
 
 	/**
 	 * Launch the menu which allows the user to create a new computer
+	 * @throws DataBaseAccessException 
 	 */
-	protected void launchMenuCreateComputer() {
+	protected void launchMenuCreateComputer() throws DataBaseAccessException {
 		System.out.println("\nName : ");
 		ComputerDto computerDto = new ComputerDto();
 		computerDto.setName(Optional.ofNullable(scanner.nextLine()));
@@ -241,8 +245,9 @@ public class CommandLineInterface {
 	 * Launch the menu which allows the user to choose a computer
 	 * 
 	 * @return {@link Computer}
+	 * @throws DataBaseAccessException 
 	 */
-	private Optional<Computer> launchMenuChooseComputer() {
+	private Optional<Computer> launchMenuChooseComputer() throws DataBaseAccessException {
 		System.out.println("\nEnter the name of the computer : ");
 		String name = scanner.nextLine();
 
@@ -270,8 +275,9 @@ public class CommandLineInterface {
 
 	/**
 	 * Launch the menu which allows the user to delete a computer
+	 * @throws DataBaseAccessException 
 	 */
-	protected void launchMenuDeleteComputer() {
+	protected void launchMenuDeleteComputer() throws DataBaseAccessException {
 		Optional<Computer> computerToBeDeleted = launchMenuChooseComputer();
 		if (computerToBeDeleted.isPresent())
 			computerService.deleteComputer(computerToBeDeleted.get().getId().toString());
@@ -279,8 +285,9 @@ public class CommandLineInterface {
 
 	/**
 	 * Launch the menu which allows the user to update a computer
+	 * @throws DataBaseAccessException 
 	 */
-	protected void launchMenuUpdateComputer() {
+	protected void launchMenuUpdateComputer() throws DataBaseAccessException {
 		Optional<Computer> computerToBeUpdate = launchMenuChooseComputer();
 		if (!computerToBeUpdate.isPresent())
 			return;
@@ -354,35 +361,41 @@ public class CommandLineInterface {
 			String strChoice = scanner.nextLine();
 
 			Optional<UserChoiceMain> userChoice = UserChoiceMain.fromString(strChoice);
-			if (userChoice.isPresent()) {
-				switch (userChoice.get()) {
-				case DISPLAY_COMPUTERS:
-					displayAllComputers();
-					break;
-				case DISPLAY_COMPANIES:
-					displayAllCompanies();
-					break;
-				case SHOW_COMPUTER_DETAILS:
-					launchMenuShowDetailComputer();
-					break;
-				case CREATE_COMPUTER:
-					launchMenuCreateComputer();
-					break;
-				case UPDATE_COMPUTER:
-					launchMenuUpdateComputer();
-					break;
-				case DELETE_COMPUTER:
-					launchMenuDeleteComputer();
-					break;
-				case DELETE_COMPANY:
-					launchMenuDeleteCompany();
-					break;
-				case QUIT:
-					stop = true;
-					break;
+			try {
+				if (userChoice.isPresent()) {
+					switch (userChoice.get()) {
+					case DISPLAY_COMPUTERS:
+							displayAllComputers();
+						break;
+					case DISPLAY_COMPANIES:
+						displayAllCompanies();
+						break;
+					case SHOW_COMPUTER_DETAILS:
+						launchMenuShowDetailComputer();
+						break;
+					case CREATE_COMPUTER:
+						launchMenuCreateComputer();
+						break;
+					case UPDATE_COMPUTER:
+						launchMenuUpdateComputer();
+						break;
+					case DELETE_COMPUTER:
+						launchMenuDeleteComputer();
+						break;
+					case DELETE_COMPANY:
+						launchMenuDeleteCompany();
+						break;
+					case QUIT:
+						stop = true;
+						break;
+					}
 				}
+			} catch (DataBaseAccessException e) {
+				System.err.println("ERROR : an error occur while accessing the database");
+				e.printStackTrace();
 			}
 		}
+
 	}
 
 	/**

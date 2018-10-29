@@ -38,7 +38,7 @@ public class ComputerMapper {
 			id = Long.valueOf(computerDto.getId());
 		}
 		if ("".equals(computerDto.getName())) {
-			throw new InvalidComputerException("Computer name value should not be empty.");
+			throw new InvalidComputerException("label.invalidComputer.EmpyName");
 		}
 
 		Optional<LocalDate> dateIntroduced = DateMapper.getLocalDate(computerDto.getDateIntroduced(), "introduced");
@@ -46,8 +46,7 @@ public class ComputerMapper {
 		if (	dateIntroduced.isPresent()
 			&&	dateDiscontinued.isPresent()
 			&&	dateIntroduced.get().isAfter(dateDiscontinued.get())) {
-			throw new InvalidComputerException("The Introduced date value ('" + dateIntroduced.get()
-					+ "') should be before the Discontinued date value ('" + dateDiscontinued.get() + "').");
+			throw new InvalidComputerException("label.invalidComputer.IntroducedAfterDiscontinued");
 		}
 		
 		Optional<Company> company = Optional.empty();
@@ -55,10 +54,10 @@ public class ComputerMapper {
 			try {
 				company = companyService.getCompanyFromId(Long.valueOf(computerDto.getCompanyId()));
 				if (!company.isPresent()) {
-					throw new InvalidComputerException("No company found with the companyId : '" + computerDto.getCompanyId() + "'");
+					throw new InvalidComputerException("label.invalidComputer.noCompany");
 				}
 			} catch (NumberFormatException numberFormatException) {
-				throw new InvalidComputerException("No company found, companyId value ('" + computerDto.getCompanyId() + "') is not a number)");
+				throw new InvalidComputerException("label.invalidComputer.noCompany");
 			}
 		}
 

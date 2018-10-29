@@ -22,6 +22,7 @@ import com.excilys.cdb.mapper.InvalidDateException;
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.model.PageInfo;
+import com.excilys.cdb.persistence.DataBaseAccessException;
 import com.excilys.cdb.service.CompanyService;
 import com.excilys.cdb.service.ComputerService;
 
@@ -36,6 +37,7 @@ public class ComputerController {
 	private final CompanyService companyService;
 	private final ComputerMapper computerMapper;
 
+	
 	@Autowired
 	public ComputerController(ComputerService computerService, CompanyService companyService, ComputerMapper computerMapper) {
 		this.computerService = computerService;
@@ -43,7 +45,7 @@ public class ComputerController {
 		this.computerMapper = computerMapper;
 	}
 
-	private Long getNbComputers(String searchedName) {
+	private Long getNbComputers(String searchedName) throws DataBaseAccessException {
 		if ("".equals(searchedName)) {
 			return computerService.getNbComputers();
 		} else {
@@ -51,7 +53,7 @@ public class ComputerController {
 		}
 	}
 
-	private List<ComputerDto> getListComputerDto(PageInfo pageInfo) {
+	private List<ComputerDto> getListComputerDto(PageInfo pageInfo) throws DataBaseAccessException {
 		if (!"".equals(pageInfo.getSearchedName())) {
 			List<Computer> listComputer = computerService.getListComputersByName(pageInfo);
 			return listComputer.stream().map(c -> new ComputerDto(c)).collect(Collectors.toList());
@@ -63,31 +65,33 @@ public class ComputerController {
 
 	@GetMapping("Dashboard")
 	public String getDashboard(ModelMap model, 
-			@RequestParam(required = false, defaultValue = "en") String lang,
 			@RequestParam(required = false, defaultValue = "") String search,
 			@RequestParam(required = false, defaultValue = "1") String pageNumber,
 			@RequestParam(required = false, defaultValue = "") String nbComputersByPage,
 			@RequestParam(required = false, defaultValue = "") String orderBy) {
 		logger.info(" ------------------- getDashboard");
 
-		Long nbComputers = getNbComputers(search);
-		logger.info(" ------------------- nbComputers = " + nbComputers);
-		PageInfo pageInfo = new PageInfo(pageNumber, nbComputersByPage, search, orderBy, nbComputers);
-		model.addAttribute("pageNumber", pageInfo.getPageNumber());
-		model.addAttribute("nbComputersByPage", pageInfo.getNbComputersByPage());
-		model.addAttribute("search", pageInfo.getSearchedName());
-		model.addAttribute("orderBy", pageInfo.getOrderBy());
-		model.addAttribute("nbComputers", pageInfo.getNbComputers());
-		model.addAttribute("nbPage", pageInfo.getNbPageTotal());
-		model.addAttribute("listComputerDtos", this.getListComputerDto(pageInfo));
-		model.addAttribute("lang", lang);
-
+		try {
+			Long nbComputers = getNbComputers(search);
+			logger.info(" ------------------- nbComputers = " + nbComputers);
+			
+			PageInfo pageInfo = new PageInfo(pageNumber, nbComputersByPage, search, orderBy, nbComputers);
+			model.addAttribute("pageNumber", pageInfo.getPageNumber());
+			model.addAttribute("nbComputersByPage", pageInfo.getNbComputersByPage());
+			model.addAttribute("search", pageInfo.getSearchedName());
+			model.addAttribute("orderBy", pageInfo.getOrderBy());
+			model.addAttribute("nbComputers", pageInfo.getNbComputers());
+			model.addAttribute("nbPage", pageInfo.getNbPageTotal());
+			model.addAttribute("listComputerDtos", this.getListComputerDto(pageInfo));
+		} catch (DataBaseAccessException e) {
+			return "500";
+		}
+		
 		return "dashboard";
 	}
 
 	@GetMapping("AddComputer")
 	public String getAddComputer(ModelMap model, 
-			@RequestParam(required = false, defaultValue = "en") String lang,			
 			@RequestParam(required = false, defaultValue = "1") String pageNumber,
 			@RequestParam(required = false, defaultValue = "10") String nbComputersByPage,
 			@RequestParam(required = false, defaultValue = "") String orderBy) {
@@ -96,14 +100,12 @@ public class ComputerController {
 		model.addAttribute("pageNumber", pageNumber);
 		model.addAttribute("nbComputersByPage", nbComputersByPage);
 		model.addAttribute("listCompanies", companyService.getListCompanies());
-		model.addAttribute("lang", lang);
 
 		return "addComputer";
 	}
 	
 	@PostMapping("AddComputer")
 	public String postAddComputer(ModelMap model, 
-			@RequestParam(required = false, defaultValue = "en") String lang,			
 			@RequestParam(required = false, defaultValue = "1") String pageNumber,
 			@RequestParam(required = false, defaultValue = "10") String nbComputersByPage,
 			@RequestParam(required = false, defaultValue = "") String orderBy,
@@ -120,14 +122,13 @@ public class ComputerController {
 		computerDto.setCompanyId(Optional.ofNullable(companyId));
 
 		model.addAttribute("nbComputersByPage", nbComputersByPage);
-		model.addAttribute("lang", lang);
 
 		try {
 			computerService.createNewComputer(computerMapper.getComputer(computerDto));
 		} catch (InvalidComputerException | InvalidDateException e) {
-			String errorMsg = e.getMessage();
-			logger.warn(errorMsg);
-			model.addAttribute("errorMsg", errorMsg);
+			String errorMsgKey = e.getMessageKey();
+			logger.warn(errorMsgKey);
+			model.addAttribute("errorMsgKey", errorMsgKey);
 			model.addAttribute("computerName", computerDto.getName());
 			model.addAttribute("dateIntroduced", computerDto.getDateIntroduced());
 			model.addAttribute("dateDiscontinued", computerDto.getDateDiscontinued());
@@ -135,8 +136,10 @@ public class ComputerController {
 			model.addAttribute("listCompanies", companyService.getListCompanies());
 			model.addAttribute("pageNumber", pageNumber);
 			return "addComputer";
+		} catch (DataBaseAccessException e) {
+			return "500";
 		}
-		
+
 		model.addAttribute("pageNumber", "lastPage");
 		return "redirect:Dashboard";
 		
@@ -144,7 +147,6 @@ public class ComputerController {
 
 	@PostMapping("DeleteComputer")
 	public String postDeleteComputer(ModelMap model, 
-			@RequestParam(required = false, defaultValue = "en") String lang, 
 			@RequestParam(required = false, defaultValue = "") String search,
 			@RequestParam(required = false, defaultValue = "1") String pageNumber,
 			@RequestParam(required = false, defaultValue = "10") String nbComputersByPage,
@@ -152,19 +154,21 @@ public class ComputerController {
 			@RequestParam String selection) {
 		logger.info(" ------------------- postDeleteComputer");
 
-		computerService.deleteComputer(selection);
+		try {
+			computerService.deleteComputer(selection);
+		} catch (DataBaseAccessException e) {
+			return "500";
+		}
 		model.addAttribute("pageNumber", pageNumber);
 		model.addAttribute("nbComputersByPage", nbComputersByPage);
 		model.addAttribute("search", search);
 		model.addAttribute("orderBy", orderBy);
-		model.addAttribute("lang", lang);
 
 		return "redirect:Dashboard"; 
 	}
 
 	@GetMapping("EditComputer")
 	public String getEditComputer(ModelMap model, 
-			@RequestParam(required = false, defaultValue = "en") String lang,						
 			@RequestParam(required = false, defaultValue = "1") String pageNumber, 
 			@RequestParam(required = false, defaultValue = "10") String nbComputersByPage, 
 			@RequestParam String computerId, 
@@ -183,14 +187,12 @@ public class ComputerController {
 		model.addAttribute("dateDiscontinued", dateDiscontinued);
 		model.addAttribute("companyName", companyName);
 		model.addAttribute("listCompanies", listCompanies);
-		model.addAttribute("lang", lang);
 
 		return "editComputer";
 	}
 	
 	@PostMapping("EditComputer")
 	public String postEditComputer(ModelMap model, 
-			@RequestParam(required = false, defaultValue = "en") String lang, 
 			@RequestParam(required = false, defaultValue = "1") String pageNumber, 
 			@RequestParam(required = false, defaultValue = "10") String nbComputersByPage, 
 			@RequestParam String computerId, 
@@ -207,7 +209,6 @@ public class ComputerController {
 		computerDto.setDateDiscontinued(Optional.ofNullable(dateDiscontinued));
 		computerDto.setCompanyId(Optional.ofNullable(companyId));
 
-		model.addAttribute("lang", lang);
 		model.addAttribute("pageNumber", pageNumber);
 		model.addAttribute("nbComputersByPage", nbComputersByPage);
 
@@ -218,8 +219,8 @@ public class ComputerController {
 			
 			return "redirect:Dashboard";
 		} catch (InvalidComputerException | InvalidDateException e) {
-			String errorMsg = e.getMessage();
-			logger.warn(errorMsg);
+			String errorMsgKey = e.getMessageKey();
+			logger.warn(errorMsgKey);
 			
 			model.addAttribute("computerId", computerDto.getCompanyId());
 			model.addAttribute("computerName", computerDto.getName());
@@ -227,9 +228,17 @@ public class ComputerController {
 			model.addAttribute("dateDiscontinued", computerDto.getDateDiscontinued());
 			model.addAttribute("companyId", computerDto.getCompanyId());
 			model.addAttribute("listCompanies", companyService.getListCompanies());
-			model.addAttribute("errorMsg", errorMsg);
+			model.addAttribute("errorMsgKey", errorMsgKey);
 			return "editComputer";			
+		} catch (DataBaseAccessException e) {
+			return "500";
 		}
+	}
+
+	@GetMapping("*")
+	public String get404(ModelMap model) {
+		logger.info(" ------------------- get404");
+		return "404";
 	}
 }
 

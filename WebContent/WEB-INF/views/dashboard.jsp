@@ -1,7 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jstl/fmt"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
 <!DOCTYPE html>
 <html>
@@ -19,14 +19,15 @@
 	<header class="navbar navbar-inverse navbar-fixed-top">
 		<div class="container">
 			<a class="navbar-brand"
-				href="Dashboard?pageNumber=1&nbComputersByPage=${nbComputersByPage}">
+				href="Dashboard?pageNumber=1&nbComputersByPage=${nbComputersByPage}&lang=${lang}">
 				<fmt:message key="label.subTitle" />
 			</a>
             <div class="pull-right btnLang" style="margin-top: 7.5px;">
-            	<a	class="btn btn-default <c:if test="${lang eq 'fr'}">btn-primary</c:if>" 
-            		href="Dashboard?lang=fr&pageNumber=${pageNumber}&nbComputersByPage=${nbComputersByPage}">FR</a>
-            	<a	class="btn btn-default <c:if test="${lang eq 'en'}">btn-primary</c:if>" 
-            		href="Dashboard?lang=en&pageNumber=${pageNumber}&nbComputersByPage=${nbComputersByPage}">EN</a>
+            ${pageContext.response.locale}
+             	<a	class="btn btn-default <c:if test="${pageContext.response.locale.language eq 'fr'}">btn-primary</c:if>" 
+            		href="Dashboard?lang=fr&pageNumber=${pageNumber}&nbComputersByPage=${nbComputersByPage}">FR</a> 
+            	<a	class="btn btn-default <c:if test="${pageContext.response.locale.language eq 'en'}">btn-primary</c:if>" 
+            		href="Dashboard?lang=en&pageNumber=${pageNumber}&nbComputersByPage=${nbComputersByPage}">EN</a> -->
 			</div>			
 		</div>
 	</header>
