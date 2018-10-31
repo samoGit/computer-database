@@ -4,7 +4,6 @@ import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.Optional;
 
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
@@ -22,22 +21,22 @@ public class ComputerRowMapper implements RowMapper<Computer>{
 		String name = resultSet.getString("computer.name");
 
 		Date dateIntroduced = resultSet.getDate("computer.introduced");
-		Optional<LocalDate> localDateIntroduced = Optional.empty();
+		LocalDate localDateIntroduced = null;
 		if (dateIntroduced != null) {
-			localDateIntroduced = Optional.of(dateIntroduced.toLocalDate());
+			localDateIntroduced = dateIntroduced.toLocalDate();
 		}
 
 		Date dateDiscontinued = resultSet.getDate("computer.discontinued");
-		Optional<LocalDate> localDateDiscontinued = Optional.empty();
+		LocalDate localDateDiscontinued = null;
 		if (dateDiscontinued != null) {
-			localDateDiscontinued = Optional.of(dateDiscontinued.toLocalDate());
+			localDateDiscontinued = dateDiscontinued.toLocalDate();
 		}
 
 		Long companyId = resultSet.getLong("company.id");
 		String companyName = resultSet.getString("company.name");
-		Optional<Company> company = Optional.empty();
+		Company company = null;
 		if (companyId != null && companyName != null)
-			company = Optional.of(new Company(companyId, companyName));
+			company = new Company(companyId, companyName);
 
 		return ComputerBuilder.newComputerBuilder()
 							  .withId(id)

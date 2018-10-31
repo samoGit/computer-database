@@ -43,8 +43,9 @@ public class CommandLineInterface {
 
 	/**
 	 * Display info about all companies.
+	 * @throws DataBaseAccessException 
 	 */
-	protected void displayAllCompanies() {
+	protected void displayAllCompanies() throws DataBaseAccessException {
 		List<Company> listCompanies = companyService.getListCompanies();
 		System.out.println("\nList of companies : ");
 		System.out.println("/---------------------------------------------------------------\\");
@@ -126,11 +127,11 @@ public class CommandLineInterface {
 			computerDto.setId(String.valueOf(computer.getId()));
 			computerDto.setName(String.valueOf(computer.getName()));
 			computerDto.setDateIntroduced(String
-					.valueOf(computer.getDateIntroduced().isPresent() ? computer.getDateIntroduced().get() : "?"));
+					.valueOf(computer.getDateIntroduced() != null ? computer.getDateIntroduced() : "?"));
 			computerDto.setDateDiscontinued(String
-					.valueOf(computer.getDateDiscontinued().isPresent() ? computer.getDateDiscontinued().get() : "?"));
+					.valueOf(computer.getDateDiscontinued() != null ? computer.getDateDiscontinued() : "?"));
 			computerDto.setCompanyName(
-					String.valueOf(computer.getCompany().isPresent() ? computer.getCompany().get().getName() : "?"));
+					String.valueOf(computer.getCompany() != null ? computer.getCompany().getName() : "?"));
 
 			displayRowComputer(computerDto);
 		}
@@ -201,8 +202,9 @@ public class CommandLineInterface {
 	 * @param message String The text to be display until the user enter a CompnayId
 	 *                (or "?")
 	 * @return {@link Company}
+	 * @throws DataBaseAccessException 
 	 */
-	private Optional<String> getCompanyIdFromUser() {
+	private Optional<String> getCompanyIdFromUser() throws DataBaseAccessException {
 		boolean companyUnknown = false;
 		List<String> listCompanyId = companyService.getListCompanies().stream().map(c -> c.getId().toString())
 				.collect(Collectors.toList());
@@ -320,7 +322,7 @@ public class CommandLineInterface {
 		} else if (field.equals("company")) {
 			field = "company_id";
 			Optional<String> companyId = getCompanyIdFromUser();
-			Optional<Company> company = Optional.empty();
+			Company company = null;
 			if (companyId.isPresent()) {
 				company = companyService.getCompanyFromId(Long.valueOf(companyId.get()));
 			}
@@ -333,8 +335,9 @@ public class CommandLineInterface {
 	/**
 	 * Launch the menu which allows the user to delete a company AND all the
 	 * computer linked to it.
+	 * @throws DataBaseAccessException 
 	 */
-	protected void launchMenuDeleteCompany() {
+	protected void launchMenuDeleteCompany() throws DataBaseAccessException {
 		Optional<String> companyToBeDeleted = getCompanyIdFromUser();
 		if (companyToBeDeleted.isPresent())
 			companyService.deleteCompany(Long.valueOf(companyToBeDeleted.get()));

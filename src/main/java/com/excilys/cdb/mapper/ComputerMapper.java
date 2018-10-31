@@ -2,7 +2,6 @@ package com.excilys.cdb.mapper;
 
 import java.sql.ResultSet;
 import java.time.LocalDate;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -11,6 +10,7 @@ import com.excilys.cdb.builder.ComputerBuilder;
 import com.excilys.cdb.dto.ComputerDto;
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
+import com.excilys.cdb.persistence.DataBaseAccessException;
 import com.excilys.cdb.service.CompanyService;
 
 /**
@@ -26,13 +26,7 @@ public class ComputerMapper {
 	@Autowired
 	private CompanyService companyService;
 
-	/**
-	 * This class only provides static methods and should not be instantiated
-	 */
-	private ComputerMapper() {
-	}
-
-	public Computer getComputer(ComputerDto computerDto) throws InvalidComputerException, InvalidDateException {
+	public Computer getComputer(ComputerDto computerDto) throws InvalidComputerException, InvalidDateException, DataBaseAccessException {
 		Long id = null;
 		if (!"".equals(computerDto.getId())) {
 			id = Long.valueOf(computerDto.getId());
@@ -41,19 +35,19 @@ public class ComputerMapper {
 			throw new InvalidComputerException("label.invalidComputer.EmpyName");
 		}
 
-		Optional<LocalDate> dateIntroduced = DateMapper.getLocalDate(computerDto.getDateIntroduced(), "introduced");
-		Optional<LocalDate> dateDiscontinued = DateMapper.getLocalDate(computerDto.getDateDiscontinued(), "discontinued");
-		if (	dateIntroduced.isPresent()
-			&&	dateDiscontinued.isPresent()
-			&&	dateIntroduced.get().isAfter(dateDiscontinued.get())) {
+		LocalDate dateIntroduced = DateMapper.getLocalDate(computerDto.getDateIntroduced(), "introduced");
+		LocalDate dateDiscontinued = DateMapper.getLocalDate(computerDto.getDateDiscontinued(), "discontinued");
+		if (	dateIntroduced != null
+			&&	dateDiscontinued != null
+			&&	dateIntroduced.isAfter(dateDiscontinued)) {
 			throw new InvalidComputerException("label.invalidComputer.IntroducedAfterDiscontinued");
 		}
 		
-		Optional<Company> company = Optional.empty();
+		Company company = null;
 		if (!"".equals(computerDto.getCompanyId())) {
 			try {
 				company = companyService.getCompanyFromId(Long.valueOf(computerDto.getCompanyId()));
-				if (!company.isPresent()) {
+				if (company == null) {
 					throw new InvalidComputerException("label.invalidComputer.noCompany");
 				}
 			} catch (NumberFormatException numberFormatException) {

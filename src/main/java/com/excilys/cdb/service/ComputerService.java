@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.excilys.cdb.mapper.InvalidComputerException;
 import com.excilys.cdb.mapper.InvalidDateException;
@@ -14,11 +15,6 @@ import com.excilys.cdb.model.PageInfo;
 import com.excilys.cdb.persistence.ComputerDao;
 import com.excilys.cdb.persistence.DataBaseAccessException;
 
-/**
- * Manage computer.
- * 
- * @author samy
- */
 @Service
 public class ComputerService {
 
@@ -66,6 +62,7 @@ public class ComputerService {
 	 * @param computerId
 	 * @throws DataBaseAccessException 
 	 */
+	@Transactional
 	public void deleteComputer(String listComputersId) throws DataBaseAccessException {
 		if (!"".equals(listComputersId)) {
 			computerDao.deleteComputer(listComputersId);
@@ -83,6 +80,7 @@ public class ComputerService {
 		computerDao.updateComputer(c, field);
 	}
 	
+	@Transactional
 	public void updateComputer(Computer computer) throws DataBaseAccessException {
 		computerDao.updateComputer(computer);
 	}

@@ -21,9 +21,9 @@
 				<fmt:message key="label.subTitle" />
 			</a>
             <div class="pull-right btnLang" style="margin-top: 7.5px;">
-            	<a	class="btn btn-default <c:if test="${pageContext.response.locale eq 'fr'}">btn-primary</c:if>" 
+            	<a	class="btn btn-default <c:if test="${pageContext.response.locale.language eq 'fr'}">btn-primary</c:if>" 
             		href="?lang=fr">FR</a>
-            	<a	class="btn btn-default <c:if test="${pageContext.response.locale eq 'en'}">btn-primary</c:if>" 
+            	<a	class="btn btn-default <c:if test="${pageContext.response.locale.language eq 'en'}">btn-primary</c:if>" 
             		href="?lang=en">EN</a>
 			</div>
 		</div>

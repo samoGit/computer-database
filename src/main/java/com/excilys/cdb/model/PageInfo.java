@@ -88,4 +88,11 @@ public class PageInfo {
 		}
 		this.offset = (this.pageNumber - 1) * this.nbComputersByPage;
 	}
+
+	@Override
+	public String toString() {
+		return "PageInfo [pageNumber=" + pageNumber + ", nbComputersByPage=" + nbComputersByPage + ", offset=" + offset
+				+ ", nbPageTotal=" + nbPageTotal + ", nbComputers=" + nbComputers + ", searchedName=" + searchedName
+				+ ", orderBy=" + orderBy + "]";
+	}
 }

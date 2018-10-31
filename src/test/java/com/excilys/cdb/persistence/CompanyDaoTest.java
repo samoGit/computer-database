@@ -1,7 +1,6 @@
 package com.excilys.cdb.persistence;
 
 import java.util.List;
-import java.util.Optional;
 
 import javax.annotation.PostConstruct;
 
@@ -30,18 +29,18 @@ public class CompanyDaoTest extends TestCase {
 	}
 
 	@Test
-	public void testGetListCompanies() {
+	public void testGetListCompanies() throws DataBaseAccessException {
 		List<Company> actualListCompaniesFound = companyDao.getListCompanies();
 		assertFalse(actualListCompaniesFound.isEmpty());
 	}
 
 	@Test
-	public void testGetCompanyFromId() {
-		Optional<Company> companyNotFound = companyDao.getCompanyFromId(-3L);
-		assertFalse(companyNotFound.isPresent());
+	public void testGetCompanyFromId() throws DataBaseAccessException {
+		Company companyNotFound = companyDao.getCompanyFromId(-3L);
+		assertNull(companyNotFound);
 
-		Optional<Company> companyFound = companyDao.getCompanyFromId(9L);
-		assertTrue(companyFound.isPresent());
+		Company companyFound = companyDao.getCompanyFromId(9L);
+		assertNotNull(companyFound);
 		
 	}
 }

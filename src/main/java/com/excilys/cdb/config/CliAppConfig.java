@@ -1,31 +1,34 @@
 package com.excilys.cdb.config;
 
 import java.util.MissingResourceException;
+import java.util.Properties;
 import java.util.ResourceBundle;
 
+import javax.sql.DataSource;
+
+import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.orm.hibernate5.HibernateTransactionManager;
+import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 
 import com.zaxxer.hikari.HikariDataSource;
 
-
 @Configuration
-@ComponentScan("com.excilys.cdb.persistence, "
-		+ "com.excilys.cdb.mapper, "
-			 + "com.excilys.cdb.service, "
-			 + "com.excilys.cdb.ui")
+@ComponentScan("com.excilys.cdb.persistence, " + "com.excilys.cdb.mapper, " + "com.excilys.cdb.service, "
+		+ "com.excilys.cdb.ui")
 public class CliAppConfig {
 
-	private HikariDataSource dataSource;
-	private JdbcTemplate jdbcTemplate;
 	private final static Logger logger = LoggerFactory.getLogger("CliAppConfig");
 
-	public CliAppConfig() {
-		dataSource = new HikariDataSource();
+	@Bean
+	public DataSource getDataSource() {
+		HikariDataSource dataSource = new HikariDataSource();
 		ResourceBundle bundle = ResourceBundle.getBundle("hikari");
 		String driverClassName = "";
 		try {
@@ -35,9 +38,7 @@ public class CliAppConfig {
 			dataSource.setUsername(bundle.getString("username"));
 			dataSource.setPassword(bundle.getString("password"));
 			dataSource.setDriverClassName(driverClassName);
-			jdbcTemplate = new JdbcTemplate(dataSource);
-		}
-		catch (MissingResourceException e) {
+		} catch (MissingResourceException e) {
 			logger.error(" >>> hikari properties not found >>> \n");
 			logger.error("   Message  = " + e.getMessage());
 			logger.error("   KeyNotFound  = " + e.getKey() + "\n");
@@ -50,10 +51,34 @@ public class CliAppConfig {
 			e.printStackTrace();
 			logger.error(" <<< hikari properties not found <<< \n");
 		}
+		return dataSource;
 	}
 
 	@Bean
-	public JdbcTemplate jdbcTemplate() {
-		return jdbcTemplate;
+	public JdbcTemplate jdbcTemplate(DataSource dataSource) {
+		return new JdbcTemplate(dataSource);
+	}
+
+	@Bean
+	public LocalSessionFactoryBean getSessionFactory(DataSource datasource) {
+		LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
+		sessionFactory.setDataSource(datasource);
+		sessionFactory.setPackagesToScan(new String[] { "com.excilys.cdb.model" });
+
+		ResourceBundle bundle = ResourceBundle.getBundle("hibernate");
+		Properties hibernateProperties = new Properties();
+		hibernateProperties.setProperty("hibernate.dialect", bundle.getString("dialect"));
+		hibernateProperties.setProperty("hibernate.show_sql", bundle.getString("show_sql"));
+
+		sessionFactory.setHibernateProperties(hibernateProperties);
+		return sessionFactory;
+	}
+
+	@Bean
+	@Autowired
+	public HibernateTransactionManager transactionManager(SessionFactory sessionFactory) {
+		HibernateTransactionManager manager = new HibernateTransactionManager();
+		manager.setSessionFactory(sessionFactory);
+		return manager;
 	}
 }

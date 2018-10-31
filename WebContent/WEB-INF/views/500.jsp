@@ -1,3 +1,8 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jstl/fmt"%>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -16,9 +21,9 @@
 				<fmt:message key="label.subTitle" />
 			</a>
             <div class="pull-right btnLang" style="margin-top: 7.5px;">
-            	<a	class="btn btn-default <c:if test="${pageContext.response.locale eq 'fr'}">btn-primary</c:if>" 
+            	<a	class="btn btn-default <c:if test="${pageContext.response.locale.language eq 'fr'}">btn-primary</c:if>" 
             		href="?lang=fr">FR</a>
-            	<a	class="btn btn-default <c:if test="${pageContext.response.locale eq 'en'}">btn-primary</c:if>" 
+            	<a	class="btn btn-default <c:if test="${pageContext.response.locale.language eq 'en'}">btn-primary</c:if>" 
             		href="?lang=en">EN</a>
 			</div>
 		</div>

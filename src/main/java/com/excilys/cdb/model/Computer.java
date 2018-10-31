@@ -4,17 +4,40 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
 /**
  * Contain data about a given computer.
  * 
  * @author samy
  */
+@Entity
+@Table(name = "computer")
 public class Computer {
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
 	private Long id;
+	
+    @Column(name = "name")
 	private String name;
-	private Optional<LocalDate> dateIntroduced;
-	private Optional<LocalDate> dateDiscontinued;
-	private Optional<Company> company;
+    
+    @Column(name = "introduced")
+	private LocalDate dateIntroduced;
+
+    @Column(name = "discontinued")
+	private LocalDate dateDiscontinued;
+    
+    @ManyToOne
+    @JoinColumn(name="company_id")
+    private Company company;
 
 	/**
 	 * Default constructor (should not be used "manually").
@@ -38,45 +61,43 @@ public class Computer {
 		this.name = name;
 	}
 
-	public Optional<LocalDate> getDateIntroduced() {
+	public LocalDate getDateIntroduced() {
 		return dateIntroduced;
 	}
 
-	public void setDateIntroduced(Optional<LocalDate> dateIntroduced) {
+	public void setDateIntroduced(LocalDate dateIntroduced) {
 		this.dateIntroduced = dateIntroduced;
 	}
 
 	public void setDateIntroducedFromString(Optional<String> dateIntroduced) {
 		if (dateIntroduced.isPresent()) {
-			this.dateIntroduced = Optional
-					.ofNullable(LocalDate.parse(dateIntroduced.get(), DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+			this.dateIntroduced = LocalDate.parse(dateIntroduced.get(), DateTimeFormatter.ofPattern("dd/MM/yyyy"));
 		} else {
-			this.dateIntroduced = Optional.empty();
+			this.dateIntroduced = null;
 		}
 	}
 
-	public Optional<LocalDate> getDateDiscontinued() {
+	public LocalDate getDateDiscontinued() {
 		return dateDiscontinued;
 	}
 
-	public void setDateDiscontinued(Optional<LocalDate> dateDiscontinued) {
+	public void setDateDiscontinued(LocalDate dateDiscontinued) {
 		this.dateDiscontinued = dateDiscontinued;
 	}
 
 	public void setDateDiscontinuedFromString(Optional<String> dateDiscontinued) {
 		if (dateDiscontinued.isPresent()) {
-			this.dateDiscontinued = Optional
-					.ofNullable(LocalDate.parse(dateDiscontinued.get(), DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+			this.dateDiscontinued = LocalDate.parse(dateDiscontinued.get(), DateTimeFormatter.ofPattern("dd/MM/yyyy"));
 		} else {
-			this.dateDiscontinued = Optional.empty();
+			this.dateDiscontinued = null;
 		}
 	}
 
-	public Optional<Company> getCompany() {
+	public Company getCompany() {
 		return company;
 	}
 
-	public void setCompany(Optional<Company> company) {
+	public void setCompany(Company company) {
 		this.company = company;
 	}
 

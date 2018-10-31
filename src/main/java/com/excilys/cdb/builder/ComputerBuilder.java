@@ -1,7 +1,6 @@
 package com.excilys.cdb.builder;
 
 import java.time.LocalDate;
-import java.util.Optional;
 
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
@@ -9,14 +8,11 @@ import com.excilys.cdb.model.Computer;
 public class ComputerBuilder {
 	private Long id;
 	private String name;
-	private Optional<LocalDate> dateIntroduced;
-	private Optional<LocalDate> dateDiscontinued;
-	private Optional<Company> company;
+	private LocalDate dateIntroduced;
+	private LocalDate dateDiscontinued;
+	private Company company;
 	
 	private ComputerBuilder() {
-		this.dateIntroduced = Optional.empty();
-		this.dateDiscontinued = Optional.empty();
-		this.company = Optional.empty();
 	}
 	
 	public static ComputerBuilder newComputerBuilder() {
@@ -33,17 +29,17 @@ public class ComputerBuilder {
 		return this;
 	}
 	
-	public ComputerBuilder withDateIntroduced(Optional<LocalDate> dateIntroduced) {
+	public ComputerBuilder withDateIntroduced(LocalDate dateIntroduced) {
 		this.dateIntroduced = dateIntroduced;
 		return this;
 	}
 	
-	public ComputerBuilder withDateDiscontinued(Optional<LocalDate> dateDiscontinued) {
+	public ComputerBuilder withDateDiscontinued(LocalDate dateDiscontinued) {
 		this.dateDiscontinued = dateDiscontinued;
 		return this;
 	}
 	
-	public ComputerBuilder withCompany(Optional<Company> company) {
+	public ComputerBuilder withCompany(Company company) {
 		this.company = company;
 		return this;
 	}

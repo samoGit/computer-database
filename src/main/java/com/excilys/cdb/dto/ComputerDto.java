@@ -27,20 +27,20 @@ public class ComputerDto {
 		this.name = computer.getName();
 
 		this.dateIntroduced = "";
-		if (computer.getDateIntroduced().isPresent()) {
-			this.dateIntroduced = computer.getDateIntroduced().get().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+		if (computer.getDateIntroduced() != null) {
+			this.dateIntroduced = computer.getDateIntroduced().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 		}
 		this.dateDiscontinued = "";
-		if (computer.getDateDiscontinued().isPresent()) {
-			this.dateDiscontinued = computer.getDateDiscontinued().get()
+		if (computer.getDateDiscontinued() != null) {
+			this.dateDiscontinued = computer.getDateDiscontinued()
 					.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 		}
 		
 		this.companyId = "";
 		this.companyName = "";
-		if (computer.getCompany().isPresent()) {
-			this.companyId = computer.getCompany().get().getId().toString();
-			this.companyName = computer.getCompany().get().getName();
+		if (computer.getCompany() != null) {
+			this.companyId = computer.getCompany().getId().toString();
+			this.companyName = computer.getCompany().getName();
 		}
 	}
 

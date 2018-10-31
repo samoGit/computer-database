@@ -1,38 +1,37 @@
 package com.excilys.cdb.persistence;
 
 import java.util.List;
-import java.util.Optional;
 
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.excilys.cdb.model.Company;
 
-/**
- * Singleton that manage interactions with the BDD (for Company).
- * 
- * @author samy
- */
 @Repository
 public class CompanyDao {
-	private final static String SQL_SELECT_ALL_COMPANY = "SELECT id, name FROM company;";
-	private final static String SQL_SELECT_COMPANY_FROM_ID = "SELECT id, name FROM company WHERE ID = ?;";
-	private final static String SQL_DELETE_COMPANY_FROM_ID = "DELETE FROM company WHERE id = ?;";
-	private final static String SQL_DELETE_COMPUTER_WHERE_COMPANY = "DELETE FROM computer WHERE company_id = ?;";
-
 	@Autowired
-	JdbcTemplate jdbcTemplate;	
-	@Autowired
-	private CompanyRowMapper companyRowMapper;
+	private SessionFactory sessionFactory;
 
 	/**
 	 * Return the list of companies present in the BDD
 	 * 
 	 * @return List of {@link Company}
+	 * @throws DataBaseAccessException
 	 */
-	public List<Company> getListCompanies() {
-		return jdbcTemplate.query(SQL_SELECT_ALL_COMPANY, new Object[] {}, companyRowMapper);
+	@SuppressWarnings("unchecked")
+	public List<Company> getListCompanies() throws DataBaseAccessException {
+		List<Company> companies = null;
+		try (Session session = sessionFactory.openSession()) {
+			String hql = "FROM Company ORDER BY name";
+			companies = session.createQuery(hql).list();
+		} catch (HibernateException e) {
+			throw new DataBaseAccessException();
+		}
+		return companies;
 	}
 
 	/**
@@ -40,14 +39,30 @@ public class CompanyDao {
 	 * 
 	 * @param id Long
 	 * @return a {@link Company}
+	 * @throws DataBaseAccessException
 	 */
-	public Optional<Company> getCompanyFromId(Long id) {
-		List<Company> companies = jdbcTemplate.query(SQL_SELECT_COMPANY_FROM_ID, new Object[] {id}, companyRowMapper);
-		return companies.isEmpty() ? Optional.empty() : Optional.of(companies.get(0));
+	@SuppressWarnings("unchecked")
+	public Company getCompanyFromId(Long id) throws DataBaseAccessException {
+		List<Company> companies = null;
+		try (Session session = sessionFactory.openSession()) {
+			String hql = "FROM Company WHERE id = :id";
+			companies = session.createQuery(hql).setParameter("id", id).list();
+		} catch (HibernateException e) {
+			throw new DataBaseAccessException();
+		}
+		return companies.isEmpty() ? null : companies.get(0);
 	}
 
-	public void deleteCompany(Long companyId) {
-		jdbcTemplate.update(SQL_DELETE_COMPUTER_WHERE_COMPANY, companyId);
-		jdbcTemplate.update(SQL_DELETE_COMPANY_FROM_ID, companyId);
+	public void deleteCompany(Long companyId) throws DataBaseAccessException {
+		try (Session session = sessionFactory.openSession()) {
+			Transaction tx = session.beginTransaction();
+			String hqlDeleteComputer = "DELETE Computer WHERE company_id = :companyId";
+			session.createQuery(hqlDeleteComputer).setParameter("companyId", companyId).executeUpdate();
+			String hqlDeleteCompany = "DELETE Company WHERE id = :companyId";
+			session.createQuery(hqlDeleteCompany).setParameter("companyId", companyId).executeUpdate();
+			tx.commit();
+		} catch (HibernateException e) {
+			throw new DataBaseAccessException();
+		}
 	}
 }

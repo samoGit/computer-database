@@ -19,7 +19,6 @@ import com.excilys.cdb.dto.ComputerDto;
 import com.excilys.cdb.mapper.ComputerMapper;
 import com.excilys.cdb.mapper.InvalidComputerException;
 import com.excilys.cdb.mapper.InvalidDateException;
-import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.model.PageInfo;
 import com.excilys.cdb.persistence.DataBaseAccessException;
@@ -99,7 +98,11 @@ public class ComputerController {
 
 		model.addAttribute("pageNumber", pageNumber);
 		model.addAttribute("nbComputersByPage", nbComputersByPage);
-		model.addAttribute("listCompanies", companyService.getListCompanies());
+		try {
+			model.addAttribute("listCompanies", companyService.getListCompanies());
+		} catch (DataBaseAccessException e) {
+			return "500";
+		}
 
 		return "addComputer";
 	}
@@ -133,7 +136,11 @@ public class ComputerController {
 			model.addAttribute("dateIntroduced", computerDto.getDateIntroduced());
 			model.addAttribute("dateDiscontinued", computerDto.getDateDiscontinued());
 			model.addAttribute("companyId", computerDto.getCompanyId());
-			model.addAttribute("listCompanies", companyService.getListCompanies());
+			try {
+				model.addAttribute("listCompanies", companyService.getListCompanies());
+			} catch (DataBaseAccessException e1) {
+				return "500";
+			}
 			model.addAttribute("pageNumber", pageNumber);
 			return "addComputer";
 		} catch (DataBaseAccessException e) {
@@ -177,8 +184,6 @@ public class ComputerController {
 			@RequestParam String dateDiscontinued, 
 			@RequestParam String companyName) {
 		logger.info(" ------------------- getEditComputer");
-
-		List<Company> listCompanies = companyService.getListCompanies();
 		model.addAttribute("pageNumber", pageNumber);
 		model.addAttribute("nbComputersByPage", nbComputersByPage);
 		model.addAttribute("computerId", computerId);
@@ -186,8 +191,11 @@ public class ComputerController {
 		model.addAttribute("dateIntroduced", dateIntroduced);
 		model.addAttribute("dateDiscontinued", dateDiscontinued);
 		model.addAttribute("companyName", companyName);
-		model.addAttribute("listCompanies", listCompanies);
-
+		try {
+			model.addAttribute("listCompanies", companyService.getListCompanies());
+		} catch (DataBaseAccessException e) {
+			return "500";
+		}		
 		return "editComputer";
 	}
 	
@@ -227,8 +235,12 @@ public class ComputerController {
 			model.addAttribute("dateIntroduced", computerDto.getDateIntroduced());
 			model.addAttribute("dateDiscontinued", computerDto.getDateDiscontinued());
 			model.addAttribute("companyId", computerDto.getCompanyId());
-			model.addAttribute("listCompanies", companyService.getListCompanies());
 			model.addAttribute("errorMsgKey", errorMsgKey);
+			try {
+				model.addAttribute("listCompanies", companyService.getListCompanies());
+			} catch (DataBaseAccessException e1) {
+				return "500";
+			}
 			return "editComputer";			
 		} catch (DataBaseAccessException e) {
 			return "500";
