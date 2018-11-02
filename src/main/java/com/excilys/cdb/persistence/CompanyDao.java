@@ -13,6 +13,11 @@ import com.excilys.cdb.model.Company;
 
 @Repository
 public class CompanyDao {
+	private final static String HQL_SELECT_ALL_COPANIES = "FROM Company ORDER BY name ";
+	private final static String HQL_SELECT_COPANY = "FROM Company WHERE id = :id ";
+	private final static String HQL_DELETE_COPUTER_WHERE_COMPANY = "DELETE Computer WHERE company_id = :companyId ";
+	private final static String HQL_DELETE_COPANY = "DELETE Company WHERE id = :companyId ";
+
 	@Autowired
 	private SessionFactory sessionFactory;
 
@@ -26,8 +31,7 @@ public class CompanyDao {
 	public List<Company> getListCompanies() throws DataBaseAccessException {
 		List<Company> companies = null;
 		try (Session session = sessionFactory.openSession()) {
-			String hql = "FROM Company ORDER BY name";
-			companies = session.createQuery(hql).list();
+			companies = session.createQuery(HQL_SELECT_ALL_COPANIES).list();
 		} catch (HibernateException e) {
 			throw new DataBaseAccessException();
 		}
@@ -45,8 +49,7 @@ public class CompanyDao {
 	public Company getCompanyFromId(Long id) throws DataBaseAccessException {
 		List<Company> companies = null;
 		try (Session session = sessionFactory.openSession()) {
-			String hql = "FROM Company WHERE id = :id";
-			companies = session.createQuery(hql).setParameter("id", id).list();
+			companies = session.createQuery(HQL_SELECT_COPANY).setParameter("id", id).list();
 		} catch (HibernateException e) {
 			throw new DataBaseAccessException();
 		}
@@ -54,14 +57,14 @@ public class CompanyDao {
 	}
 
 	public void deleteCompany(Long companyId) throws DataBaseAccessException {
+		Transaction transaction = null;
 		try (Session session = sessionFactory.openSession()) {
-			Transaction tx = session.beginTransaction();
-			String hqlDeleteComputer = "DELETE Computer WHERE company_id = :companyId";
-			session.createQuery(hqlDeleteComputer).setParameter("companyId", companyId).executeUpdate();
-			String hqlDeleteCompany = "DELETE Company WHERE id = :companyId";
-			session.createQuery(hqlDeleteCompany).setParameter("companyId", companyId).executeUpdate();
-			tx.commit();
+			transaction = session.beginTransaction();
+			session.createQuery(HQL_DELETE_COPUTER_WHERE_COMPANY).setParameter("companyId", companyId).executeUpdate();
+			session.createQuery(HQL_DELETE_COPANY).setParameter("companyId", companyId).executeUpdate();
+			transaction.commit();
 		} catch (HibernateException e) {
+			transaction.rollback();
 			throw new DataBaseAccessException();
 		}
 	}

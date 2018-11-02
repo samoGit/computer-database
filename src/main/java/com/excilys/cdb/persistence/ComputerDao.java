@@ -26,13 +26,10 @@ public class ComputerDao {
 
 	private final static String HQL_SELECT_ALL_COMPUTERS = "FROM Computer ORDER BY %s ";
 	private final static String HQL_SELECT_ALL_COMPUTERS_BYNAME = "FROM Computer WHERE name LIKE :searchedName ORDER BY %s ";
-
 	private final static String HQL_UPDATE_COMPUTER = "UPDATE Computer SET %s = :newValue WHERE id = :id ";
-	
 	private final static String HQL_UPDATE_COMPUTER_ALLFIELDS = "UPDATE Computer SET name = :name, dateIntroduced = "
 			+ ":dateIntroduced, dateDiscontinued = :dateDiscontinued, company = :company WHERE id = :id  ";
 	private final static String HQL_DELETE_COMPUTER = "DELETE Computer WHERE id IN (%s) ";
-
 	final static String HQL_SELECT_NB_COMPUTERS = "SELECT count(id) as nbComputers FROM Computer ";
 	final static String HQL_SELECT_NB_COMPUTERS_BYNAME = "SELECT count(id) as nbComputers FROM Computer "
 			+ "WHERE name LIKE :searchedName ";	
