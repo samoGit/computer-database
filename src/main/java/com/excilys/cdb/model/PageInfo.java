@@ -36,6 +36,8 @@ public class PageInfo {
 		if (nbComputers % nbComputersByPage != 0) {
 			nbPageTotal++;
 		}
+		if (nbPageTotal < 1L)
+			nbPageTotal = 1L;
 		return nbPageTotal;
 	}
 	

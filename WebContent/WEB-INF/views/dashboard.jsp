@@ -40,6 +40,8 @@
 					<form id="searchForm" action="#" method="GET" class="form-inline">
 						<input type="search" id="searchbox" name="search"
 							class="form-control" placeholder='<fmt:message key="label.search" />' value="${search}" />
+						<input type="hidden" value="${pageNumber}" id="pageNumber" name="pageNumber" />
+						<input type="hidden" value="${nbComputersByPage}" id="nbComputersByPage" name="nbComputersByPage" />
 						<input type="submit" id="searchsubmit" value='<fmt:message key="label.filterByName" />'
 							class="btn btn-primary" />
 					</form>
