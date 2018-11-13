@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
+import com.excilys.cdb.mapper.ComputerMapper;
 import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.model.ComputerDto;
-import com.excilys.cdb.model.ComputerMapper;
 import com.excilys.cdb.model.InvalidComputerException;
 import com.excilys.cdb.model.InvalidDateException;
 import com.excilys.cdb.model.PageInfo;

@@ -13,10 +13,10 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.stereotype.Component;
 
 import com.excilys.cdb.config.CliAppConfig;
+import com.excilys.cdb.mapper.ComputerMapper;
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.model.ComputerDto;
-import com.excilys.cdb.model.ComputerMapper;
 import com.excilys.cdb.model.InvalidComputerException;
 import com.excilys.cdb.model.InvalidDateException;
 import com.excilys.cdb.model.PageInfo;

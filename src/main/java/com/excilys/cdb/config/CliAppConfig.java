@@ -20,7 +20,7 @@ import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import com.zaxxer.hikari.HikariDataSource;
 
 @Configuration
-@ComponentScan("com.excilys.cdb.persistence, com.excilys.cdb.model, com.excilys.cdb.service, "
+@ComponentScan("com.excilys.cdb.persistence, com.excilys.cdb.model, com.excilys.cdb.mapper, com.excilys.cdb.service, "
 		+ "com.excilys.cdb.ui")
 public class CliAppConfig {
 

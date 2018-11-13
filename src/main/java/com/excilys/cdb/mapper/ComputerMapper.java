@@ -1,4 +1,4 @@
-package com.excilys.cdb.model;
+package com.excilys.cdb.mapper;
 
 import java.sql.ResultSet;
 import java.time.LocalDate;
@@ -6,6 +6,13 @@ import java.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.excilys.cdb.model.Company;
+import com.excilys.cdb.model.Computer;
+import com.excilys.cdb.model.ComputerBuilder;
+import com.excilys.cdb.model.ComputerDto;
+import com.excilys.cdb.model.DateMapper;
+import com.excilys.cdb.model.InvalidComputerException;
+import com.excilys.cdb.model.InvalidDateException;
 import com.excilys.cdb.persistence.DataBaseAccessException;
 import com.excilys.cdb.service.CompanyService;
 
