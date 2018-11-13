@@ -1,9 +1,7 @@
-package com.excilys.cdb.dto;
+package com.excilys.cdb.model;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
-
-import com.excilys.cdb.model.Computer;
 
 public class ComputerDto {
 	private String id;

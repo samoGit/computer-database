@@ -1,4 +1,4 @@
-package com.excilys.cdb.mapper;
+package com.excilys.cdb.model;
 
 import java.time.DateTimeException;
 import java.time.LocalDate;

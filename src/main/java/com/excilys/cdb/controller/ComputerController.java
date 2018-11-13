@@ -15,11 +15,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
-import com.excilys.cdb.dto.ComputerDto;
-import com.excilys.cdb.mapper.ComputerMapper;
-import com.excilys.cdb.mapper.InvalidComputerException;
-import com.excilys.cdb.mapper.InvalidDateException;
 import com.excilys.cdb.model.Computer;
+import com.excilys.cdb.model.ComputerDto;
+import com.excilys.cdb.model.ComputerMapper;
+import com.excilys.cdb.model.InvalidComputerException;
+import com.excilys.cdb.model.InvalidDateException;
 import com.excilys.cdb.model.PageInfo;
 import com.excilys.cdb.persistence.DataBaseAccessException;
 import com.excilys.cdb.service.CompanyService;
@@ -36,9 +36,9 @@ public class ComputerController {
 	private final CompanyService companyService;
 	private final ComputerMapper computerMapper;
 
-	
 	@Autowired
-	public ComputerController(ComputerService computerService, CompanyService companyService, ComputerMapper computerMapper) {
+	public ComputerController(ComputerService computerService, CompanyService companyService,
+			ComputerMapper computerMapper) {
 		this.computerService = computerService;
 		this.companyService = companyService;
 		this.computerMapper = computerMapper;
@@ -63,8 +63,7 @@ public class ComputerController {
 	}
 
 	@GetMapping("Dashboard")
-	public String getDashboard(ModelMap model, 
-			@RequestParam(required = false, defaultValue = "") String search,
+	public String getDashboard(ModelMap model, @RequestParam(required = false, defaultValue = "") String search,
 			@RequestParam(required = false, defaultValue = "1") String pageNumber,
 			@RequestParam(required = false, defaultValue = "") String nbComputersByPage,
 			@RequestParam(required = false, defaultValue = "") String orderBy) {
@@ -73,7 +72,7 @@ public class ComputerController {
 		try {
 			Long nbComputers = getNbComputers(search);
 			logger.info(" ------------------- nbComputers = " + nbComputers);
-			
+
 			PageInfo pageInfo = new PageInfo(pageNumber, nbComputersByPage, search, orderBy, nbComputers);
 			model.addAttribute("pageNumber", pageInfo.getPageNumber());
 			model.addAttribute("nbComputersByPage", pageInfo.getNbComputersByPage());
@@ -85,13 +84,12 @@ public class ComputerController {
 		} catch (DataBaseAccessException e) {
 			return "500";
 		}
-		
+
 		return "dashboard";
 	}
 
 	@GetMapping("AddComputer")
-	public String getAddComputer(ModelMap model, 
-			@RequestParam(required = false, defaultValue = "1") String pageNumber,
+	public String getAddComputer(ModelMap model, @RequestParam(required = false, defaultValue = "1") String pageNumber,
 			@RequestParam(required = false, defaultValue = "10") String nbComputersByPage,
 			@RequestParam(required = false, defaultValue = "") String orderBy) {
 		logger.info(" ------------------- getAddComputer");
@@ -106,15 +104,12 @@ public class ComputerController {
 
 		return "addComputer";
 	}
-	
+
 	@PostMapping("AddComputer")
-	public String postAddComputer(ModelMap model, 
-			@RequestParam(required = false, defaultValue = "1") String pageNumber,
+	public String postAddComputer(ModelMap model, @RequestParam(required = false, defaultValue = "1") String pageNumber,
 			@RequestParam(required = false, defaultValue = "10") String nbComputersByPage,
-			@RequestParam(required = false, defaultValue = "") String orderBy,
-			@RequestParam String computerName,
-			@RequestParam String dateIntroduced,
-			@RequestParam String dateDiscontinued,
+			@RequestParam(required = false, defaultValue = "") String orderBy, @RequestParam String computerName,
+			@RequestParam String dateIntroduced, @RequestParam String dateDiscontinued,
 			@RequestParam String companyId) {
 		logger.info(" ------------------- postAddComputer");
 
@@ -149,16 +144,14 @@ public class ComputerController {
 
 		model.addAttribute("pageNumber", "lastPage");
 		return "redirect:Dashboard";
-		
+
 	}
 
 	@PostMapping("DeleteComputer")
-	public String postDeleteComputer(ModelMap model, 
-			@RequestParam(required = false, defaultValue = "") String search,
+	public String postDeleteComputer(ModelMap model, @RequestParam(required = false, defaultValue = "") String search,
 			@RequestParam(required = false, defaultValue = "1") String pageNumber,
 			@RequestParam(required = false, defaultValue = "10") String nbComputersByPage,
-			@RequestParam(required = false, defaultValue = "") String orderBy,
-			@RequestParam String selection) {
+			@RequestParam(required = false, defaultValue = "") String orderBy, @RequestParam String selection) {
 		logger.info(" ------------------- postDeleteComputer");
 
 		try {
@@ -171,18 +164,14 @@ public class ComputerController {
 		model.addAttribute("search", search);
 		model.addAttribute("orderBy", orderBy);
 
-		return "redirect:Dashboard"; 
+		return "redirect:Dashboard";
 	}
 
 	@GetMapping("EditComputer")
-	public String getEditComputer(ModelMap model, 
-			@RequestParam(required = false, defaultValue = "1") String pageNumber, 
-			@RequestParam(required = false, defaultValue = "10") String nbComputersByPage, 
-			@RequestParam String computerId, 
-			@RequestParam String computerName, 
-			@RequestParam String dateIntroduced, 
-			@RequestParam String dateDiscontinued, 
-			@RequestParam String companyName) {
+	public String getEditComputer(ModelMap model, @RequestParam(required = false, defaultValue = "1") String pageNumber,
+			@RequestParam(required = false, defaultValue = "10") String nbComputersByPage,
+			@RequestParam String computerId, @RequestParam String computerName, @RequestParam String dateIntroduced,
+			@RequestParam String dateDiscontinued, @RequestParam String companyName) {
 		logger.info(" ------------------- getEditComputer");
 		model.addAttribute("pageNumber", pageNumber);
 		model.addAttribute("nbComputersByPage", nbComputersByPage);
@@ -195,19 +184,16 @@ public class ComputerController {
 			model.addAttribute("listCompanies", companyService.getListCompanies());
 		} catch (DataBaseAccessException e) {
 			return "500";
-		}		
+		}
 		return "editComputer";
 	}
-	
+
 	@PostMapping("EditComputer")
-	public String postEditComputer(ModelMap model, 
-			@RequestParam(required = false, defaultValue = "1") String pageNumber, 
-			@RequestParam(required = false, defaultValue = "10") String nbComputersByPage, 
-			@RequestParam String computerId, 
-			@RequestParam String computerName, 
-			@RequestParam String dateIntroduced, 
-			@RequestParam String dateDiscontinued, 
-			@RequestParam String companyId) {
+	public String postEditComputer(ModelMap model,
+			@RequestParam(required = false, defaultValue = "1") String pageNumber,
+			@RequestParam(required = false, defaultValue = "10") String nbComputersByPage,
+			@RequestParam String computerId, @RequestParam String computerName, @RequestParam String dateIntroduced,
+			@RequestParam String dateDiscontinued, @RequestParam String companyId) {
 		logger.info(" ------------------- postEditComputer");
 
 		ComputerDto computerDto = new ComputerDto();
@@ -221,15 +207,15 @@ public class ComputerController {
 		model.addAttribute("nbComputersByPage", nbComputersByPage);
 
 		try {
-			Computer computer = computerMapper.getComputer(computerDto); 
+			Computer computer = computerMapper.getComputer(computerDto);
 			logger.info("computer to be update = " + computer);
-			computerService.updateComputer(computer);		
-			
+			computerService.updateComputer(computer);
+
 			return "redirect:Dashboard";
 		} catch (InvalidComputerException | InvalidDateException e) {
 			String errorMsgKey = e.getMessageKey();
 			logger.warn(errorMsgKey);
-			
+
 			model.addAttribute("computerId", computerDto.getCompanyId());
 			model.addAttribute("computerName", computerDto.getName());
 			model.addAttribute("dateIntroduced", computerDto.getDateIntroduced());
@@ -241,7 +227,7 @@ public class ComputerController {
 			} catch (DataBaseAccessException e1) {
 				return "500";
 			}
-			return "editComputer";			
+			return "editComputer";
 		} catch (DataBaseAccessException e) {
 			return "500";
 		}
@@ -253,8 +239,3 @@ public class ComputerController {
 		return "404";
 	}
 }
-
-
-
-
-

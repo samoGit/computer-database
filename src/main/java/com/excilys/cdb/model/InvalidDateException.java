@@ -1,4 +1,4 @@
-package com.excilys.cdb.mapper;
+package com.excilys.cdb.model;
 
 public class InvalidDateException extends MapperException {
 	private static final long serialVersionUID = 7792513824999192264L;

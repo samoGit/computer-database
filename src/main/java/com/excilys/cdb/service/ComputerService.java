@@ -8,9 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.excilys.cdb.mapper.InvalidComputerException;
-import com.excilys.cdb.mapper.InvalidDateException;
 import com.excilys.cdb.model.Computer;
+import com.excilys.cdb.model.InvalidComputerException;
+import com.excilys.cdb.model.InvalidDateException;
 import com.excilys.cdb.model.PageInfo;
 import com.excilys.cdb.persistence.ComputerDao;
 import com.excilys.cdb.persistence.DataBaseAccessException;

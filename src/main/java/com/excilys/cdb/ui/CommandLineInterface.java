@@ -13,12 +13,12 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.stereotype.Component;
 
 import com.excilys.cdb.config.CliAppConfig;
-import com.excilys.cdb.dto.ComputerDto;
-import com.excilys.cdb.mapper.ComputerMapper;
-import com.excilys.cdb.mapper.InvalidComputerException;
-import com.excilys.cdb.mapper.InvalidDateException;
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
+import com.excilys.cdb.model.ComputerDto;
+import com.excilys.cdb.model.ComputerMapper;
+import com.excilys.cdb.model.InvalidComputerException;
+import com.excilys.cdb.model.InvalidDateException;
 import com.excilys.cdb.model.PageInfo;
 import com.excilys.cdb.persistence.DataBaseAccessException;
 import com.excilys.cdb.service.CompanyService;
@@ -43,7 +43,8 @@ public class CommandLineInterface {
 
 	/**
 	 * Display info about all companies.
-	 * @throws DataBaseAccessException 
+	 * 
+	 * @throws DataBaseAccessException
 	 */
 	protected void displayAllCompanies() throws DataBaseAccessException {
 		List<Company> listCompanies = companyService.getListCompanies();
@@ -61,7 +62,8 @@ public class CommandLineInterface {
 
 	/**
 	 * Display info about all computers.
-	 * @throws DataBaseAccessException 
+	 * 
+	 * @throws DataBaseAccessException
 	 */
 	protected void displayAllComputers() throws DataBaseAccessException {
 		PageInfo pageInfo = new PageInfo("", "", "", "", computerService.getNbComputers());
@@ -126,10 +128,10 @@ public class CommandLineInterface {
 			ComputerDto computerDto = new ComputerDto();
 			computerDto.setId(String.valueOf(computer.getId()));
 			computerDto.setName(String.valueOf(computer.getName()));
-			computerDto.setDateIntroduced(String
-					.valueOf(computer.getDateIntroduced() != null ? computer.getDateIntroduced() : "?"));
-			computerDto.setDateDiscontinued(String
-					.valueOf(computer.getDateDiscontinued() != null ? computer.getDateDiscontinued() : "?"));
+			computerDto.setDateIntroduced(
+					String.valueOf(computer.getDateIntroduced() != null ? computer.getDateIntroduced() : "?"));
+			computerDto.setDateDiscontinued(
+					String.valueOf(computer.getDateDiscontinued() != null ? computer.getDateDiscontinued() : "?"));
 			computerDto.setCompanyName(
 					String.valueOf(computer.getCompany() != null ? computer.getCompany().getName() : "?"));
 
@@ -153,7 +155,8 @@ public class CommandLineInterface {
 	/**
 	 * Launch the menu which allows the user to select a computer (with its name)
 	 * and displays all the information known about this computer
-	 * @throws DataBaseAccessException 
+	 * 
+	 * @throws DataBaseAccessException
 	 */
 	protected void launchMenuShowDetailComputer() throws DataBaseAccessException {
 		System.out.println("\n\nPlease enter the name of a computer : ");
@@ -202,7 +205,7 @@ public class CommandLineInterface {
 	 * @param message String The text to be display until the user enter a CompnayId
 	 *                (or "?")
 	 * @return {@link Company}
-	 * @throws DataBaseAccessException 
+	 * @throws DataBaseAccessException
 	 */
 	private Optional<String> getCompanyIdFromUser() throws DataBaseAccessException {
 		boolean companyUnknown = false;
@@ -224,7 +227,8 @@ public class CommandLineInterface {
 
 	/**
 	 * Launch the menu which allows the user to create a new computer
-	 * @throws DataBaseAccessException 
+	 * 
+	 * @throws DataBaseAccessException
 	 */
 	protected void launchMenuCreateComputer() throws DataBaseAccessException {
 		System.out.println("\nName : ");
@@ -247,7 +251,7 @@ public class CommandLineInterface {
 	 * Launch the menu which allows the user to choose a computer
 	 * 
 	 * @return {@link Computer}
-	 * @throws DataBaseAccessException 
+	 * @throws DataBaseAccessException
 	 */
 	private Optional<Computer> launchMenuChooseComputer() throws DataBaseAccessException {
 		System.out.println("\nEnter the name of the computer : ");
@@ -277,7 +281,8 @@ public class CommandLineInterface {
 
 	/**
 	 * Launch the menu which allows the user to delete a computer
-	 * @throws DataBaseAccessException 
+	 * 
+	 * @throws DataBaseAccessException
 	 */
 	protected void launchMenuDeleteComputer() throws DataBaseAccessException {
 		Optional<Computer> computerToBeDeleted = launchMenuChooseComputer();
@@ -287,7 +292,8 @@ public class CommandLineInterface {
 
 	/**
 	 * Launch the menu which allows the user to update a computer
-	 * @throws DataBaseAccessException 
+	 * 
+	 * @throws DataBaseAccessException
 	 */
 	protected void launchMenuUpdateComputer() throws DataBaseAccessException {
 		Optional<Computer> computerToBeUpdate = launchMenuChooseComputer();
@@ -335,7 +341,8 @@ public class CommandLineInterface {
 	/**
 	 * Launch the menu which allows the user to delete a company AND all the
 	 * computer linked to it.
-	 * @throws DataBaseAccessException 
+	 * 
+	 * @throws DataBaseAccessException
 	 */
 	protected void launchMenuDeleteCompany() throws DataBaseAccessException {
 		Optional<String> companyToBeDeleted = getCompanyIdFromUser();
@@ -368,7 +375,7 @@ public class CommandLineInterface {
 				if (userChoice.isPresent()) {
 					switch (userChoice.get()) {
 					case DISPLAY_COMPUTERS:
-							displayAllComputers();
+						displayAllComputers();
 						break;
 					case DISPLAY_COMPANIES:
 						displayAllCompanies();

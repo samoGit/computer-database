@@ -16,7 +16,7 @@ import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 
 @Configuration
 @EnableWebMvc
-@ComponentScan("com.excilys.cdb.config, " + "com.excilys.cdb.mapper, " + "com.excilys.cdb.persistence, "
+@ComponentScan("com.excilys.cdb.config, com.excilys.cdb.model, com.excilys.cdb.persistence, "
 		+ "com.excilys.cdb.service, " + "com.excilys.cdb.controller")
 public class WebMvcConfig implements WebMvcConfigurer {
 
@@ -31,24 +31,24 @@ public class WebMvcConfig implements WebMvcConfigurer {
 		registry.addResourceHandler("/css/**").addResourceLocations("/WEB-INF/lib/css/");
 		registry.addResourceHandler("/fonts/**").addResourceLocations("/WEB-INF/lib/fonts/");
 	}
-	
+
 	@Bean("messageSource")
 	public MessageSource messageSource() {
-	    ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
-	    messageSource.setBasenames("languages/messages");
-	    messageSource.setDefaultEncoding("UTF-8");
-	    return messageSource;
+		ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
+		messageSource.setBasenames("languages/messages");
+		messageSource.setDefaultEncoding("UTF-8");
+		return messageSource;
 	}
-	
+
 	@Bean
 	public LocaleResolver localeResolver() {
-	    return new CookieLocaleResolver();
+		return new CookieLocaleResolver();
 	}
 
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
-	    LocaleChangeInterceptor localeChangeInterceptor = new LocaleChangeInterceptor();
-	    localeChangeInterceptor.setParamName("lang");
-	    registry.addInterceptor(localeChangeInterceptor);
+		LocaleChangeInterceptor localeChangeInterceptor = new LocaleChangeInterceptor();
+		localeChangeInterceptor.setParamName("lang");
+		registry.addInterceptor(localeChangeInterceptor);
 	}
 }

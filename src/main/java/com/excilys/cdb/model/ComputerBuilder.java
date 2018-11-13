@@ -1,9 +1,6 @@
-package com.excilys.cdb.builder;
+package com.excilys.cdb.model;
 
 import java.time.LocalDate;
-
-import com.excilys.cdb.model.Company;
-import com.excilys.cdb.model.Computer;
 
 public class ComputerBuilder {
 	private Long id;
