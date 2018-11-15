@@ -218,7 +218,7 @@ public class ComputerController {
 			String errorMsgKey = e.getMessageKey();
 			logger.warn(errorMsgKey);
 
-			model.addAttribute("computerId", computerDto.getCompanyId());
+			model.addAttribute("computerId", computerDto.getId());
 			model.addAttribute("computerName", computerDto.getName());
 			model.addAttribute("dateIntroduced", computerDto.getDateIntroduced());
 			model.addAttribute("dateDiscontinued", computerDto.getDateDiscontinued());
