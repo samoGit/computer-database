@@ -257,4 +257,19 @@ public class ComputerController {
 		}
 		return computerToBeCreated;
 	}
+	
+
+	@GetMapping("custoLogin")
+	public String login(ModelMap model, 
+			@RequestParam(value = "error", required = false) String error,
+			@RequestParam(value = "logout", required = false) String logout) {
+		if (error != null) {
+			model.addAttribute("msg", "Invalid username and password!");
+		}
+		else if (logout != null) {
+			model.addAttribute("msg", "You've been logged out successfully.");
+		}
+		return "custoLogin";
+
+	}
 }

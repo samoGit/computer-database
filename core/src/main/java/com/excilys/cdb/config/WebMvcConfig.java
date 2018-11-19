@@ -10,6 +10,8 @@ import org.springframework.web.servlet.config.annotation.DefaultServletHandlerCo
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
+import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
@@ -17,7 +19,7 @@ import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 @Configuration
 @EnableWebMvc
 @ComponentScan("com.excilys.cdb.config, com.excilys.cdb.model, com.excilys.cdb.binding, com.excilys.cdb.persistence, "
-		+ "com.excilys.cdb.service, " + "com.excilys.cdb.controller")
+		+ "com.excilys.cdb.service, com.excilys.cdb.controller")
 public class WebMvcConfig implements WebMvcConfigurer {
 
 	@Override
@@ -50,5 +52,15 @@ public class WebMvcConfig implements WebMvcConfigurer {
 		LocaleChangeInterceptor localeChangeInterceptor = new LocaleChangeInterceptor();
 		localeChangeInterceptor.setParamName("lang");
 		registry.addInterceptor(localeChangeInterceptor);
+	}
+
+	@Override
+	public void configureViewResolvers(ViewResolverRegistry registry) {
+		registry.jsp().prefix("/WEB-INF/views/").suffix(".jsp");
+	}
+
+	@Override
+	public void addViewControllers(ViewControllerRegistry registry) {
+		registry.addViewController("/login").setViewName("login");
 	}
 }

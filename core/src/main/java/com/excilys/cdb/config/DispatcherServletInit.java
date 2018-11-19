@@ -6,7 +6,7 @@ public class DispatcherServletInit extends AbstractAnnotationConfigDispatcherSer
 
     @Override
     protected Class<?>[] getRootConfigClasses() {
-        return new Class<?>[] { WebAppConfig.class };
+        return new Class<?>[] { WebMvcConfig.class, WebAppConfig.class, WebSecurityConfig.class };
     }
 
     @Override
