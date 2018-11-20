@@ -20,7 +20,7 @@ public class CompanyService {
 	 * Return the list of companies present in the BDD
 	 * 
 	 * @return List of Company
-	 * @throws DataBaseAccessException 
+	 * @throws DataBaseAccessException
 	 */
 	public List<Company> getListCompanies() throws DataBaseAccessException {
 		return companyDao.getListCompanies();
@@ -31,14 +31,24 @@ public class CompanyService {
 	 * 
 	 * @param id Long
 	 * @return a {@link Company}
-	 * @throws DataBaseAccessException 
+	 * @throws DataBaseAccessException
 	 */
 	public Company getCompanyFromId(Long id) throws DataBaseAccessException {
 		return companyDao.getCompanyFromId(id);
 	}
-	
+
 	@Transactional
 	public void deleteCompany(Long id) throws DataBaseAccessException {
-		companyDao.deleteCompany(id);		
+		companyDao.deleteCompany(id);
+	}
+
+	@Transactional
+	public void updateCompany(Company company) throws DataBaseAccessException {
+		companyDao.updateCompany(company);
+	}
+
+	@Transactional
+	public void addCompany(String companyName) throws DataBaseAccessException {
+		companyDao.addCompany(new Company(-1L, companyName));
 	}
 }

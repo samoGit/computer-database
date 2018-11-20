@@ -23,13 +23,12 @@
 				<fmt:message key="label.subTitle" />
 			</a>
             <div class="pull-right btnLang" style="margin-top: 7.5px;">
-            ${pageContext.response.locale}
              	<a	class="btn btn-default" href="logout">Logout</a> 
             
              	<a	class="btn btn-default <c:if test="${pageContext.response.locale.language eq 'fr'}">btn-primary</c:if>" 
             		href="Dashboard?lang=fr&pageNumber=${pageNumber}&nbComputersByPage=${nbComputersByPage}">FR</a> 
             	<a	class="btn btn-default <c:if test="${pageContext.response.locale.language eq 'en'}">btn-primary</c:if>" 
-            		href="Dashboard?lang=en&pageNumber=${pageNumber}&nbComputersByPage=${nbComputersByPage}">EN</a> -->
+            		href="Dashboard?lang=en&pageNumber=${pageNumber}&nbComputersByPage=${nbComputersByPage}">EN</a>
 			</div>			
 		</div>
 	</header>

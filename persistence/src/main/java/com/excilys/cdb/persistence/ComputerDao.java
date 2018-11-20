@@ -26,6 +26,7 @@ public class ComputerDao {
 
 	private final static String HQL_SELECT_ALL_COMPUTERS = "FROM Computer ORDER BY %s ";
 	private final static String HQL_SELECT_ALL_COMPUTERS_BYNAME = "FROM Computer WHERE name LIKE :searchedName ORDER BY %s ";
+	private final static String HQL_SELECT_COMPUTERS_BY_COMPANY_ID = "FROM Computer WHERE company.id = :companyid ";
 	private final static String HQL_UPDATE_COMPUTER = "UPDATE Computer SET %s = :newValue WHERE id = :id ";
 	private final static String HQL_UPDATE_COMPUTER_ALLFIELDS = "UPDATE Computer SET name = :name, dateIntroduced = "
 			+ ":dateIntroduced, dateDiscontinued = :dateDiscontinued, company = :company WHERE id = :id  ";
@@ -255,4 +256,21 @@ public class ComputerDao {
 		}
 		return 0L;
 	}
+
+	public List<Computer> getListComputersByCompanyId(Long companyId) throws DataBaseAccessException {
+		logger.info("\n\n\n     --- Start getListComputersByCompanyId, companyId = " + companyId + " --- \n\n\n");		
+		List<Computer> computers = null;
+		try (Session session = sessionFactory.openSession()) {
+			Query<Computer> hibernateQuery = session.createQuery(HQL_SELECT_COMPUTERS_BY_COMPANY_ID, Computer.class);
+			hibernateQuery.setParameter("companyid", companyId);
+			logger.info("\n\n\n     --- hibernateQuery = " + hibernateQuery.getQueryString() + " --- \n\n\n");
+			
+			computers = hibernateQuery.list();
+			logger.info("\n\n\n     --- nb computers found = " + computers.size() + " --- \n\n\n");
+		} catch (HibernateException e) {
+			throw new DataBaseAccessException();
+		}
+		return computers;
+	}
+	
 }

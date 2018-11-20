@@ -235,12 +235,12 @@ public class ComputerController {
 		}
 	}
 
-	@GetMapping("*")
+	/*@GetMapping("*")
 	public String get404(ModelMap model) {
 		logger.info(" ------------------- get404");
 		return "404";
-	}
-	
+	}*/
+
 	public Computer getComputerWithCorrectCompany(ComputerDto computerDto) throws InvalidComputerException, InvalidDateException, DataBaseAccessException {
 		Computer computerToBeCreated = computerMapper.getComputerWithNoCompany(computerDto);
 		if (!"".equals(computerDto.getCompanyId())) {

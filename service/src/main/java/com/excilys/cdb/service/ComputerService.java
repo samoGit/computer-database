@@ -104,4 +104,8 @@ public class ComputerService {
 	public Long getNbComputersByName(String searchedName) throws DataBaseAccessException {
 		return computerDao.getNbComputersByName(searchedName);
 	}
+	
+	public List<Computer> getListComputersByCompanyId(Long companyId) throws DataBaseAccessException {
+		return computerDao.getListComputersByCompanyId(companyId);
+	}
 }

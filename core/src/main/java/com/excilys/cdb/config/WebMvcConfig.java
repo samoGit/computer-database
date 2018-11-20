@@ -6,6 +6,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.web.servlet.LocaleResolver;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -19,7 +20,7 @@ import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 @Configuration
 @EnableWebMvc
 @ComponentScan("com.excilys.cdb.config, com.excilys.cdb.model, com.excilys.cdb.binding, com.excilys.cdb.persistence, "
-		+ "com.excilys.cdb.service, com.excilys.cdb.controller")
+		+ "com.excilys.cdb.service, com.excilys.cdb.controller, com.excilys.cdb.rest")
 public class WebMvcConfig implements WebMvcConfigurer {
 
 	@Override
@@ -63,4 +64,10 @@ public class WebMvcConfig implements WebMvcConfigurer {
 	public void addViewControllers(ViewControllerRegistry registry) {
 		registry.addViewController("/login").setViewName("login");
 	}
+	
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedMethods("HEAD", "GET", "PUT", "POST", "DELETE", "PATCH", "OPTION");
+    }
 }

@@ -21,7 +21,7 @@ import com.zaxxer.hikari.HikariDataSource;
 
 @Configuration
 @ComponentScan("com.excilys.cdb.persistence, com.excilys.cdb.model, com.excilys.cdb.binding, com.excilys.cdb.service, "
-		+ "com.excilys.cdb.console")
+		+ "com.excilys.cdb.console, com.excilys.cdb.rest")
 public class CliAppConfig {
 
 	private final static Logger logger = LoggerFactory.getLogger("CliAppConfig");

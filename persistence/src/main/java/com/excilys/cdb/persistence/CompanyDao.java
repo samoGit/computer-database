@@ -68,4 +68,28 @@ public class CompanyDao {
 			throw new DataBaseAccessException();
 		}
 	}
+
+	public void updateCompany(Company company) throws DataBaseAccessException {
+		Transaction transaction = null;
+		try (Session session = sessionFactory.openSession()) {
+			transaction = session.beginTransaction();
+			session.update(company);
+			transaction.commit();
+		} catch (HibernateException e) {
+			transaction.rollback();
+			throw new DataBaseAccessException();
+		}
+	}
+	
+	public void addCompany(Company company) throws DataBaseAccessException {
+		Transaction transaction = null;
+		try (Session session = sessionFactory.openSession()) {
+			transaction = session.beginTransaction();
+			session.save(company);
+			transaction.commit();
+		} catch (HibernateException e) {
+			transaction.rollback();
+			throw new DataBaseAccessException();
+		}
+	}
 }

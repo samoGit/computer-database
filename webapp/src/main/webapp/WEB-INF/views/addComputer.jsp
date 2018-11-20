@@ -91,7 +91,7 @@
 						</fieldset>
 						<div class="actions pull-right">
 							<input type="submit" value='<fmt:message key="label.add" />' class="btn btn-primary">
-							or <a
+							<a
 								href="Dashboard?pageNumber=${pageNumber}&nbComputersByPage=${nbComputersByPage}"
 								class="btn btn-default"><fmt:message key="label.cancel" /></a>
 						</div>
